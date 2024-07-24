@@ -1,0 +1,25 @@
+name: 테스트 & 통합
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'public/**'
+      - 'src/assets/**'
+
+jobs:
+  Test:
+    name: Vite 테스트
+    runs-on: ubuntu-latest
+    steps:
+      - name: 리포지토리 체크아웃
+        uses: actions/checkout@v4
+      - name: Node.js 셋업
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.2'
+      - name: 패키지 설치
+        run: npm ci
+      - name: 테스트 수행
+        run: npm test
