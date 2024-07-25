@@ -59,4 +59,37 @@ describe("html 생성 요청 시", () => {
       'utf-8'
     );
   });
+  
+  it("표가 파싱된다.", async () => {
+    // given
+    markdown = '| 왼쪽 정렬 | 가운데 정렬 | 오른쪽 정렬 |\n' +
+      '| :---- | :----: | -----: |\n' +
+      '| 내용    |   내용   |     내용 |';
+    expectedHtml = `<table>
+<thead>
+<tr>
+<th align="left">왼쪽 정렬</th>
+<th align="center">가운데 정렬</th>
+<th align="right">오른쪽 정렬</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">내용</td>
+<td align="center">내용</td>
+<td align="right">내용</td>
+</tr>
+</tbody>
+</table>`;
+    
+    // when
+    await generateHtmlFiles()
+    
+    // then
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      htmlPath,
+      expectedHtml,
+      'utf-8'
+    );
+  });
 });
