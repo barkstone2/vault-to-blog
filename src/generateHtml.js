@@ -6,6 +6,8 @@ import rehypeStringify from "rehype-stringify";
 import path from "path";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 async function processMarkdown(filePath) {
   const markdown = fs.readFileSync(filePath, 'utf-8');
@@ -13,7 +15,9 @@ async function processMarkdown(filePath) {
     .use(remarkParse)
     .use(remarkBreaks)
     .use(remarkGfm)
+    .use(remarkMath)
     .use(remarkRehype)
+    .use(rehypeKatex)
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(markdown);
   
