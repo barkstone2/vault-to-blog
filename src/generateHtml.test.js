@@ -42,4 +42,21 @@ describe("html 생성 요청 시", () => {
       'utf-8'
     );
   });
+  
+  it("줄바꿈이 처리된다", async () => {
+    // given
+    markdown = '줄바꿈이\n처리된다';
+    expectedHtml = `<p>줄바꿈이<br>
+처리된다</p>`;
+    
+    // when
+    await generateHtmlFiles()
+    
+    // then
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      htmlPath,
+      expectedHtml,
+      'utf-8'
+    );
+  });
 });
