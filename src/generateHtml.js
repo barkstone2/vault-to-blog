@@ -5,12 +5,14 @@ import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import path from "path";
 import remarkBreaks from "remark-breaks";
+import remarkGfm from "remark-gfm";
 
 async function processMarkdown(filePath) {
   const markdown = fs.readFileSync(filePath, 'utf-8');
   const result = await unified()
     .use(remarkParse)
     .use(remarkBreaks)
+    .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(markdown);
