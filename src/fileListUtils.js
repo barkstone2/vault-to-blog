@@ -4,20 +4,36 @@ import path from "path";
 const markdownPath = 'public/markdown';
 const jsonFilePath = 'public/markdown-files.json';
 
-function listFilesRecursively(dir, fileList = []) {
+const addToFileMap = (fileMap, key, value) => {
+  if (!fileMap[key]) {
+    fileMap[key] = [value];
+  } else {
+    fileMap[key].push(value);
+  }
+}
+
+function traverseFilesRecursively(dir, fileMap) {
   const files = fs.readdirSync(dir, { encoding: 'utf-8' });
   files.forEach((file) => {
     const filePath = path.join(dir, file);
     if (fs.statSync(filePath).isDirectory()) {
-      listFilesRecursively(filePath, fileList);
+      traverseFilesRecursively(filePath, fileMap);
     } else if (file.endsWith('.md')) {
-      fileList.push(path.relative(markdownPath, filePath).normalize('NFC'));
+      const fileNameKey = file.replace('.md', '').normalize('NFC');
+      const relativePath = path.relative(markdownPath, filePath).normalize('NFC')
+      const relativePathKey = relativePath.replace('.md', '')
+      
+      addToFileMap(fileMap, fileNameKey, relativePath);
+      if (relativePathKey !== fileNameKey) {
+        addToFileMap(fileMap, relativePathKey, relativePath);
+      }
     }
   });
-  return fileList;
+  return fileMap;
 }
 
-export default function createFileListToJson() {
-  const markdownFiles = listFilesRecursively(markdownPath);
-  fs.writeFileSync(jsonFilePath, JSON.stringify(markdownFiles, null, 2), { encoding: 'utf-8' });
+export default function createFileMapToJson() {
+  const fileMap = {};
+  traverseFilesRecursively(markdownPath, fileMap);
+  fs.writeFileSync(jsonFilePath, JSON.stringify(fileMap, null, 2), { encoding: 'utf-8' });
 }

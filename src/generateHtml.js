@@ -27,7 +27,11 @@ async function processMarkdown(filePath) {
 const htmlDir = 'public/html'
 export default async function generateHtmlFiles() {
   const fileListJson = fs.readFileSync('public/markdown-files.json', 'utf-8');
-  const files = JSON.parse(fileListJson)
+  const fileMap = JSON.parse(fileListJson)
+  const files = new Set();
+  for (const fileKey in fileMap) {
+    fileMap[fileKey].forEach(file => files.add(file));
+  }
   for (const file of files) {
     const html = await processMarkdown(file);
     const htmlFilePath = path.join(htmlDir, file.replace('.md', '.html'))
