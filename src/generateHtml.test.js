@@ -3,20 +3,22 @@ import generateHtmlFiles from "./generateHtml.js";
 import fs from "fs";
 
 const htmlPath = 'public/html/md.html'
-const mdFilePath = 'md.md'
 let markdown;
 let expectedHtml;
 vi.mock('fs')
 beforeAll(() => {
-  fs.readFileSync.mockImplementation((filePath) => {
-    if (filePath === 'md.md') {
-      return markdown;
-    } else {
-      return JSON.stringify({'md' : [`${mdFilePath}`]})
+  vi.mock('./utils/file/fileMapUtils', () => {
+    const fileMap = { 'md': ['md.md'] };
+    return {
+      getFileMap: vi.fn(() => {
+        return fileMap;
+      }),
     }
+  })
+  fs.readFileSync.mockImplementation(() => {
+    return markdown;
   });
   fs.existsSync.mockImplementation(() => {
-  
   });
   fs.writeFileSync.mockImplementation(() => {
   });
