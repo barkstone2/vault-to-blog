@@ -12,7 +12,7 @@ beforeAll(() => {
     if (filePath === 'md.md') {
       return markdown;
     } else {
-      return JSON.stringify([`${mdFilePath}`])
+      return JSON.stringify({'md' : [`${mdFilePath}`]})
     }
   });
   fs.existsSync.mockImplementation(() => {
