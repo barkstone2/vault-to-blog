@@ -18,7 +18,10 @@ export function getFileMap() {
   return JSON.parse(fileListJson);
 }
 
-export const imageFileMap = {};
+export const imageFileMap = (() => {
+  const imageFileMap = fs.readFileSync(imageJsonFilePath, 'utf-8');
+  return JSON.parse(imageFileMap);
+});
 
 function traverseImageRecursively(dir, fileMap) {
   const files = fs.readdirSync(dir, { encoding: 'utf-8' });
@@ -43,6 +46,7 @@ function traverseImageRecursively(dir, fileMap) {
 }
 
 export function createImageMapToJson() {
+  const imageFileMap = {};
   traverseImageRecursively(sourceDir, imageFileMap);
   fs.writeFileSync(imageJsonFilePath, JSON.stringify(imageFileMap, null, 2), { encoding: 'utf-8' });
 }
