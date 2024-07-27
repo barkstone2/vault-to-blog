@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const markdownPath = 'public/markdown';
+const sourceDir = 'public/sources';
 const jsonFilePath = 'public/markdown-files.json';
 
 const addToFileMap = (fileMap, key, value) => {
@@ -20,7 +20,7 @@ function traverseFilesRecursively(dir, fileMap) {
       traverseFilesRecursively(filePath, fileMap);
     } else if (file.endsWith('.md')) {
       const fileNameKey = file.replace('.md', '').normalize('NFC');
-      const relativePath = path.relative(markdownPath, filePath).normalize('NFC')
+      const relativePath = path.relative(sourceDir, filePath).normalize('NFC')
       const relativePathKey = relativePath.replace('.md', '')
       
       addToFileMap(fileMap, fileNameKey, relativePath);
@@ -34,6 +34,6 @@ function traverseFilesRecursively(dir, fileMap) {
 
 export default function createFileMapToJson() {
   const fileMap = {};
-  traverseFilesRecursively(markdownPath, fileMap);
+  traverseFilesRecursively(sourceDir, fileMap);
   fs.writeFileSync(jsonFilePath, JSON.stringify(fileMap, null, 2), { encoding: 'utf-8' });
 }
