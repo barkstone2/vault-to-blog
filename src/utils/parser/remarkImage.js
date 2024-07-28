@@ -1,7 +1,7 @@
 import { visit } from 'unist-util-visit';
-import {imageFileMap} from "../file/fileUtils.js";
+import {getImageFileMap} from "../file/fileUtils.js";
 
-const imageMap = imageFileMap;
+const imageMap = getImageFileMap();
 const remarkImage = () => {
   return (tree) => {
     visit(tree, 'text', (node, index, parent) => {

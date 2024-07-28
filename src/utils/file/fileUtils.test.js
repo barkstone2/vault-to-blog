@@ -1,5 +1,11 @@
-import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
-import {createFileMapToJson, createImageMapToJson} from "./fileUtils.js";
+import {afterAll, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
+import {
+  createFileMapToJson,
+  createImageMapToJson, getImageFileMap,
+  getMarkdownFileMap,
+  initImageFileMap,
+  initMarkdownFileMap
+} from "./fileUtils.js";
 import fs from "fs";
 
 const sourceDir = 'public/sources';
@@ -14,6 +20,7 @@ let expectedFileMap;
 
 beforeAll(() => {
   vi.mock('fs')
+  vi.mock('fetch')
   fs.readdirSync.mockImplementation((dir) => {
     return mockFiles[dir] || [];
   })
@@ -175,17 +182,69 @@ describe('파일 목록 JSON 생성 요청 시', () => {
   });
 });
 
-describe('모듈 초기화 시', () => {
-  it('이미지 맵 JSON 파일의 내용을 읽어 변수에 할당한다.', () => {
-    expect(fs.readFileSync).toHaveBeenCalledWith(
-      imageJsonFilePath,
-      'utf-8'
+describe('파일 맵 초기화 요청 시', () => {
+  let expectedFileMap = {'default': 'default'};
+  beforeEach(() => {
+    vi.resetModules();
+    global.fetch = vi.fn(() => {
+      return Promise.resolve({
+          json: () => Promise.resolve(expectedFileMap)
+        });
+      }
     )
+  })
+  
+  it('fetch를 통해 마크다운 JSON 파일을 로드한다.', async () => {
+    expectedFileMap = {'file1': 'file1'};
+    await initMarkdownFileMap()
+    expect(fetch).toHaveBeenCalledWith(markdownJsonFilePath)
   });
-  it('파일 맵 JSON 파일의 내용을 읽어 변수에 할당한다.', () => {
-    expect(fs.readFileSync).toHaveBeenCalledWith(
-      markdownJsonFilePath,
-      'utf-8'
+  
+  it('fetch에 성공하면 내부 객체를 업데이트한다.', async () => {
+    expectedFileMap = {'file2': 'file2'};
+    await initMarkdownFileMap()
+    const markdownFileMap = getMarkdownFileMap()
+    expect(markdownFileMap).toEqual(expectedFileMap)
+  });
+  
+  it('fetch에 실패하면 내부 객체를 업데이트하지 않는다.', async () => {
+    expectedFileMap = {'file3': 'file3'};
+    global.fetch = vi.fn(() => Promise.reject(new Error('Fetch error')));
+    await initMarkdownFileMap()
+    const markdownFileMap = getMarkdownFileMap()
+    expect(markdownFileMap).not.toBe(expectedFileMap)
+  });
+});
+
+describe('이미지 맵 조회 요청 시', () => {
+  let expectedImageMap = {'default': 'default'};
+  beforeEach(() => {
+    global.fetch = vi.fn(() => {
+        return Promise.resolve({
+          json: () => Promise.resolve(expectedImageMap)
+        });
+      }
     )
+  })
+  
+  it('fetch를 통해 이미지 JSON 파일을 로드한다.', async () => {
+    expectedImageMap = {'image1': 'image1'};
+    await initImageFileMap()
+    expect(fetch).toHaveBeenCalledWith(imageJsonFilePath)
+  });
+  
+  it('fetch에 성공하면 내부 객체를 업데이트한다.', async () => {
+    expectedImageMap = {'image2': 'image2'};
+    await initImageFileMap()
+    const imageFileMap = getImageFileMap()
+    expect(imageFileMap).toEqual(expectedImageMap)
+  });
+  
+  it('fetch에 실패하면 내부 객체를 업데이트하지 않는다.', async () => {
+    expectedImageMap = {'image3': 'image3'};
+    global.fetch = vi.fn(() => Promise.reject(new Error('Fetch error')));
+    await initImageFileMap()
+    const imageFileMap = getImageFileMap()
+    expect(imageFileMap).not.toBe(expectedFileMap)
   });
 });

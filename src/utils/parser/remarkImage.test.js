@@ -6,7 +6,7 @@ beforeAll(() => {
   vi.mock('../file/fileUtils', () => {
     const imageMap = { 'image.png': ['image.png'] };
     return {
-      imageFileMap: imageMap
+      getImageFileMap: vi.fn(() => imageMap)
     }
   })
 });

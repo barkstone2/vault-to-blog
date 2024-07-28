@@ -1,7 +1,7 @@
 import { visit } from 'unist-util-visit';
-import {markdownFileMap} from "../file/fileUtils.js";
+import {getMarkdownFileMap} from "../file/fileUtils.js";
 
-const fileMap = markdownFileMap
+const fileMap = getMarkdownFileMap()
 const remarkBacklink = () => {
   return (tree) => {
     visit(tree, ['text'], (node, index, parent) => {

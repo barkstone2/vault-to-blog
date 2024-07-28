@@ -9,7 +9,7 @@ beforeAll(() => {
   vi.mock('fs')
   vi.mock('./utils/file/fileUtils', () => {
     return {
-      markdownFileMap: { 'md': ['md.md'] }
+      getMarkdownFileMap: vi.fn(() =>({ 'md': ['md.md'] }))
     }
   })
   fs.readFileSync.mockImplementation(() => {

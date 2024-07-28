@@ -1,14 +1,16 @@
 import {u} from "unist-builder";
 import remarkBacklink from "./remarkBacklink.js";
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
+import {getMarkdownFileMap} from "../file/fileUtils.js";
 
 beforeAll(() => {
   vi.mock('../file/fileUtils', () => {
     const fileMap = { 'md': ['md.md'] };
     return {
-      markdownFileMap: fileMap
+      getMarkdownFileMap: vi.fn(() => fileMap)
     }
   })
+  getMarkdownFileMap()
 });
 afterAll(() => {
   vi.clearAllMocks();
