@@ -5,14 +5,11 @@ import fs from "fs";
 const htmlPath = 'public/html/md.html'
 let markdown;
 let expectedHtml;
-vi.mock('fs')
 beforeAll(() => {
-  vi.mock('./utils/file/fileMapUtils', () => {
-    const fileMap = { 'md': ['md.md'] };
+  vi.mock('fs')
+  vi.mock('./utils/file/fileUtils', () => {
     return {
-      getFileMap: vi.fn(() => {
-        return fileMap;
-      }),
+      markdownFileMap: { 'md': ['md.md'] }
     }
   })
   fs.readFileSync.mockImplementation(() => {

@@ -3,7 +3,7 @@ import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
 import remarkImage from "./remarkImage.js";
 
 beforeAll(() => {
-  vi.mock('../file/fileMapUtils', () => {
+  vi.mock('../file/fileUtils', () => {
     const imageMap = { 'image.png': ['image.png'] };
     return {
       imageFileMap: imageMap

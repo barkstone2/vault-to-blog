@@ -3,12 +3,10 @@ import remarkBacklink from "./remarkBacklink.js";
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
 
 beforeAll(() => {
-  vi.mock('../file/fileMapUtils', () => {
+  vi.mock('../file/fileUtils', () => {
     const fileMap = { 'md': ['md.md'] };
     return {
-      getFileMap: vi.fn(() => {
-        return fileMap;
-      }),
+      markdownFileMap: fileMap
     }
   })
 });

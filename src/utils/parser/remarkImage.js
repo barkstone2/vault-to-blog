@@ -1,5 +1,5 @@
 import { visit } from 'unist-util-visit';
-import {imageFileMap} from "../file/fileMapUtils.js";
+import {imageFileMap} from "../file/fileUtils.js";
 
 const imageMap = imageFileMap;
 const remarkImage = () => {
