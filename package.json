@@ -11,7 +11,10 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.5",
     "mime": "^4.0.4",
+    "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rehype": "^13.0.1",
