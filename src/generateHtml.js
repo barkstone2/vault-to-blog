@@ -8,7 +8,7 @@ import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
-import {getFileMap} from "./utils/file/fileMapUtils.js";
+import {markdownFileMap} from "./utils/file/fileUtils.js";
 
 async function processMarkdown(filePath) {
   const markdown = fs.readFileSync(filePath, 'utf-8');
@@ -27,7 +27,7 @@ async function processMarkdown(filePath) {
 
 const htmlDir = 'public/html'
 export default async function generateHtmlFiles() {
-  const fileMap = getFileMap()
+  const fileMap = markdownFileMap
   const files = new Set();
   for (const fileKey in fileMap) {
     fileMap[fileKey].forEach(file => files.add(file));

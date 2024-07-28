@@ -1,0 +1,87 @@
+import fs from "fs";
+import path from "path";
+import mime from "mime";
+
+const sourceDir = 'public/sources';
+const imageJsonFilePath = 'public/image-files.json';
+const markdownJsonFilePath = 'public/markdown-files.json';
+
+const addToFileMap = (fileMap, key, value) => {
+  if (!fileMap[key]) {
+    fileMap[key] = [value];
+  } else {
+    fileMap[key].push(value);
+  }
+}
+
+function traverseImageRecursively(dir, fileMap) {
+  const files = fs.readdirSync(dir, { encoding: 'utf-8' });
+  files.forEach((file) => {
+    const filePath = path.join(dir, file);
+    const mimeType = mime.getType(file);
+    if (fs.statSync(filePath).isDirectory()) {
+      traverseImageRecursively(filePath, fileMap);
+    } else {
+      if (mimeType && mimeType.startsWith('image/')) {
+        const fileNameKey = file.normalize('NFC');
+        const relativePath = path.relative(sourceDir, filePath).normalize('NFC')
+        
+        addToFileMap(fileMap, fileNameKey, relativePath);
+        if (fileNameKey !== relativePath) {
+          addToFileMap(fileMap, relativePath, relativePath);
+        }
+      }
+    }
+  });
+  return fileMap;
+}
+
+function traverseFilesRecursively(dir, fileMap) {
+  const files = fs.readdirSync(dir, { encoding: 'utf-8' });
+  files.forEach((file) => {
+    const filePath = path.join(dir, file);
+    if (fs.statSync(filePath).isDirectory()) {
+      traverseFilesRecursively(filePath, fileMap);
+    } else if (file.endsWith('.md')) {
+      const fileNameKey = file.replace('.md', '').normalize('NFC');
+      const relativePath = path.relative(sourceDir, filePath).normalize('NFC')
+      const relativePathKey = relativePath.replace('.md', '')
+      
+      addToFileMap(fileMap, fileNameKey, relativePath);
+      if (relativePathKey !== fileNameKey) {
+        addToFileMap(fileMap, relativePathKey, relativePath);
+      }
+    }
+  });
+  return fileMap;
+}
+
+export const markdownFileMap = (() => {
+  try {
+    const markdownFileMap = fs.readFileSync(markdownJsonFilePath, 'utf-8');
+    return JSON.parse(markdownFileMap);
+  } catch (error) {
+    return {}
+  }
+})();
+
+export const imageFileMap = (() => {
+  try {
+    const imageFileMap = fs.readFileSync(imageJsonFilePath, 'utf-8');
+    return JSON.parse(imageFileMap);
+  } catch (error) {
+    return {}
+  }
+})();
+
+export function createImageMapToJson() {
+  const imageFileMap = {};
+  traverseImageRecursively(sourceDir, imageFileMap);
+  fs.writeFileSync(imageJsonFilePath, JSON.stringify(imageFileMap, null, 2), { encoding: 'utf-8' });
+}
+
+export function createFileMapToJson() {
+  const fileMap = {};
+  traverseFilesRecursively(sourceDir, fileMap);
+  fs.writeFileSync(markdownJsonFilePath, JSON.stringify(fileMap, null, 2), { encoding: 'utf-8' });
+}
