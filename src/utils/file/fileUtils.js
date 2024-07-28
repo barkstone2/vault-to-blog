@@ -56,23 +56,33 @@ function traverseFilesRecursively(dir, fileMap) {
   return fileMap;
 }
 
-export const markdownFileMap = (() => {
+let markdownFileMap = {};
+export async function initMarkdownFileMap() {
   try {
-    const markdownFileMap = fs.readFileSync(markdownJsonFilePath, 'utf-8');
-    return JSON.parse(markdownFileMap);
+    const response = await fetch(markdownJsonFilePath)
+    markdownFileMap = await response.json();
   } catch (error) {
-    return {}
+    console.log('Failed to initialize markdown file map.', error);
   }
-})();
+}
 
-export const imageFileMap = (() => {
+export function getMarkdownFileMap() {
+  return markdownFileMap;
+}
+
+let imageFileMap = {};
+export async function initImageFileMap() {
   try {
-    const imageFileMap = fs.readFileSync(imageJsonFilePath, 'utf-8');
-    return JSON.parse(imageFileMap);
+    const response = await fetch(imageJsonFilePath)
+    imageFileMap = await response.json();
   } catch (error) {
-    return {}
+    console.log('Failed to initialize image file map.', error);
   }
-})();
+}
+
+export function getImageFileMap() {
+  return imageFileMap;
+}
 
 export function createImageMapToJson() {
   const imageFileMap = {};
