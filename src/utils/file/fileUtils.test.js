@@ -108,6 +108,18 @@ describe('이미지 맵 JSON 생성 요청 시', () => {
       options
     );
   });
+  it('이미지 맵을 업데이트한다.', () => {
+    mockFiles = {
+      [sourceDir] : ['file1.png'],
+    };
+    expectedFileMap = {
+      'file1.png' : ['file1.png']
+    };
+    
+    createImageMapToJson();
+    
+    expect(getImageFileMap()).toStrictEqual(expectedFileMap);
+  });
 })
 
 describe('파일 목록 JSON 생성 요청 시', () => {
@@ -180,6 +192,18 @@ describe('파일 목록 JSON 생성 요청 시', () => {
       jsonOf(expectedFileMap),
       options
     );
+  });
+  it('마크다운 맵을 업데이트한다.', () => {
+    mockFiles = {
+      [sourceDir] : ['file1.md'],
+    };
+    expectedFileMap = {
+      'file1' : ['file1.md']
+    };
+    
+    createFileMapToJson();
+    
+    expect(getMarkdownFileMap()).toStrictEqual(expectedFileMap);
   });
 });
 
