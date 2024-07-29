@@ -44,10 +44,13 @@ export const initTree =  () => {
   return buildTree(fileSet)
 }
 
-export const renderTree = (nodes, basePath = '', compareFn = () => {}) => {
+export const renderTree = (nodes, basePath = '', compareFn = () => {}, navigate) => {
   const sortedNodes = Object.entries(nodes).sort(compareFn)
   return sortedNodes.map(([key, value]) => {
     const path = `${basePath}/${key}`;
+    const handleNavigate = () => {
+      navigate(path);
+    }
     return (
       <React.Fragment key={path}>
         {!value.isFile ? (
@@ -57,7 +60,7 @@ export const renderTree = (nodes, basePath = '', compareFn = () => {}) => {
             </div>
           </TreeItem>
         ) : (
-          <TreeItem onClick={()=>{}} title={key}/>
+          <TreeItem onClick={handleNavigate} title={key}/>
         )}
       </React.Fragment>
     );
