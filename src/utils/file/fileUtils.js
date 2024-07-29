@@ -70,6 +70,18 @@ export function getMarkdownFileMap() {
   return markdownFileMap;
 }
 
+let markdownFileSet = null;
+export function getMarkdownFileSet() {
+  if (!markdownFileSet) {
+    const result = new Set();
+    for (const fileKey in getMarkdownFileMap()) {
+      markdownFileMap[fileKey].forEach(file => result.add(file));
+    }
+    markdownFileSet = result;
+  }
+  return markdownFileSet;
+}
+
 let imageFileMap = {};
 export async function initImageFileMap() {
   try {
