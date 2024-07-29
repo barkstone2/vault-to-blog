@@ -2,6 +2,7 @@ import {render} from "@testing-library/react";
 import TreeContainer from "./TreeContainer.jsx";
 import {initTree, renderTree} from "../utils/treeUtils.jsx";
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
+import {MemoryRouter} from "react-router-dom";
 
 let tree = {};
 describe('트리 컨테이너 컴포넌트 렌더링 시', () => {
@@ -23,7 +24,7 @@ describe('트리 컨테이너 컴포넌트 렌더링 시', () => {
       children: {}
     }
     
-    render(<TreeContainer/>)
+    render(<MemoryRouter><TreeContainer/></MemoryRouter>)
     
     expect(initTree).toHaveBeenCalled();
   });
@@ -33,7 +34,7 @@ describe('트리 컨테이너 컴포넌트 렌더링 시', () => {
       children: {}
     }
     
-    render(<TreeContainer/>)
+    render(<MemoryRouter><TreeContainer/></MemoryRouter>)
     
     expect(renderTree).toHaveBeenCalled()
     const calls = renderTree.mock.calls;

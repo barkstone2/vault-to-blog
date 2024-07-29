@@ -1,6 +1,7 @@
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
 import {initTree, renderTree} from "./treeUtils.jsx";
 import {render, screen} from "@testing-library/react";
+import {MemoryRouter} from "react-router-dom";
 
 let fileSet;
 let expectedTree;
@@ -104,7 +105,7 @@ describe('renderTree 호출 시', () => {
     inputTree = {
       [nodeTitle] : {children: {}, count: 1, isFile: true},
     }
-    render(renderTree(inputTree))
+    render(<MemoryRouter>{renderTree(inputTree)}</MemoryRouter>)
     expect(screen.getByText(nodeTitle)).toBeInTheDocument();
   });
   
@@ -119,7 +120,7 @@ describe('renderTree 호출 시', () => {
       },
     }
     const expectedTitle = `${nodeKey} (${nodeCount})`
-    render(renderTree(inputTree))
+    render(<MemoryRouter>{renderTree(inputTree)}</MemoryRouter>)
     expect(screen.getByText(expectedTitle)).toBeInTheDocument();
   });
   
@@ -142,7 +143,7 @@ describe('renderTree 호출 시', () => {
       },
     }
     
-    render(renderTree(inputTree))
+    render(<MemoryRouter>{renderTree(inputTree)}</MemoryRouter>)
     const dir1Children = screen.getByText('dir1 (1)').parentElement.nextSibling;
     const file1 = screen.getByText('file1');
     const dir2 = screen.getByText('dir2 (1)');
