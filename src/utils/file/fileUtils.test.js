@@ -1,10 +1,11 @@
 import {afterAll, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import {
   createFileMapToJson,
-  createImageMapToJson, getImageFileMap,
+  createImageMapToJson,
+  getImageFileMap,
   getMarkdownFileMap,
   initImageFileMap,
-  initMarkdownFileMap
+  initMarkdownFileMap,
 } from "./fileUtils.js";
 import fs from "fs";
 
@@ -183,9 +184,7 @@ describe('파일 목록 JSON 생성 요청 시', () => {
 });
 
 describe('파일 맵 초기화 요청 시', () => {
-  let expectedFileMap = {'default': 'default'};
   beforeEach(() => {
-    vi.resetModules();
     global.fetch = vi.fn(() => {
       return Promise.resolve({
           json: () => Promise.resolve(expectedFileMap)
@@ -216,7 +215,7 @@ describe('파일 맵 초기화 요청 시', () => {
   });
 });
 
-describe('이미지 맵 조회 요청 시', () => {
+describe('이미지 맵 초기화 요청 시', () => {
   let expectedImageMap = {'default': 'default'};
   beforeEach(() => {
     global.fetch = vi.fn(() => {
@@ -246,5 +245,45 @@ describe('이미지 맵 조회 요청 시', () => {
     await initImageFileMap()
     const imageFileMap = getImageFileMap()
     expect(imageFileMap).not.toBe(expectedFileMap)
+  });
+});
+
+describe('파일 셋 조회 요청 시', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    global.fetch = vi.fn(() => {
+        return Promise.resolve({
+          json: () => Promise.resolve(expectedFileMap)
+        });
+      }
+    )
+  })
+  
+  let expectedFileSet;
+  it('파일 셋이 초기화되지 않은 경우 파일 맵을 전체 순회하며 파일 셋에 담는다.', async () => {
+    const { getMarkdownFileSet, initMarkdownFileMap } = await import('./fileUtils.js')
+    expectedFileMap = {'file1': ['file1', 'dir/file1'], 'dir/file1': ['dir/file1']}
+    expectedFileSet = new Set(['file1', 'dir/file1'])
+    await initMarkdownFileMap()
+    
+    const resultSet = getMarkdownFileSet()
+    
+    expect(resultSet).toStrictEqual(expectedFileSet);
+  });
+  
+  it('파일 셋이 초기화된 경우 캐시된 파일 셋을 반환한다.', async () => {
+    const { getMarkdownFileSet, initMarkdownFileMap } = await import('./fileUtils.js')
+    expectedFileMap = {}
+    await initMarkdownFileMap()
+    const initSet = getMarkdownFileSet()
+
+    expectedFileMap = {'file2': ['file2', 'dir/file2'], 'dir/file2': ['dir/file2']}
+    expectedFileSet = new Set(['file2', 'dir/file2'])
+    await initMarkdownFileMap()
+    
+    const cachedSet = getMarkdownFileSet()
+    
+    expect(cachedSet).not.toStrictEqual(expectedFileSet);
+    expect(cachedSet).toStrictEqual(initSet);
   });
 });
