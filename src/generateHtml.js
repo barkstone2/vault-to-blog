@@ -10,7 +10,9 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import {getMarkdownFileSet} from "./utils/file/fileUtils.js";
 
-async function processMarkdown(filePath) {
+const sourceDir = 'public/sources';
+async function processMarkdown(file) {
+  const filePath = path.join(sourceDir, file).normalize('NFC')
   const markdown = fs.readFileSync(filePath, 'utf-8');
   const result = await unified()
     .use(remarkParse)

@@ -97,13 +97,21 @@ export function getImageFileMap() {
 }
 
 export function createImageMapToJson() {
-  const imageFileMap = {};
-  traverseImageRecursively(sourceDir, imageFileMap);
-  fs.writeFileSync(imageJsonFilePath, JSON.stringify(imageFileMap, null, 2), { encoding: 'utf-8' });
+  const fileMap = {};
+  traverseImageRecursively(sourceDir, fileMap);
+  fs.writeFileSync(imageJsonFilePath, JSON.stringify(fileMap, null, 2), { encoding: 'utf-8' });
+  imageFileMap = fileMap;
 }
 
 export function createFileMapToJson() {
   const fileMap = {};
   traverseFilesRecursively(sourceDir, fileMap);
   fs.writeFileSync(markdownJsonFilePath, JSON.stringify(fileMap, null, 2), { encoding: 'utf-8' });
+  markdownFileMap = fileMap;
+}
+
+export function initSourceDirectory() {
+  if (!fs.existsSync(sourceDir)) {
+    fs.mkdirSync(sourceDir, { recursive: true });
+  }
 }
