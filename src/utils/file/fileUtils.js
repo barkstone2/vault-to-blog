@@ -59,7 +59,7 @@ function traverseFilesRecursively(dir, fileMap) {
 let markdownFileMap = {};
 export async function initMarkdownFileMap() {
   try {
-    const response = await fetch(markdownJsonFilePath)
+    const response = await fetch("/" + markdownJsonFilePath)
     markdownFileMap = await response.json();
   } catch (error) {
     console.log('Failed to initialize markdown file map.', error);
@@ -85,7 +85,7 @@ export function getMarkdownFileSet() {
 let imageFileMap = {};
 export async function initImageFileMap() {
   try {
-    const response = await fetch(imageJsonFilePath)
+    const response = await fetch("/" + imageJsonFilePath)
     imageFileMap = await response.json();
   } catch (error) {
     console.log('Failed to initialize image file map.', error);

@@ -220,7 +220,7 @@ describe('파일 맵 초기화 요청 시', () => {
   it('fetch를 통해 마크다운 JSON 파일을 로드한다.', async () => {
     expectedFileMap = {'file1': 'file1'};
     await initMarkdownFileMap()
-    expect(fetch).toHaveBeenCalledWith(markdownJsonFilePath)
+    expect(fetch).toHaveBeenCalledWith('/' + markdownJsonFilePath)
   });
   
   it('fetch에 성공하면 내부 객체를 업데이트한다.', async () => {
@@ -253,7 +253,7 @@ describe('이미지 맵 초기화 요청 시', () => {
   it('fetch를 통해 이미지 JSON 파일을 로드한다.', async () => {
     expectedImageMap = {'image1': 'image1'};
     await initImageFileMap()
-    expect(fetch).toHaveBeenCalledWith(imageJsonFilePath)
+    expect(fetch).toHaveBeenCalledWith('/' + imageJsonFilePath)
   });
   
   it('fetch에 성공하면 내부 객체를 업데이트한다.', async () => {
