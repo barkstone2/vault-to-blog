@@ -1,0 +1,30 @@
+.nav-children {
+    margin-left: 11px;
+    border-left: 1px solid;
+    padding-left: 11px;
+    margin-bottom: 5px;
+}
+
+.nav-item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+.nav-item:hover {
+    background-color: rgba(136, 136, 136, 0.58);
+    border-radius: 5px;
+}
+
+.nav-item-title {
+    padding-left: 3px;
+}
+
+.nav-directory > .nav-children {
+    display: none;
+}
+
+.nav-directory.open > .nav-children {
+    display: block;
+}
