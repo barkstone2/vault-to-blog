@@ -16,11 +16,12 @@ const addToFileMap = (fileMap, key, value) => {
 
 function traverseImageRecursively(dir, fileMap) {
   const files = fs.readdirSync(dir, { encoding: 'utf-8' });
+  const directories = [];
   files.forEach((file) => {
     const filePath = path.join(dir, file);
     const mimeType = mime.getType(file);
     if (fs.statSync(filePath).isDirectory()) {
-      traverseImageRecursively(filePath, fileMap);
+      directories.push(file);
     } else {
       if (mimeType && mimeType.startsWith('image/')) {
         const fileNameKey = file.normalize('NFC');
@@ -33,15 +34,21 @@ function traverseImageRecursively(dir, fileMap) {
       }
     }
   });
+  
+  directories.forEach((file) => {
+    const filePath = path.join(dir, file);
+    traverseImageRecursively(filePath, fileMap);
+  })
   return fileMap;
 }
 
 function traverseFilesRecursively(dir, fileMap) {
   const files = fs.readdirSync(dir, { encoding: 'utf-8' });
+  const directories = [];
   files.forEach((file) => {
     const filePath = path.join(dir, file);
     if (fs.statSync(filePath).isDirectory()) {
-      traverseFilesRecursively(filePath, fileMap);
+      directories.push(file);
     } else if (file.endsWith('.md')) {
       const fileNameKey = file.replace('.md', '').normalize('NFC');
       const relativePath = path.relative(sourceDir, filePath).normalize('NFC')
@@ -53,6 +60,11 @@ function traverseFilesRecursively(dir, fileMap) {
       }
     }
   });
+  
+  directories.forEach((file) => {
+    const filePath = path.join(dir, file);
+    traverseFilesRecursively(filePath, fileMap);
+  })
   return fileMap;
 }
 
