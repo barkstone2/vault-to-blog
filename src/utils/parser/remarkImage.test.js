@@ -104,4 +104,22 @@ describe("이미지 파싱 플러그인 동작 시", () => {
     
     expect(inputAst).toEqual(expectedAst)
   });
+  
+  it('이미지 src가 인코딩 된다.', () => {
+    imageMap = {'이미지.png': ['이미지.png']}
+    inputAst = u('root', [
+      u('paragraph', [
+        u('text', '![[이미지.png]]')
+      ])
+    ]);
+    expectedAst = u('root', [
+      u('paragraph', [
+        u('html', `<img src="/sources/${encodeURI("이미지")}.png" alt="이미지" title="이미지"/>`)
+      ])
+    ]);
+    
+    remarkImage()(inputAst)
+    
+    expect(inputAst).toEqual(expectedAst)
+  });
 })
