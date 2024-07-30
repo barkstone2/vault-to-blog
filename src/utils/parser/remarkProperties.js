@@ -1,11 +1,7 @@
 import {visit} from "unist-util-visit";
-import remarkFrontmatter from "remark-frontmatter";
-import remarkParseFrontmatter from 'remark-parse-frontmatter';
 
 const remarkProperties = () => {
   return (tree) => {
-    remarkFrontmatter()(tree)
-    remarkParseFrontmatter()(tree)
     visit(tree, 'yaml', (node, index, parent) => {
       const newNodes = [];
       const properties = node.value.split("\n");
