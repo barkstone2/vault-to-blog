@@ -1,8 +1,8 @@
 import { visit } from 'unist-util-visit';
 import {getMarkdownFileMap} from "../file/fileUtils.js";
 
-const fileMap = getMarkdownFileMap()
 const remarkBacklink = () => {
+  const fileMap = getMarkdownFileMap()
   return (tree) => {
     visit(tree, ['text'], (node, index, parent) => {
       const linkRegex = /\[\[([^\]]+)\]\]/g;
