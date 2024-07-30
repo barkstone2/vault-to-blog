@@ -31,10 +31,9 @@ const remarkImage = () => {
                 value: node.value.slice(imageLastIndex, match.index),
               });
             }
-            
             newImageNodes.push({
               type: 'html',
-              value: `<img src="/sources/${imageNameWithType}" alt="${imageName}" title="${imageName}"${imageSize ? ` style="width: ${imageSize}px;"/>` : '/>'}`,
+              value: `<img src="/sources/${encodeURI(targetPath)}" alt="${imageName}" title="${imageName}"${imageSize ? ` style="width: ${imageSize}px;"/>` : '/>'}`,
             });
             
             imageLastIndex = match.index + fullMatch.length;
