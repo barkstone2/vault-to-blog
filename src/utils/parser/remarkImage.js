@@ -1,8 +1,8 @@
 import { visit } from 'unist-util-visit';
 import {getImageFileMap} from "../file/fileUtils.js";
 
-const imageMap = getImageFileMap();
 const remarkImage = () => {
+  const imageMap = getImageFileMap();
   return (tree) => {
     visit(tree, 'text', (node, index, parent) => {
       const imageRegex = /!\[\[([^\]]+)\]\]/g;
