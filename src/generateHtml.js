@@ -9,6 +9,9 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import {getMarkdownFileSet} from "./utils/file/fileUtils.js";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkParseFrontmatter from "remark-parse-frontmatter";
+import remarkObsidian from "./utils/parser/remarkObsidian.js";
 
 const sourceDir = 'public/sources';
 async function processMarkdown(file) {
@@ -16,10 +19,13 @@ async function processMarkdown(file) {
   const markdown = fs.readFileSync(filePath, 'utf-8');
   const result = await unified()
     .use(remarkParse)
+    .use(remarkFrontmatter)
+    .use(remarkParseFrontmatter)
     .use(remarkBreaks)
+    .use(remarkObsidian)
     .use(remarkGfm)
     .use(remarkMath)
-    .use(remarkRehype)
+    .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeKatex)
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(markdown);
