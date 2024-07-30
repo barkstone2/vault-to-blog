@@ -30,7 +30,8 @@
     "remark-parse-frontmatter": "^1.0.3",
     "remark-rehype": "^11.1.0",
     "unified": "^11.0.5",
-    "unist-util-visit": "^5.0.0"
+    "unist-util-visit": "^5.0.0",
+    "vite-plugin-static-copy": "^1.0.6"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.7",
