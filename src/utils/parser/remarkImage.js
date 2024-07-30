@@ -16,9 +16,9 @@ const remarkImage = () => {
           const [fullMatch, imageText] = match;
           const parts = imageText.split('|');
           const imageNameWithType = parts[0];
-          const imageName = imageNameWithType.split(".")[0]
+          const fileName = imageNameWithType.split("/").pop();
+          const imageName = fileName.split(".").slice(0, -1).join('.');
           const imageSize = parts[1];
-          
           let targetPath;
           if (imageMap[imageNameWithType]) {
             targetPath = imageMap[imageNameWithType][0];

@@ -2,9 +2,9 @@ import {u} from "unist-builder";
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
 import remarkImage from "./remarkImage.js";
 
+let imageMap = { 'image.png': ['image.png'] };
 beforeAll(() => {
   vi.mock('../file/fileUtils', () => {
-    const imageMap = { 'image.png': ['image.png'] };
     return {
       getImageFileMap: vi.fn(() => imageMap)
     }
@@ -61,6 +61,42 @@ describe("이미지 파싱 플러그인 동작 시", () => {
     expectedAst = u('root', [
       u('paragraph', [
         u('html', `<img src="/sources/image.png" alt="image" title="image" style="width: 300px;"/>`)
+      ])
+    ]);
+    
+    remarkImage()(inputAst)
+    
+    expect(inputAst).toEqual(expectedAst)
+  });
+  
+  it('alt와 title에는 순수한 이미지 이름을 사용한다.', () => {
+    imageMap = {'path/to/image.png': ['path/to/image.png']}
+    inputAst = u('root', [
+      u('paragraph', [
+        u('text', '![[path/to/image.png|300]]')
+      ])
+    ]);
+    expectedAst = u('root', [
+      u('paragraph', [
+        u('html', `<img src="/sources/path/to/image.png" alt="image" title="image" style="width: 300px;"/>`)
+      ])
+    ]);
+    
+    remarkImage()(inputAst)
+    
+    expect(inputAst).toEqual(expectedAst)
+  });
+  
+  it('이미지 이름에 포함된 .이 파싱된다.', () => {
+    imageMap = {'i.m.a.g.e.png': ['i.m.a.g.e.png']}
+    inputAst = u('root', [
+      u('paragraph', [
+        u('text', '![[i.m.a.g.e.png|300]]')
+      ])
+    ]);
+    expectedAst = u('root', [
+      u('paragraph', [
+        u('html', `<img src="/sources/i.m.a.g.e.png" alt="i.m.a.g.e" title="i.m.a.g.e" style="width: 300px;"/>`)
       ])
     ]);
     
