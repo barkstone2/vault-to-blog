@@ -1,3 +1,7 @@
+.sidebar {
+    padding: 20px;
+}
+
 .nav-children {
     margin-left: 11px;
     border-left: 1px solid;
