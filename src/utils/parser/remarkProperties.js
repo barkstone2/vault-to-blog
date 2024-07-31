@@ -16,7 +16,7 @@ const remarkProperties = () => {
         const value = pInfo[1];
         newNodes.push({
           type: 'html',
-          value: `<div class="property-title">`
+          value: `<div class="property-title" title="${title}">`
         })
         newNodes.push({
           type: 'text',
@@ -28,7 +28,7 @@ const remarkProperties = () => {
         })
         newNodes.push({
           type: 'html',
-          value: `<div class="property-value">`
+          value: `<div class="property-value" title="${value}">`
         })
         newNodes.push({
           type: 'text',

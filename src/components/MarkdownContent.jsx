@@ -1,6 +1,7 @@
 import {useParams} from "react-router-dom";
 import useBacklinkNavigation from "../utils/hooks/useBacklinkNavigation.js";
 import {useEffect, useState} from "react";
+import '../styles/content.css'
 
 function MarkdownContent() {
   const { '*': filePath } = useParams();
