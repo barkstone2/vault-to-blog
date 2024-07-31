@@ -17,7 +17,9 @@ function MarkdownContent() {
   useBacklinkNavigation(content);
   
   return (
-    <div className="markdown-content" dangerouslySetInnerHTML={{ __html: content }}/>
+    <div className="content-container">
+      <div className="markdown-content" dangerouslySetInnerHTML={{ __html: content }}/>
+    </div>
   );
 }
 

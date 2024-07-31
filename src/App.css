@@ -2,9 +2,9 @@
   display: grid;
   width: 100vw;
   height: 100vh;
-  grid-template-columns: auto 5fr;
+  grid-template-columns: 260px minmax(520px, auto) 260px;
   grid-template-areas:
-    "sidebar main"
+    "sidebar main infobar"
 }
 
 .loading-layer {
@@ -17,4 +17,15 @@
   font-size: 40px;
   user-select: none;
   color: inherit;
+}
+
+.content-container {
+  display: flex;
+  justify-content: center;
+}
+
+.markdown-content {
+  padding: 20px;
+  max-width: 1000px;
+  min-width: 0;
 }
