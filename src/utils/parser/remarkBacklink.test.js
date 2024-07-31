@@ -20,7 +20,7 @@ let inputAst;
 let expectedAst;
 
 describe("remarkBacklink 플러그인 동작 시", () => {
-  it("[[]]으로 감싸진 텍스트를 link 노드로 변환한다.", () => {
+  it("[[]]으로 감싸진 텍스트를 html 노드로 변환한다.", () => {
     inputAst = u('root', [
       u('paragraph', [
         u('text', '[[md]]')
@@ -28,16 +28,14 @@ describe("remarkBacklink 플러그인 동작 시", () => {
     ]);
     expectedAst = u('root', [
       u('paragraph', [
-        u('link', {'url': '/md.md'}, [
-          u('text', 'md')
-        ])
+        u('html', '<a href="/md.md" class="backlink">md</a>')
       ])
     ]);
     remarkBacklink()(inputAst)
     expect(inputAst).toEqual(expectedAst)
   });
   
-  it("[[]]으로 감싸진 텍스트가 fileMap에 없으면 링크 노드로 변환하지 않는다", () => {
+  it("[[]]으로 감싸진 텍스트가 fileMap에 없으면 html 노드로 변환하지 않는다", () => {
     inputAst = u('root', [
       u('paragraph', [
         u('text', '[[md.png]]')
@@ -60,9 +58,7 @@ describe("remarkBacklink 플러그인 동작 시", () => {
     ]);
     expectedAst = u('root', [
       u('paragraph', [
-        u('link', {'url': '/md.md'}, [
-          u('text', 'display')
-        ])
+        u('html', '<a href="/md.md" class="backlink">display</a>')
       ])
     ]);
     remarkBacklink()(inputAst)

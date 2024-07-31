@@ -5,7 +5,7 @@ const remarkBacklink = () => {
   const fileMap = getMarkdownFileMap()
   return (tree) => {
     visit(tree, ['text'], (node, index, parent) => {
-      const linkRegex = /\[\[([^\]]+)\]\]/g;
+      const linkRegex = /\[\[([^\]]+)]]/g;
       const matches = [...node.value.matchAll(linkRegex)];
       if (matches.length > 0) {
         const newNodes = [];
@@ -31,9 +31,8 @@ const remarkBacklink = () => {
             
             const url = `/${targetPath}`;
             newNodes.push({
-              type: 'link',
-              url: url,
-              children: [{ type: 'text', value: display }],
+              type: 'html',
+              value: `<a href="${url}" class="backlink">${display}</a>`,
             });
             
             lastIndex = match.index + fullMatch.length;
