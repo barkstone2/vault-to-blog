@@ -1,9 +1,26 @@
+/* 콘텐츠 영역 디자인 */
+.content-container {
+    display: flex;
+    justify-content: center;
+}
+
+.markdown-content {
+    padding: 20px;
+    width: 100%;
+    max-width: 1000px;
+}
+
+.content-title {
+    font-size: 4rem;
+    font-weight: bold;
+}
+
 /* 프로퍼티 영역 디자인 */
 .property-container {
     padding: 20px;
     display: grid;
     grid-gap: 1rem;
-    grid-template-columns: minmax(auto, 1fr) 10fr;
+    grid-template-columns: minmax(auto, 1fr) 5fr;
     margin-bottom: 100px;
 }
 
