@@ -10,7 +10,7 @@ function MarkdownContent() {
     const fetchHtml = async () => {
       const response = await fetch(`/html/${filePath.replace('.md', '.html')}`);
       const text = await response.text();
-      setContent(text)
+      setContent(`<div class="content-title">${filePath.split('/').pop()}</div>`+ text)
     }
     fetchHtml()
   }, [filePath]);

@@ -18,14 +18,3 @@
   user-select: none;
   color: inherit;
 }
-
-.content-container {
-  display: flex;
-  justify-content: center;
-}
-
-.markdown-content {
-  padding: 20px;
-  max-width: 1000px;
-  min-width: 0;
-}
