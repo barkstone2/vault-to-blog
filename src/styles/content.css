@@ -1,0 +1,14 @@
+/* 프로퍼티 영역 디자인 */
+.property-container {
+    padding: 20px;
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: minmax(auto, 1fr) 10fr;
+    margin-bottom: 100px;
+}
+
+.property-title, .property-value {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
