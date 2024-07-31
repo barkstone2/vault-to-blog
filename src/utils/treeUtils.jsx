@@ -56,7 +56,7 @@ export const renderTree = (nodes, basePath = '', compareFn = () => {}, navigate)
         {!value.isFile ? (
           <TreeItem title={key + " (" + value.count + ")"} isDirectory={true}>
             <div className="nav-children">
-              {renderTree(value.children, path, compareFn)}
+              {renderTree(value.children, path, compareFn, navigate)}
             </div>
           </TreeItem>
         ) : (
