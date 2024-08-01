@@ -10,8 +10,8 @@ import {
 import fs from "fs";
 
 const sourceDir = 'public/sources';
-const imageJsonFilePath = 'public/image-files.json';
-const markdownJsonFilePath = 'public/markdown-files.json'
+const imageJsonFilePath = 'image-files.json';
+const markdownJsonFilePath = 'markdown-files.json'
 
 const options = { encoding: 'utf-8' };
 const jsonOf = (expectedFileList) => {return JSON.stringify(expectedFileList, null, 2)};
@@ -52,7 +52,7 @@ describe('이미지 맵 JSON 생성 요청 시', () => {
     
     // then
     expect(fs.writeFileSync).toHaveBeenCalledWith(
-      imageJsonFilePath,
+      'public/' + imageJsonFilePath,
       jsonOf(expectedFileMap),
       options
     );
@@ -81,7 +81,7 @@ describe('이미지 맵 JSON 생성 요청 시', () => {
     
     // then
     expect(fs.writeFileSync).toHaveBeenCalledWith(
-      imageJsonFilePath,
+      'public/' + imageJsonFilePath,
       jsonOf(expectedFileMap),
       options
     );
@@ -103,7 +103,7 @@ describe('이미지 맵 JSON 생성 요청 시', () => {
     
     // then
     expect(fs.writeFileSync).toHaveBeenCalledWith(
-      imageJsonFilePath,
+      'public/' + imageJsonFilePath,
       jsonOf(expectedFileMap),
       options
     );
@@ -137,7 +137,7 @@ describe('파일 목록 JSON 생성 요청 시', () => {
     
     // then
     expect(fs.writeFileSync).toHaveBeenCalledWith(
-      markdownJsonFilePath,
+      'public/' + markdownJsonFilePath,
       jsonOf(expectedFileMap),
       options
     );
@@ -166,7 +166,7 @@ describe('파일 목록 JSON 생성 요청 시', () => {
     
     // then
     expect(fs.writeFileSync).toHaveBeenCalledWith(
-      markdownJsonFilePath,
+      'public/' + markdownJsonFilePath,
       jsonOf(expectedFileMap),
       options
     );
@@ -188,7 +188,7 @@ describe('파일 목록 JSON 생성 요청 시', () => {
     
     // then
     expect(fs.writeFileSync).toHaveBeenCalledWith(
-      markdownJsonFilePath,
+      'public/' + markdownJsonFilePath,
       jsonOf(expectedFileMap),
       options
     );
