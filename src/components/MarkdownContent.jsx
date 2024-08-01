@@ -8,9 +8,10 @@ function MarkdownContent() {
   const [content, setContent] = useState('');
   useEffect(() => {
     const fetchHtml = async () => {
-      const response = await fetch(`/html/${filePath.replace('.md', '.html')}`);
+      const path = filePath ? `/html/${filePath.replace('.md', '.html')}` : `/home.html`;
+      const response = await fetch(`${path}`);
       const text = await response.text();
-      setContent(`<div class="content-title">${filePath.split('/').pop()}</div>`+ text)
+      setContent(`<div class="content-title">${filePath.split('/').pop()}</div>` + text);
     }
     fetchHtml()
   }, [filePath]);
