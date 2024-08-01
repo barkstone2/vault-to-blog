@@ -3,8 +3,8 @@ import path from "path";
 import mime from "mime";
 
 const sourceDir = 'public/sources';
-const imageJsonFilePath = 'public/image-files.json';
-const markdownJsonFilePath = 'public/markdown-files.json';
+const imageJsonFilePath = 'image-files.json';
+const markdownJsonFilePath = 'markdown-files.json';
 
 const addToFileMap = (fileMap, key, value) => {
   if (!fileMap[key]) {
@@ -111,14 +111,14 @@ export function getImageFileMap() {
 export function createImageMapToJson() {
   const fileMap = {};
   traverseImageRecursively(sourceDir, fileMap);
-  fs.writeFileSync(imageJsonFilePath, JSON.stringify(fileMap, null, 2), { encoding: 'utf-8' });
+  fs.writeFileSync('public/' + imageJsonFilePath, JSON.stringify(fileMap, null, 2), { encoding: 'utf-8' });
   imageFileMap = fileMap;
 }
 
 export function createFileMapToJson() {
   const fileMap = {};
   traverseFilesRecursively(sourceDir, fileMap);
-  fs.writeFileSync(markdownJsonFilePath, JSON.stringify(fileMap, null, 2), { encoding: 'utf-8' });
+  fs.writeFileSync('public/' + markdownJsonFilePath, JSON.stringify(fileMap, null, 2), { encoding: 'utf-8' });
   markdownFileMap = fileMap;
 }
 
