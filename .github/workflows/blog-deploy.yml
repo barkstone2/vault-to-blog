@@ -1,0 +1,43 @@
+name: 블로그 배포
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: 빌드
+    if: github.repository != 'barkstone2/obsidian-to-blog'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 리포지토리 체크아웃
+        uses: actions/checkout@v4
+      - name: Node.js 셋업
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.2'
+      - name: 패키지 설치
+        run: npm ci
+      - name: 빌드
+        run: npm run build
+      - name: 아티팩트 업로드
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    name: 배포
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 페이지 배포
+        id: deployment
+        if: github.event_name == 'push'
+        uses: actions/deploy-pages@v4
