@@ -33,7 +33,7 @@ describe('마크다운 콘텐츠 컴포넌트 렌더링 시', () => {
       </MemoryRouter>
     );
     
-    expect(fetch).toHaveBeenCalledWith('/home.html');
+    expect(fetch).toHaveBeenCalledWith('/default/home.html');
   })
   
   it('요청 경로의 md 확장자를 html로 변경한 뒤 fetch 요청한다.', async () => {
