@@ -1,12 +1,13 @@
-name: 테스트 & 통합
+name: 리액트 앱 테스트 & 통합
 
 on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - 'public/**'
-      - 'src/assets/**'
+    paths:
+      - 'react-app/**'
+      - '!react-app/public/**'
+      - '!react-app/src/assets/**'
 
 jobs:
   Test:
@@ -20,6 +21,10 @@ jobs:
         with:
           node-version: '22.2'
       - name: 패키지 설치
-        run: npm ci
+        run: |
+          cd react-app
+          npm ci
       - name: 테스트 수행
-        run: npm test
+        run: |
+          cd react-app
+          npm test

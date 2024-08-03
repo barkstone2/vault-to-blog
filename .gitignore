@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# react-app
+react-app/node_modules
+react-app/public/html/*
