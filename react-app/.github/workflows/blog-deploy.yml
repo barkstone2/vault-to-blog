@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     name: 빌드
-    if: github.repository != 'barkstone2/obsidian-to-blog'
     runs-on: ubuntu-latest
     steps:
       - name: 리포지토리 체크아웃
