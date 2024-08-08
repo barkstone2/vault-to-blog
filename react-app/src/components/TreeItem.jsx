@@ -4,11 +4,13 @@ import DirectoryIcon from "./DirectoryIcon.jsx";
 
 const TreeItem = ({title, onClick = () => {}, isDirectory = false, children = null}) => {
   const [isOpen, setIsOpen] = useState(false);
-  let className;
+  let className = 'tree-item';
+  let type = 'nav-file'
   if (isDirectory) {
-    className = 'nav-directory'
-    if (isOpen) className += ' open';
+    type = 'nav-folder';
+    if (!isOpen) className += ' is-collapsed';
   }
+  className += ` ${type}`;
   const doOnClick = () => {
     if (isDirectory) {
       setIsOpen(!isOpen);
@@ -17,11 +19,13 @@ const TreeItem = ({title, onClick = () => {}, isDirectory = false, children = nu
   }
   return (
     <div className={className}>
-      <div className="nav-item" onClick={doOnClick}>
+      <div className={`tree-item-self is-clickable mod-collapsible ${type}-title`} onClick={doOnClick} style={{ marginInlineStart: "0px", paddingInlineStart: "24px"}}>
         <DirectoryIcon isDirectory={isDirectory} isOpen={isOpen}/>
-        <span className="nav-item-title">{title}</span>
+        <div className={`tree-item-inner ${type}-title-content`}>{title}</div>
       </div>
-      {children}
+      <div className={`tree-item-children ${type}-children`}>
+        {children}
+      </div>
     </div>
   )
 }
