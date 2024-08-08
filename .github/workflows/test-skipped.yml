@@ -1,0 +1,18 @@
+name: 테스트 생략
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**'
+      - '!react-app/**'
+      - 'react-app/public/**'
+      - 'react-app/src/assets/**'
+
+jobs:
+  Test:
+    name: Vite 테스트
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo test skipped.
