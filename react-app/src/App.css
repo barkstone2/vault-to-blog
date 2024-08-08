@@ -9,3 +9,7 @@
   user-select: none;
   color: inherit;
 }
+
+.d-none {
+  display: none;
+}

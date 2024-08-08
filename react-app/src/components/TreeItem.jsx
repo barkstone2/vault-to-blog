@@ -23,7 +23,7 @@ const TreeItem = ({title, onClick = () => {}, isDirectory = false, children = nu
         <DirectoryIcon isDirectory={isDirectory} isOpen={isOpen}/>
         <div className={`tree-item-inner ${type}-title-content`}>{title}</div>
       </div>
-      <div className={`tree-item-children ${type}-children`}>
+      <div className={`tree-item-children ${type}-children ${!isOpen ? 'd-none' : ''}`}>
         {children}
       </div>
     </div>
