@@ -30,11 +30,11 @@ describe('백링크 네비게이션 훅 동작 시', () => {
   
   it('backlink 클래스 클릭 시 목적지로 이동하고 스크롤이 상단으로 이동한다.', () => {
     const href = "/test-path";
-    document.body.innerHTML = `<a href="${href}" class="backlink">Test Link</a>`;
+    document.body.innerHTML = `<a href="${href}" class="internal-link">Test Link</a>`;
     const content = ''
     setup(content)
     
-    const link = document.querySelector('.backlink');
+    const link = document.querySelector('.internal-link');
     window.scrollTo = vi.fn();
     
     fireEvent.click(link);
@@ -45,11 +45,11 @@ describe('백링크 네비게이션 훅 동작 시', () => {
   
   it('훅 클린업 동작 시 이벤트 리스너가 제거된다.', () => {
     const href = "/test-path";
-    document.body.innerHTML = `<a href="${href}" class="backlink">Test Link</a>`;
+    document.body.innerHTML = `<a href="${href}" class="internal-link">Test Link</a>`;
     const content = ''
     const { unmount } = setup(content);
     
-    const link = document.querySelector('.backlink');
+    const link = document.querySelector('.internal-link');
     const removeEventListenerSpy = vi.spyOn(link, 'removeEventListener');
     
     unmount();

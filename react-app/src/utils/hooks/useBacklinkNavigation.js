@@ -10,7 +10,7 @@ function useBacklinkNavigation(content) {
     window.scrollTo(0, 0)
   }, [navigate]);
   useEffect(() => {
-    const backlinks = document.querySelectorAll('.backlink');
+    const backlinks = document.querySelectorAll('.internal-link');
     backlinks.forEach(link => {
       link.addEventListener('click', handleNavigate);
     });
