@@ -1,6 +1,6 @@
 import {useState} from "react";
-import TreeItemIcon from "./TreeItemIcon.jsx";
 import PropTypes from "prop-types";
+import DirectoryIcon from "./DirectoryIcon.jsx";
 
 const TreeItem = ({title, onClick = () => {}, isDirectory = false, children = null}) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +18,7 @@ const TreeItem = ({title, onClick = () => {}, isDirectory = false, children = nu
   return (
     <div className={className}>
       <div className="nav-item" onClick={doOnClick}>
-        <TreeItemIcon isDirectory={isDirectory} isOpen={isOpen}/>
+        <DirectoryIcon isDirectory={isDirectory} isOpen={isOpen}/>
         <span className="nav-item-title">{title}</span>
       </div>
       {children}
