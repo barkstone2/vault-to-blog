@@ -19,8 +19,6 @@ describe("트리 아이템 렌더링 시", () => {
   
   it('디렉토리면서 닫힌 상태면 is-collapsed 클래스가 추가된다.', () => {
     const {container} = render(<TreeItem title="title" isDirectory={true}/>);
-    // const clickable = container.querySelector('.tree-item-self');
-    // fireEvent.click(clickable)
     expect(container.querySelector('.tree-item')).toHaveClass('is-collapsed');
   });
   
@@ -29,6 +27,19 @@ describe("트리 아이템 렌더링 시", () => {
     const clickable = container.querySelector('.tree-item-self');
     fireEvent.click(clickable)
     expect(container.querySelector('.tree-item')).not.toHaveClass('is-collapsed');
+  });
+  
+  it('디렉토리가 닫힌 상태면 자식 목록 태그에 d-none 클래스가 추가된다.', () => {
+    const {container} = render(<TreeItem title="title" isDirectory={true}/>);
+    expect(container.querySelector('.tree-item-children ')).toHaveClass('d-none');
+  });
+  
+  
+  it('디렉토리면서 열린 상태면 자식 목록 태그에 d-none 클래스가 제거된다.', () => {
+    const {container} = render(<TreeItem title="title" isDirectory={true}/>);
+    const clickable = container.querySelector('.tree-item-self');
+    fireEvent.click(clickable)
+    expect(container.querySelector('.tree-item-children')).not.toHaveClass('d-none');
   });
 })
 
