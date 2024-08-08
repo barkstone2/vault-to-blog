@@ -9,13 +9,21 @@ const directoryFirstFn = ([key1, value1], [key2, value2]) => {
   return key1.localeCompare(key2);
 };
 
-const TreeContainer = () => {
+const TreeContainer = ({datatype}) => {
   const tree = useRef(initTree());
   const navigate = useNavigate()
   return (
-    <div className="tree-container">
-      {renderTree(tree.current.children, '', directoryFirstFn, navigate)}
-    </div>)
+    <div className="workspace-leaf">
+      <hr className="workspace-leaf-resize-handle"/>
+      <div className="workspace-leaf-content" datatype={datatype}>
+        <div className="nav-files-container node-insert-event" style={{position: "relative"}}>
+          <div>
+            {renderTree(tree.current.children, '', directoryFirstFn, navigate)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default TreeContainer;

@@ -44,25 +44,33 @@ export const initTree =  () => {
   return buildTree(fileSet)
 }
 
-export const renderTree = (nodes, basePath = '', compareFn = () => {}, navigate) => {
+export const renderTree = (nodes, basePath = '', compareFn = () => {
+}, navigate) => {
   const sortedNodes = Object.entries(nodes).sort(compareFn)
-  return sortedNodes.map(([key, value]) => {
-    const path = `${basePath}/${key}`;
-    const handleNavigate = () => {
-      navigate(path);
-    }
-    return (
-      <React.Fragment key={path}>
-        {!value.isFile ? (
-          <TreeItem title={key + " (" + value.count + ")"} isDirectory={true}>
-            <div className="nav-children">
-              {renderTree(value.children, path, compareFn, navigate)}
-            </div>
-          </TreeItem>
-        ) : (
-          <TreeItem onClick={handleNavigate} title={key}/>
-        )}
-      </React.Fragment>
-    );
-  })
+  return (
+    <>
+      {/*아마 크기 조절용인듯? 크기 조절 기능은 나중에 추가*/}
+      <div style={{width: '353px', height: '0.1px', marginBottom: '0px'}}></div>
+      {
+        sortedNodes.map(([key, value]) => {
+            const path = `${basePath}/${key}`;
+            const handleNavigate = () => {
+              navigate(path);
+            }
+            return (
+              <React.Fragment key={path}>
+                {!value.isFile ? (
+                  <TreeItem title={key + " (" + value.count + ")"} isDirectory={true}>
+                    {renderTree(value.children, path, compareFn, navigate)}
+                  </TreeItem>
+                ) : (
+                  <TreeItem onClick={handleNavigate} title={key}/>
+                )}
+              </React.Fragment>
+            );
+          }
+        )
+      }
+    </>
+  )
 };
