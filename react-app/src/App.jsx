@@ -21,12 +21,14 @@ function App() {
   }
   
   return (
-    <>
-      <Sidebar/>
-      <Routes>
-        <Route path={"/*"} element={<MarkdownContent/>}/>
-      </Routes>
-    </>
+    <div className="horizontal-main-container">
+      <div className="workspace is-left-sidedock-open is-right-sidedock-open">
+        <Sidebar/>
+        <Routes>
+          <Route path={"/*"} element={<MarkdownContent/>}/>
+        </Routes>
+      </div>
+    </div>
   );
 }
 
