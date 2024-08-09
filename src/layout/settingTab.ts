@@ -1,4 +1,5 @@
 import {App, normalizePath, Notice, PluginSettingTab, Setting, TFolder} from "obsidian";
+import Awesomplete from "awesomplete";
 import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
 
 export class OTBSettingTab extends PluginSettingTab {
@@ -35,6 +36,32 @@ export class OTBSettingTab extends PluginSettingTab {
 			.setTooltip('Select a directory that contains markdown files, images or other files for publishing to GitHub Pages.')
 			.addSearch((cb) => {
 				inputEl = cb.inputEl;
+				const awesomplete = new Awesomplete(cb.inputEl, {
+					list: directories,
+					minChars: 0,
+					maxItems: Number.MAX_VALUE,
+					autoFirst: true,
+				});
+
+				setTimeout(() => {
+					const dropdown = awesomplete.ul;
+					if (dropdown) {
+						dropdown.removeAttribute('aria-label');
+					}
+				}, 0);
+
+				cb.inputEl.addEventListener('click', () => {
+					awesomplete.evaluate();
+				});
+
+				cb.inputEl.addEventListener('focus', () => {
+					awesomplete.evaluate();
+				});
+
+				cb.clearButtonEl.addEventListener('click', () => {
+					awesomplete.close();
+				});
+
 				cb
 					.setPlaceholder('Enter a directory path')
 					.setValue(this.settings.sourceDir)
