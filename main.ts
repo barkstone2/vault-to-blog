@@ -1,6 +1,7 @@
 import {Plugin} from 'obsidian';
 import {Paths} from "./src/store/paths";
 import {StatusBar} from "./src/layout/statusBar";
+import {OTBSettingTab} from './src/layout/settingTab';
 
 export interface ObsidianToBlogSettings {
  sourceDir: string;
@@ -23,6 +24,7 @@ export default class ObsidianToBlog extends Plugin {
 		await this.loadPaths();
 		this.statusBar = new StatusBar(this.addStatusBarItem(), this);
 		await this.renderStatusBar()
+		this.addSettingTab(new OTBSettingTab(this.app, this, this.settings,));
 	}
 
 	async loadSettings() {
