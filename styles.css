@@ -1,3 +1,4 @@
+/* 상태바 항목 */
 .grayscale {
 	filter: grayscale(100%);
 }
@@ -5,4 +6,41 @@
 .status-bar-icon {
 	width: 20px;
 	height: 20px;
+}
+
+/* 설정탭 컨테이너 */
+.setting-container {
+	display: grid;
+	grid-template-rows: 1fr auto;
+}
+
+.setting {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
+.control {
+	display: grid;
+	grid-template-columns: 1fr auto;
+}
+
+.name, .desc {
+	width: fit-content;
+}
+
+/* 설정탭 텍스트, 콘텐츠 */
+.current-value {
+	color: var(--text-muted);
+	font-size: 0.8rem;
+	padding-left: 1rem;
+	padding-bottom: 1rem;
+}
+
+.warning {
+	color: var(--text-warning);
+	font-weight: bold;
+}
+
+.current-value:before {
+	content: '✅ ';
 }
