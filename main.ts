@@ -1,4 +1,5 @@
 import {Plugin} from 'obsidian';
+import {Paths} from "./src/store/paths";
 import {StatusBar} from "./src/layout/statusBar";
 
 export interface ObsidianToBlogSettings {
@@ -16,8 +17,10 @@ const DEFAULT_SETTINGS: ObsidianToBlogSettings = {
 export default class ObsidianToBlog extends Plugin {
 	settings: ObsidianToBlogSettings;
 	statusBar: StatusBar;
+	paths: Paths;
 	async onload() {
 		await this.loadSettings();
+		await this.loadPaths();
 		this.statusBar = new StatusBar(this.addStatusBarItem(), this);
 		await this.renderStatusBar()
 	}
@@ -28,6 +31,10 @@ export default class ObsidianToBlog extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	async loadPaths() {
+		this.paths = new Paths(this.app);
 	}
 
 	async renderStatusBar() {
