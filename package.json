@@ -31,5 +31,6 @@
 	},
 	"dependencies": {
 		"awesomplete": "^1.1.7",
+		"child-process": "^1.0.2"
 	}
 }

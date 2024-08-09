@@ -1,6 +1,7 @@
 import {App, normalizePath, Notice, PluginSettingTab, Setting, TFolder} from "obsidian";
 import Awesomplete from "awesomplete";
 import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
+import {spawn} from "child_process";
 
 export class OTBSettingTab extends PluginSettingTab {
 	plugin: OTBPlugin;
@@ -86,6 +87,7 @@ export class OTBSettingTab extends PluginSettingTab {
 	}
 
 	private createRepositoryUrlSetting(containerEl: HTMLElement) {
+		let inputEl: HTMLInputElement;
 		const desc = new DocumentFragment();
 		desc.createDiv({text: 'Enter a GitHub Pages repository URL.'});
 		desc.createDiv({text: 'This must be entered before activating.', cls: 'warning'});
@@ -94,11 +96,29 @@ export class OTBSettingTab extends PluginSettingTab {
 			.setDesc(desc)
 			.setTooltip('Enter a valid GitHub Pages repository URL.')
 			.addText((cb) => {
+				inputEl = cb.inputEl;
 				cb.setPlaceholder('Enter a repository URL.')
 				cb.setValue(this.settings.repositoryUrl)
 			})
 			.addButton((cb) => {
 				cb.setButtonText("Save")
+				cb.onClick(async () => {
+					const child = spawn('git',['ls-remote', inputEl.value]);
+					child.on('error', (error) => {
+						new Notice('Failed to start remote validation. Check your network.')
+					})
+					child.on('close', async (code) => {
+						if (code === 0) {
+							this.settings.repositoryUrl = inputEl.value;
+							await this.plugin.saveSettings();
+							new Notice('Settings saved.');
+							this.display()
+						} else {
+							new Notice(`Invalid repository URL.`)
+							inputEl.value = this.settings.repositoryUrl;
+						}
+					})
+				})
 			});
 		this.addDefaultSettingClass(setting)
 		containerEl.createDiv({cls: 'current-value', text: 'Repository URL : ' + this.settings.repositoryUrl});
