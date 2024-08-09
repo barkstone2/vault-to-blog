@@ -44,3 +44,52 @@
 .current-value:before {
 	content: '✅ ';
 }
+
+/* awesomplete 스타일 덮어쓰기 */
+.awesomplete {
+	width: 100%;
+	max-width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+.awesomplete mark {
+	background: inherit;
+	color: inherit;
+	font-weight: normal;
+	text-decoration: none;
+}
+
+.awesomplete [role="status"] {
+	display: none;
+}
+
+.awesomplete ul {
+	position: absolute;
+	max-height: 300px;
+	overflow-y: auto;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	background-color: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 5px;
+	box-shadow: var(--shadow-elevation-low);
+	z-index: 10;
+}
+
+.awesomplete li {
+	margin: 5px;
+	padding: 5px;
+	cursor: pointer;
+	list-style: none;
+	font-family: var(--font-family-editor);
+	color: var(--text-normal);
+	border-radius: 5px;
+}
+
+.awesomplete li:hover,
+.awesomplete li[aria-selected="true"] {
+	background-color: var(--background-modifier-hover);
+}
