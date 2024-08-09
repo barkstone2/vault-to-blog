@@ -1,4 +1,4 @@
-import {App, PluginSettingTab, Setting} from "obsidian";
+import {App, normalizePath, Notice, PluginSettingTab, Setting, TFolder} from "obsidian";
 import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
 
 export class OTBSettingTab extends PluginSettingTab {
@@ -23,6 +23,9 @@ export class OTBSettingTab extends PluginSettingTab {
 	}
 
 	private createSourceDirSetting(containerEl: HTMLElement) {
+		let inputEl: HTMLInputElement;
+		const directories = this.app.vault.getAllFolders(true)
+			.map((it: TFolder) => normalizePath(it.path));
 		const desc = new DocumentFragment();
 		desc.createDiv({text: 'Select a directory to publish to GitHub Pages.'});
 		desc.createDiv({text: 'This must be selected before activating.', cls: 'warning'});
@@ -31,12 +34,25 @@ export class OTBSettingTab extends PluginSettingTab {
 			.setDesc(desc)
 			.setTooltip('Select a directory that contains markdown files, images or other files for publishing to GitHub Pages.')
 			.addSearch((cb) => {
+				inputEl = cb.inputEl;
 				cb
 					.setPlaceholder('Enter a directory path')
 					.setValue(this.settings.sourceDir)
 			})
 			.addButton((cb) => {
 				cb.setButtonText("Save")
+				cb.onClick(async () => {
+					if (!directories.includes(inputEl?.value)) {
+						new Notice('Invalid directory path.', 3000)
+						inputEl.value = this.settings.sourceDir;
+						return;
+					}
+
+					this.settings.sourceDir = inputEl?.value;
+					await this.plugin.saveSettings();
+					this.display()
+					new Notice('Setting saved.');
+				})
 			});
 		this.addDefaultSettingClass(setting)
 		containerEl.createDiv({cls: 'current-value', text: 'Source Dir : ' + this.settings.sourceDir});
