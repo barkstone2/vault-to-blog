@@ -93,3 +93,12 @@
 .awesomplete li[aria-selected="true"] {
 	background-color: var(--background-modifier-hover);
 }
+
+/* 설정 버튼 */
+.button-row.active .activate-button {
+	display: none;
+}
+
+.button-row.inactive .inactivate-button {
+	display: none;
+}

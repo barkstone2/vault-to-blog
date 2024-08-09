@@ -22,6 +22,10 @@ export class OTBSettingTab extends PluginSettingTab {
 		this.createSourceDirSetting(propertiesContainer)
 		this.createRepositoryUrlSetting(propertiesContainer);
 		containerEl.append(propertiesContainer)
+
+		const buttonContainer = containerEl.createDiv({cls: 'button-container'})
+		this.createButton(buttonContainer);
+		containerEl.append(buttonContainer);
 	}
 
 	private createSourceDirSetting(containerEl: HTMLElement) {
@@ -122,6 +126,23 @@ export class OTBSettingTab extends PluginSettingTab {
 			});
 		this.addDefaultSettingClass(setting)
 		containerEl.createDiv({cls: 'current-value', text: 'Repository URL : ' + this.settings.repositoryUrl});
+	}
+
+	private createButton(containerEl: HTMLDivElement) {
+		const setting = new Setting(containerEl)
+			.addButton((cb) => {
+				cb.setButtonText('Activate')
+				cb.setClass('activate-button')
+				cb.setCta()
+			})
+			.addButton((cb) => {
+				cb.setButtonText('Inactivate')
+				cb.setClass('inactivate-button')
+			})
+		const settingEl = setting.settingEl;
+		settingEl.addClass('button-row')
+		settingEl.addClass(this.settings.isActivated ? 'active' : 'inactive')
+		return setting;
 	}
 
 	private addDefaultSettingClass(setting: Setting) {
