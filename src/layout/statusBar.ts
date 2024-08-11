@@ -10,6 +10,7 @@ export class StatusBar {
 		statusBarEl.setAttribute("data-tooltip-position", "top");
 		statusBarEl.onClickEvent(async () => {
 			if (this.plugin.settings.isActivated) {
+				this.plugin.publishBlog();
 			} else {
 				new Notice("Activate before publishing.")
 			}
