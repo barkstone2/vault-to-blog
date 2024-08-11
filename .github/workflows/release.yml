@@ -1,0 +1,36 @@
+name: 플러그인 릴리즈
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.2'
+
+      - name: Build plugin
+        run: |
+          npm install
+          npm run build
+      - name: 리액트 앱 소스코드 아카이빙
+        run: |
+          zip -r react-app.zip ./react-app
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+
+          gh release create "$tag" \
+            --title="$tag" \
+            --draft \
+            main.js manifest.json styles.css react-app.zip
