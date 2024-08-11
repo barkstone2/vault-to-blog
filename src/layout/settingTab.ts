@@ -2,15 +2,21 @@ import {App, normalizePath, Notice, PluginSettingTab, Setting, TFolder} from "ob
 import Awesomplete from "awesomplete";
 import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
 import {spawn} from "child_process";
+import {Paths} from "../store/paths";
+import {GitUtils} from "../utils/gitUtils";
 
 export class OTBSettingTab extends PluginSettingTab {
 	plugin: OTBPlugin;
+	paths: Paths;
 	settings: ObsidianToBlogSettings;
+	gitUtils: GitUtils;
 
-	constructor(app: App, plugin: OTBPlugin, settings: ObsidianToBlogSettings,) {
+	constructor(app: App, plugin: OTBPlugin, settings: ObsidianToBlogSettings, paths: Paths, gitUtils: GitUtils,) {
 		super(app, plugin);
 		this.plugin = plugin;
 		this.settings = settings;
+		this.paths = paths;
+		this.gitUtils = gitUtils;
 	}
 
 	display(): void {
@@ -90,6 +96,14 @@ export class OTBSettingTab extends PluginSettingTab {
 		containerEl.createDiv({cls: 'current-value', text: 'Source Dir : ' + this.settings.sourceDir});
 	}
 
+	private addDefaultSettingClass(setting: Setting) {
+		setting.settingEl.addClass('setting')
+		setting.controlEl.addClass('control')
+		setting.nameEl.addClass('name')
+		setting.descEl.addClass('desc')
+		setting.infoEl.addClass('info')
+	}
+
 	private createRepositoryUrlSetting(containerEl: HTMLElement) {
 		let inputEl: HTMLInputElement;
 		const desc = new DocumentFragment();
@@ -134,6 +148,11 @@ export class OTBSettingTab extends PluginSettingTab {
 				cb.setButtonText('Activate')
 				cb.setClass('activate-button')
 				cb.setCta()
+				cb.onClick(async () => {
+					await this.doActivate()
+					await this.plugin.saveSettings();
+					this.display()
+				})
 			})
 			.addButton((cb) => {
 				cb.setButtonText('Inactivate')
@@ -145,11 +164,12 @@ export class OTBSettingTab extends PluginSettingTab {
 		return setting;
 	}
 
-	private addDefaultSettingClass(setting: Setting) {
-		setting.settingEl.addClass('setting')
-		setting.controlEl.addClass('control')
-		setting.nameEl.addClass('name')
-		setting.descEl.addClass('desc')
-		setting.infoEl.addClass('info')
+	private async doActivate() {
+		const options = {cwd: this.paths.reactPath};
+		const noticeDuration = 5000;
+		await this.gitUtils.initializeGit(options, noticeDuration);
+		await this.gitUtils.addRemote(options, noticeDuration);
+		this.settings.isActivated = true;
+		new Notice('Activate Succeed.', noticeDuration)
 	}
 }
