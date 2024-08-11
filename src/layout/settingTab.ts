@@ -4,19 +4,22 @@ import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
 import {spawn, spawnSync} from "child_process";
 import {Paths} from "../store/paths";
 import {GitUtils} from "../utils/gitUtils";
+import {FileUtils} from "../utils/fileUtils";
 
 export class OTBSettingTab extends PluginSettingTab {
 	plugin: OTBPlugin;
 	paths: Paths;
 	settings: ObsidianToBlogSettings;
 	gitUtils: GitUtils;
+	fileUtils: FileUtils;
 
-	constructor(app: App, plugin: OTBPlugin, settings: ObsidianToBlogSettings, paths: Paths, gitUtils: GitUtils,) {
+	constructor(app: App, plugin: OTBPlugin, settings: ObsidianToBlogSettings, paths: Paths, gitUtils: GitUtils, fileUtils: FileUtils) {
 		super(app, plugin);
 		this.plugin = plugin;
 		this.settings = settings;
 		this.paths = paths;
 		this.gitUtils = gitUtils;
+		this.fileUtils = fileUtils;
 	}
 
 	display(): void {
@@ -168,6 +171,11 @@ export class OTBSettingTab extends PluginSettingTab {
 			.addButton((cb) => {
 				cb.setButtonText('Inactivate')
 				cb.setClass('inactivate-button')
+				cb.onClick(async () => {
+					await this.doInactivate()
+					await this.plugin.saveSettings();
+					this.display()
+				})
 			})
 		const settingEl = setting.settingEl;
 		settingEl.addClass('button-row')
@@ -187,5 +195,14 @@ export class OTBSettingTab extends PluginSettingTab {
 	private isValidRepositoryURL(repositoryURL: string) {
 		const child = spawnSync('git',['ls-remote', repositoryURL]);
 		return child.status == 0;
+	}
+
+	private async doInactivate() {
+		const options = {cwd: this.paths.reactPath};
+		const noticeDuration = 5000;
+		await this.gitUtils.removeRemote(options, noticeDuration);
+		await this.fileUtils.cleanSourceDest(noticeDuration);
+		this.settings.isActivated = false;
+		new Notice('Inactivate Succeed.', noticeDuration)
 	}
 }
