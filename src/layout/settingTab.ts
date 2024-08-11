@@ -1,7 +1,7 @@
 import {App, normalizePath, Notice, PluginSettingTab, Setting, TFolder} from "obsidian";
 import Awesomplete from "awesomplete";
 import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
-import {spawn} from "child_process";
+import {spawn, spawnSync} from "child_process";
 import {Paths} from "../store/paths";
 import {GitUtils} from "../utils/gitUtils";
 
@@ -80,7 +80,7 @@ export class OTBSettingTab extends PluginSettingTab {
 			.addButton((cb) => {
 				cb.setButtonText("Save")
 				cb.onClick(async () => {
-					if (!directories.includes(inputEl?.value)) {
+					if (!this.isValidSourceDir(inputEl?.value)) {
 						new Notice('Invalid directory path.', 3000)
 						inputEl.value = this.settings.sourceDir;
 						return;
@@ -94,6 +94,13 @@ export class OTBSettingTab extends PluginSettingTab {
 			});
 		this.addDefaultSettingClass(setting)
 		containerEl.createDiv({cls: 'current-value', text: 'Source Dir : ' + this.settings.sourceDir});
+	}
+
+	private isValidSourceDir(sourceDir: string) {
+		new Notice(sourceDir)
+		const directories = this.app.vault.getAllFolders(true)
+			.map((it: TFolder) => normalizePath(it.path));
+		return directories.includes(sourceDir);
 	}
 
 	private addDefaultSettingClass(setting: Setting) {
@@ -149,9 +156,13 @@ export class OTBSettingTab extends PluginSettingTab {
 				cb.setClass('activate-button')
 				cb.setCta()
 				cb.onClick(async () => {
-					await this.doActivate()
-					await this.plugin.saveSettings();
-					this.display()
+					if (this.isValidSourceDir(this.settings.sourceDir) && this.isValidRepositoryURL(this.settings.repositoryUrl)) {
+						await this.doActivate()
+						await this.plugin.saveSettings();
+						this.display()
+					} else {
+						new Notice('Invalid directory path or invalid repository URL.')
+					}
 				})
 			})
 			.addButton((cb) => {
@@ -171,5 +182,10 @@ export class OTBSettingTab extends PluginSettingTab {
 		await this.gitUtils.addRemote(options, noticeDuration);
 		this.settings.isActivated = true;
 		new Notice('Activate Succeed.', noticeDuration)
+	}
+
+	private isValidRepositoryURL(repositoryURL: string) {
+		const child = spawnSync('git',['ls-remote', repositoryURL]);
+		return child.status == 0;
 	}
 }
