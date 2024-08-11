@@ -189,6 +189,7 @@ export class OTBSettingTab extends PluginSettingTab {
 		await this.gitUtils.initializeGit(options, noticeDuration);
 		await this.gitUtils.addRemote(options, noticeDuration);
 		this.settings.isActivated = true;
+		await this.plugin.renderStatusBar();
 		new Notice('Activate Succeed.', noticeDuration)
 	}
 
@@ -203,6 +204,7 @@ export class OTBSettingTab extends PluginSettingTab {
 		await this.gitUtils.removeRemote(options, noticeDuration);
 		await this.fileUtils.cleanSourceDest(noticeDuration);
 		this.settings.isActivated = false;
+		await this.plugin.renderStatusBar();
 		new Notice('Inactivate Succeed.', noticeDuration)
 	}
 }
