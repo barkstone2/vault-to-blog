@@ -1,4 +1,4 @@
-import {Plugin} from 'obsidian';
+import {Notice, Plugin} from 'obsidian';
 import {Paths} from "./src/store/paths";
 import {StatusBar} from "./src/layout/statusBar";
 import {OTBSettingTab} from './src/layout/settingTab';
@@ -51,6 +51,17 @@ export default class ObsidianToBlog extends Plugin {
 		} else {
 			this.statusBar.inactivate()
 		}
+	}
+
+	async publishBlog() {
+		new Notice('Start publishing blog');
+		const options = {cwd: this.paths.reactPath};
+		const noticeDuration = 5000
+		await this.fileUtils.syncSourceToDest(noticeDuration);
+		await this.gitUtils.stageAllChanges(options, noticeDuration)
+		await this.gitUtils.commitChanges(options, noticeDuration)
+		await this.gitUtils.pushToRemote(options, noticeDuration);
+		new Notice('Blog published')
 	}
 
 	private async loadUtils() {
