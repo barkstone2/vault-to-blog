@@ -48,6 +48,25 @@ export class GitUtils {
 		});
 	}
 
+	async removeRemote(options: { cwd: string }, noticeDuration: number) {
+		return new Promise(resolve => {
+			const child = spawn('git', ['remote', 'remove', 'blog'], options);
+			child.on('error', (error) => {
+				const message = `Failed to start the process of removing the remote.\n ${error.message}`;
+				new Notice(message, noticeDuration);
+				console.log(message)
+			})
+			child.on('close', (code) => {
+				if (code === 0) {
+					resolve(true);
+					new Notice('Succeeded in removing remote.', noticeDuration)
+				} else {
+					new Notice("Failed to remove remote.", noticeDuration)
+				}
+			})
+		});
+	}
+
 	async stageAllChanges(options: { cwd: string }, noticeDuration: number) {
 		return new Promise(resolve => {
 			const child = spawn('git', ['add', '.'], options);

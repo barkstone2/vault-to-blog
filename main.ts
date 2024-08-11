@@ -2,6 +2,7 @@ import {Plugin} from 'obsidian';
 import {Paths} from "./src/store/paths";
 import {StatusBar} from "./src/layout/statusBar";
 import {OTBSettingTab} from './src/layout/settingTab';
+import {FileUtils} from "./src/utils/fileUtils";
 import {GitUtils} from "./src/utils/gitUtils";
 
 export interface ObsidianToBlogSettings {
@@ -21,6 +22,7 @@ export default class ObsidianToBlog extends Plugin {
 	statusBar: StatusBar;
 	paths: Paths;
 	gitUtils: GitUtils;
+	fileUtils: FileUtils;
 
 	async onload() {
 		await this.loadSettings();
@@ -28,7 +30,7 @@ export default class ObsidianToBlog extends Plugin {
 		await this.loadUtils();
 		this.statusBar = new StatusBar(this.addStatusBarItem(), this);
 		await this.renderStatusBar()
-		this.addSettingTab(new OTBSettingTab(this.app, this, this.settings, this.paths, this.gitUtils));
+		this.addSettingTab(new OTBSettingTab(this.app, this, this.settings, this.paths, this.gitUtils, this.fileUtils));
 	}
 
 	async loadSettings() {
@@ -53,5 +55,6 @@ export default class ObsidianToBlog extends Plugin {
 
 	private async loadUtils() {
 		this.gitUtils = new GitUtils(this, this.settings);
+		this.fileUtils = new FileUtils(this.paths, this.settings);
 	}
 }
