@@ -13,6 +13,7 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkParseFrontmatter from "remark-parse-frontmatter";
 import remarkObsidian from "./utils/parser/remarkObsidian.js";
 import rehypeHighlight from "rehype-highlight";
+import rehypeCallout from "./utils/parser/rehypeCallout.js";
 
 const sourceDir = 'public/sources';
 async function processMarkdown(file) {
@@ -29,6 +30,7 @@ async function processMarkdown(file) {
 		.use(remarkRehype, {allowDangerousHtml: true})
 		.use(rehypeKatex)
 		.use(rehypeHighlight)
+		.use(rehypeCallout)
 		.use(rehypeStringify, {allowDangerousHtml: true})
 		.process(markdown);
 	
