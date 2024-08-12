@@ -30,16 +30,17 @@ describe('백링크 네비게이션 훅 동작 시', () => {
   
   it('backlink 클래스 클릭 시 목적지로 이동하고 스크롤이 상단으로 이동한다.', () => {
     const href = "/test-path";
-    document.body.innerHTML = `<a href="${href}" class="internal-link">Test Link</a>`;
+    document.body.innerHTML = `<div class="markdown-preview-view"><a href="${href}" class="internal-link">Test Link</a></div>`;
     const content = ''
     setup(content)
     
     const link = document.querySelector('.internal-link');
-    window.scrollTo = vi.fn();
+    const markdownView = document.querySelector('.markdown-preview-view');
+    markdownView.scrollTo = vi.fn();
     
     fireEvent.click(link);
     
-    expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
+    expect(markdownView.scrollTo).toHaveBeenCalledWith(0, 0);
     expect(navigate).toHaveBeenCalledWith(href);
   });
   

@@ -56,6 +56,7 @@ export const renderTree = (nodes, basePath = '', compareFn = () => {
             const path = `${basePath}/${key}`;
             const handleNavigate = () => {
               navigate(path);
+              document.querySelector('.markdown-preview-view').scrollTo(0, 0);
             }
             return (
               <React.Fragment key={path}>

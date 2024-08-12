@@ -7,7 +7,7 @@ function useBacklinkNavigation(content) {
     e.preventDefault();
     const navPath = e.target.getAttribute('href')
     navigate(navPath)
-    window.scrollTo(0, 0)
+    document.querySelector('.markdown-preview-view').scrollTo(0, 0);
   }, [navigate]);
   useEffect(() => {
     const backlinks = document.querySelectorAll('.internal-link');
