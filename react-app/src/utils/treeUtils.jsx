@@ -49,7 +49,7 @@ export const renderTree = (nodes, basePath = '', compareFn = () => {
   const sortedNodes = Object.entries(nodes).sort(compareFn)
   return (
     <>
-      {/*아마 크기 조절용인듯? 크기 조절 기능은 나중에 추가*/}
+      {/* TODO 아마 크기 조절용인듯? 크기 조절 기능은 나중에 추가*/}
       <div style={{width: '353px', height: '0.1px', marginBottom: '0px'}}></div>
       {
         sortedNodes.map(([key, value]) => {
@@ -65,7 +65,7 @@ export const renderTree = (nodes, basePath = '', compareFn = () => {
                     {renderTree(value.children, path, compareFn, navigate)}
                   </TreeItem>
                 ) : (
-                  <TreeItem onClick={handleNavigate} title={key}/>
+                  <TreeItem onClick={handleNavigate} title={key.replace('.md', '')}/>
                 )}
               </React.Fragment>
             );
