@@ -32,9 +32,11 @@ function MarkdownContent() {
       <div className="workspace-tabs mod-top">
         <div className="workspace-tab-header-container"></div>
         <div className="workspace-tab-container">
+          {/* TODO 탭 전환 기능 추가 시 leaf 단위로 처리가 필요 */}
           <div className="workspace-leaf">
             <hr className="workspace-leaf-resize-handle"/>
             <div className="workspace-leaf-content" datatype="markdown" datamode="preview">
+              {/* TODO 요청 path 기준으로 렌더링 가능 */}
               <div className="view-header">
               </div>
               <div className="view-content">
@@ -42,17 +44,7 @@ function MarkdownContent() {
                   <div
                     className="markdown-preview-view markdown-rendered node-insert-event is-readable-line-width allow-fold-headings show-indentation-guide allow-fold-lists show-properties"
                     tabIndex="-1" style={{tabSize: 4}}>
-                    <div className="markdown-preview-sizer markdown-preview-section"
-                         style={{paddingBottom: '336px', minHeight: '1054px'}}>
-                      <div className="markdown-preview-pusher"
-                           style={{width: '1px', height: '0.1px', marginBottom: '0px'}}></div>
-                      <div className="mod-header">
-                        <div className="inline-title">{innerHtml.title}</div>
-                        <div className="metadata-container" tabIndex="-1" data-property-count="3">
-                          <div className="metadata-properties-heading" tabIndex="0"></div>
-                        </div>
-                      </div>
-                      <div dangerouslySetInnerHTML={{__html: innerHtml.content}}/>
+                    <div className="markdown-preview-sizer markdown-preview-section" dangerouslySetInnerHTML={{__html: innerHtml.content}}>
                     </div>
                   </div>
                 </div>

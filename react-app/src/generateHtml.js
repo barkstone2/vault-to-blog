@@ -19,12 +19,13 @@ const sourceDir = 'public/sources';
 async function processMarkdown(file) {
 	const filePath = path.join(sourceDir, file).normalize('NFC')
 	const markdown = fs.readFileSync(filePath, 'utf-8');
+	const title = file.normalize('NFC').split('/').pop().replace('.md', '');
 	const result = await unified()
 		.use(remarkParse)
 		.use(remarkFrontmatter)
 		.use(remarkParseFrontmatter)
 		.use(remarkBreaks)
-		.use(remarkObsidian)
+		.use(remarkObsidian, {title})
 		.use(remarkGfm)
 		.use(remarkMath)
 		.use(remarkRehype, {allowDangerousHtml: true})

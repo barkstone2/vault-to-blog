@@ -31,8 +31,13 @@ describe("html 생성 요청 시", () => {
   it("마크다운이 HTML로 변환된다", async () => {
     // given
     markdown = '# H1';
-    expectedHtml = '<h1>H1</h1>';
-
+    expectedHtml =
+`<div class="markdown-preview-pusher" style="width: 1px; height: 0.1px; margin-bottom: 0;"></div>
+<div class="mod-header">
+<div class="inline-title" tabindex="-1">md</div>
+</div>
+<h1>H1</h1>`;
+    
     // when
     await generateHtmlFiles()
 
@@ -47,7 +52,12 @@ describe("html 생성 요청 시", () => {
   it("줄바꿈이 처리된다", async () => {
     // given
     markdown = '줄바꿈이\n처리된다';
-    expectedHtml = `<p>줄바꿈이<br>
+    expectedHtml =
+      `<div class="markdown-preview-pusher" style="width: 1px; height: 0.1px; margin-bottom: 0;"></div>
+<div class="mod-header">
+<div class="inline-title" tabindex="-1">md</div>
+</div>
+<p>줄바꿈이<br>
 처리된다</p>`;
     
     // when
@@ -66,7 +76,12 @@ describe("html 생성 요청 시", () => {
     markdown = '| 왼쪽 정렬 | 가운데 정렬 | 오른쪽 정렬 |\n' +
       '| :---- | :----: | -----: |\n' +
       '| 내용    |   내용   |     내용 |';
-    expectedHtml = `<table>
+    expectedHtml =
+`<div class="markdown-preview-pusher" style="width: 1px; height: 0.1px; margin-bottom: 0;"></div>
+<div class="mod-header">
+<div class="inline-title" tabindex="-1">md</div>
+</div>
+<table>
 <thead>
 <tr>
 <th align="left">왼쪽 정렬</th>

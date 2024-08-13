@@ -1,14 +1,13 @@
 import remarkProperties from "./remarkProperties.js";
 import {u} from "unist-builder";
-import * as remarkUtil from "../remarkUtils.js";
 import * as propertyRemarkUtil from "../propertyRemarkUtils.js";
 
 let inputAst;
-let addNewTagSpy;
+let parseKeyAndValueSpy;
 let addMultiPropertyValueSpy;
 let addPropertyValueSpy;
 beforeAll(() => {
-  addNewTagSpy = vi.spyOn(remarkUtil, 'addNewTag');
+  parseKeyAndValueSpy = vi.spyOn(propertyRemarkUtil, 'parseKeyAndValue');
   addMultiPropertyValueSpy = vi.spyOn(propertyRemarkUtil, 'addMultiPropertyValue');
   addPropertyValueSpy = vi.spyOn(propertyRemarkUtil, 'addPropertyValue');
 })
@@ -23,13 +22,13 @@ describe('프로퍼티 파싱 요청 시', () => {
       u('text', 'a'),
     ]);
     remarkProperties()(inputAst)
-    expect(addNewTagSpy).not.toBeCalled();
+    expect(parseKeyAndValueSpy).not.toBeCalled();
   });
   
   it('트리의 첫 번째 자식이 없는 경우 변환 로직이 호출되지 않는다.', () => {
     inputAst = u('root', []);
     remarkProperties()(inputAst)
-    expect(addNewTagSpy).not.toBeCalled();
+    expect(parseKeyAndValueSpy).not.toBeCalled();
   });
   
   it('트리의 첫 번째 자식이 yaml 타입인 경우 변환 로직이 호출된다.', () => {
@@ -37,7 +36,7 @@ describe('프로퍼티 파싱 요청 시', () => {
       u('yaml', "a: A")
     ]);
     remarkProperties()(inputAst)
-    expect(addNewTagSpy).toBeCalled();
+    expect(parseKeyAndValueSpy).toBeCalled();
   });
   
   it('프로퍼티의 타입이 multitext인 경우 addMultiPropertyValue가 호출된다.', () => {
