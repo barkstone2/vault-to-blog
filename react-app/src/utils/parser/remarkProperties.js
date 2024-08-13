@@ -1,52 +1,44 @@
-import {visit} from "unist-util-visit";
+import {
+  addMultiPropertyValue,
+  addPropertyKey,
+  addPropertyValue,
+  getPropertyType,
+  parseKeyAndValue
+} from "../propertyRemarkUtils.js";
+import {addNewTag} from "../remarkUtils.js";
 
-const remarkProperties = () => {
+const remarkProperties = (options = {}) => {
   return (tree) => {
-    visit(tree, 'yaml', (node, index, parent) => {
+    if (tree.children[0]?.type === 'yaml') {
       const newNodes = [];
-      const properties = node.value.split("\n");
-      newNodes.push({
-        type: 'html',
-        value: '<div class="property-container">'
+      addNewTag(
+        newNodes,
+        '<div class="metadata-container" tabindex="-1"><div class="metadata-properties">',
+        '</div></div>',
+        () => {
+        const yaml = tree.children[0];
+        const properties = yaml.value.split('\n');
+        for (let index = 0; index < properties.length; index++) {
+          const property = properties[index];
+          const {key, value} = parseKeyAndValue(property)
+          const type = getPropertyType(key);
+          addNewTag(
+            newNodes,
+            `<div class="metadata-property" data-property-key="${key}" data-property-type="${type}">`,
+            '</div>',
+            () => {
+              addPropertyKey(newNodes, key, type);
+              if (type === 'multitext' || type === 'tags') {
+                index = addMultiPropertyValue(newNodes, type, properties, index);
+              } else {
+                addPropertyValue(newNodes, value, type);
+              }
+            })
+        }
       });
       
-      for (const property of properties) {
-        const pInfo = property.split(": ")
-        const title = pInfo[0];
-        const value = pInfo[1];
-        newNodes.push({
-          type: 'html',
-          value: `<div class="property-title" title="${title}">`
-        })
-        newNodes.push({
-          type: 'text',
-          value: `${title}`
-        })
-        newNodes.push({
-          type: 'html',
-          value: `</div>`
-        })
-        newNodes.push({
-          type: 'html',
-          value: `<div class="property-value" title="${value}">`
-        })
-        newNodes.push({
-          type: 'text',
-          value: `${value}`
-        })
-        newNodes.push({
-          type: 'html',
-          value: `</div>`
-        })
-      }
-      
-      newNodes.push({
-        type: 'html',
-        value: `</div>`
-      })
-      
-      parent.children.splice(index, 1, ...newNodes);
-    })
+      tree.children.splice(0, 1, ...newNodes);
+    }
   }
 }
 

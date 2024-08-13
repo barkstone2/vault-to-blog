@@ -1,54 +1,75 @@
-import {describe, expect, it} from "vitest";
 import remarkProperties from "./remarkProperties.js";
 import {u} from "unist-builder";
+import * as remarkUtil from "../remarkUtils.js";
+import * as propertyRemarkUtil from "../propertyRemarkUtils.js";
 
 let inputAst;
-let expectedAst;
+let addNewTagSpy;
+let addMultiPropertyValueSpy;
+let addPropertyValueSpy;
+beforeAll(() => {
+  addNewTagSpy = vi.spyOn(remarkUtil, 'addNewTag');
+  addMultiPropertyValueSpy = vi.spyOn(propertyRemarkUtil, 'addMultiPropertyValue');
+  addPropertyValueSpy = vi.spyOn(propertyRemarkUtil, 'addPropertyValue');
+})
+
+afterAll(() => {
+  vi.clearAllMocks();
+})
 
 describe('프로퍼티 파싱 요청 시', () => {
-  it('yaml 타입 노드를 HTML 태그로 파싱한다.', () => {
+  it('트리의 첫 번째 자식이 yaml 타입이 아닐 경우 변환 로직이 호출되지 않는다.', () => {
+    inputAst = u('root', [
+      u('text', 'a'),
+    ]);
+    remarkProperties()(inputAst)
+    expect(addNewTagSpy).not.toBeCalled();
+  });
+  
+  it('트리의 첫 번째 자식이 없는 경우 변환 로직이 호출되지 않는다.', () => {
+    inputAst = u('root', []);
+    remarkProperties()(inputAst)
+    expect(addNewTagSpy).not.toBeCalled();
+  });
+  
+  it('트리의 첫 번째 자식이 yaml 타입인 경우 변환 로직이 호출된다.', () => {
     inputAst = u('root', [
       u('yaml', "a: A")
     ]);
-    expectedAst = u('root', [
-      u('html', '<div class="property-container">'),
-      u('html', '<div class="property-title" title="a">'),
-      u('text', 'a'),
-      u('html', '</div>'),
-      u('html', '<div class="property-value" title="A">'),
-      u('text', 'A'),
-      u('html', '</div>'),
-      u('html', '</div>'),
-    ])
-
     remarkProperties()(inputAst)
-    
-    expect(inputAst).toEqual(expectedAst)
+    expect(addNewTagSpy).toBeCalled();
   });
   
-  it('프로퍼티가 여러개라도 모두 파싱된다.', () => {
+  it('프로퍼티의 타입이 multitext인 경우 addMultiPropertyValue가 호출된다.', () => {
+    vi.spyOn(propertyRemarkUtil, 'getPropertyType').mockImplementation(() => {
+      return 'multitext'
+    })
     inputAst = u('root', [
-      u('yaml', "a: A\nb: B")
+      u('yaml', "a: A")
     ]);
-    expectedAst = u('root', [
-      u('html', '<div class="property-container">'),
-      u('html', '<div class="property-title" title="a">'),
-      u('text', 'a'),
-      u('html', '</div>'),
-      u('html', '<div class="property-value" title="A">'),
-      u('text', 'A'),
-      u('html', '</div>'),
-      u('html', '<div class="property-title" title="b">'),
-      u('text', 'b'),
-      u('html', '</div>'),
-      u('html', '<div class="property-value" title="B">'),
-      u('text', 'B'),
-      u('html', '</div>'),
-      u('html', '</div>'),
-    ])
-    
     remarkProperties()(inputAst)
-    
-    expect(inputAst).toEqual(expectedAst)
+    expect(addMultiPropertyValueSpy).toBeCalled();
   });
-})
+  
+  it('프로퍼티의 타입이 tags인 경우 addMultiPropertyValue가 호출된다.', () => {
+    vi.spyOn(propertyRemarkUtil, 'getPropertyType').mockImplementation(() => {
+      return 'tags'
+    })
+    inputAst = u('root', [
+      u('yaml', "a: A")
+    ]);
+    remarkProperties()(inputAst)
+    expect(addMultiPropertyValueSpy).toBeCalled();
+  });
+  
+  it('프로퍼티의 타입이 tags와 multitext가 아니면 addPropertyValue가 호출된다.', () => {
+    vi.spyOn(propertyRemarkUtil, 'getPropertyType').mockImplementation(() => {
+      return 'text'
+    })
+    inputAst = u('root', [
+      u('yaml', "a: A")
+    ]);
+    remarkProperties()(inputAst)
+    expect(addPropertyValueSpy).toBeCalled();
+  });
+});
