@@ -172,7 +172,7 @@ export class OTBSettingTab extends PluginSettingTab {
 				cb.setButtonText('Inactivate')
 				cb.setClass('inactivate-button')
 				cb.onClick(async () => {
-					await this.doInactivate()
+					await this.plugin.doInactivate()
 					await this.plugin.saveSettings();
 					this.display()
 				})
@@ -188,6 +188,7 @@ export class OTBSettingTab extends PluginSettingTab {
 		const noticeDuration = 5000;
 		await this.gitUtils.initializeGit(options, noticeDuration);
 		await this.gitUtils.addRemote(options, noticeDuration);
+		this.settings.version = this.plugin.manifest.version;
 		this.settings.isActivated = true;
 		await this.plugin.renderStatusBar();
 		new Notice('Activate Succeed.', noticeDuration)
@@ -196,15 +197,5 @@ export class OTBSettingTab extends PluginSettingTab {
 	private isValidRepositoryURL(repositoryURL: string) {
 		const child = spawnSync('git',['ls-remote', repositoryURL]);
 		return child.status == 0;
-	}
-
-	private async doInactivate() {
-		const options = {cwd: this.paths.reactPath};
-		const noticeDuration = 5000;
-		await this.gitUtils.removeRemote(options, noticeDuration);
-		await this.fileUtils.cleanSourceDest(noticeDuration);
-		this.settings.isActivated = false;
-		await this.plugin.renderStatusBar();
-		new Notice('Inactivate Succeed.', noticeDuration)
 	}
 }

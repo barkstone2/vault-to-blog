@@ -6,16 +6,18 @@ import {FileUtils} from "./src/utils/fileUtils";
 import {GitUtils} from "./src/utils/gitUtils";
 
 export interface ObsidianToBlogSettings {
- sourceDir: string;
- repositoryUrl: string;
- isActivated: boolean;
+	sourceDir: string;
+	repositoryUrl: string;
+	isActivated: boolean;
+	version: string;
 }
 
 const DEFAULT_SETTINGS: ObsidianToBlogSettings = {
- sourceDir: '',
- repositoryUrl: '',
- isActivated: false,
-}
+	sourceDir: '',
+	repositoryUrl: '',
+	isActivated: false,
+	version: '0.0.1'
+};
 
 export default class ObsidianToBlog extends Plugin {
 	settings: ObsidianToBlogSettings;
@@ -31,10 +33,29 @@ export default class ObsidianToBlog extends Plugin {
 		this.statusBar = new StatusBar(this.addStatusBarItem(), this);
 		await this.renderStatusBar()
 		this.addSettingTab(new OTBSettingTab(this.app, this, this.settings, this.paths, this.gitUtils, this.fileUtils));
+		await this.checkVersion();
 	}
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+	}
+
+	async checkVersion() {
+		if (this.settings.version !== this.manifest.version && this.settings.isActivated) {
+			new Notice('OTB plugin is inactivated due to detection of changing version. Please reactivate.')
+			await this.doInactivate();
+			await this.saveSettings();
+		}
+	}
+
+	async doInactivate() {
+		const options = {cwd: this.paths.reactPath};
+		const noticeDuration = 5000;
+		await this.gitUtils.removeRemote(options, noticeDuration);
+		await this.fileUtils.cleanSourceDest(noticeDuration);
+		this.settings.isActivated = false;
+		await this.renderStatusBar();
+		new Notice('Inactivate Succeed.', noticeDuration)
 	}
 
 	async saveSettings() {
