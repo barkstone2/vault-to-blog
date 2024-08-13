@@ -88,4 +88,29 @@ export class FileUtils {
 			})
 		});
 	}
+
+	async copyTypesJson(noticeDuration: number) {
+		const sourcePath = `${this.paths.vaultPath}/.obsidian/types.json`
+		return new Promise(resolve => {
+			let child;
+			if (process.platform === 'win32') {
+				child = spawn('xcopy', [sourcePath, this.paths.sourcePublicPath, '/e', '/i']);
+			} else {
+				child = spawn('cp', ['-r', sourcePath, this.paths.sourcePublicPath]);
+			}
+			child.on('error', (error) => {
+				const message = `Failed to start the process of copying types.json file.\n${error.message}`;
+				new Notice(message, noticeDuration)
+				console.log(message)
+			})
+			child.on('close', (code) => {
+				if (code === 0) {
+					resolve(true);
+					new Notice('Succeeded in copying types.json file.', noticeDuration)
+				} else {
+					new Notice('Failed to copy types.json file.')
+				}
+			})
+		});
+	}
 }
