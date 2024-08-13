@@ -17,3 +17,16 @@ export function loadCalloutSVGSync(filePath) {
     }
   }
 }
+
+const propertySVGPath = (type) => `public/images/properties/${type}.svg`;
+export function loadPropertySVGSync(type) {
+  try {
+    return fs.readFileSync(propertySVGPath(type), 'utf-8');
+  } catch {
+    try {
+      return fs.readFileSync(propertySVGPath('text'), 'utf-8');
+    } catch {
+      return '<div></div>'
+    }
+  }
+}
