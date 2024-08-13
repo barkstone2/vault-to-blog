@@ -3,9 +3,9 @@ import remarkProperties from "./remarkProperties.js";
 import remarkBacklink from "./remarkBacklink.js";
 import remarkImage from "./remarkImage.js";
 
-const remarkObsidian = () => {
+const remarkObsidian = (options) => {
   return (tree) => {
-    remarkProperties()(tree)
+    remarkProperties(options)(tree)
     remarkBacklink()(tree)
     remarkImage()(tree)
     remarkHighlight()(tree)

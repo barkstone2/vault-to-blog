@@ -8799,9 +8799,10 @@ iframe.external-embed {
   top: 0;
   bottom: 0;
 }
-.metadata-properties-heading:focus:before {
-  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
-}
+/* CHECK Properties 타이틀 선택 시 CSS 비활성화 */
+/*.metadata-properties-heading:focus:before {*/
+/*  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);*/
+/*}*/
 .metadata-properties-heading .collapse-indicator {
   position: absolute;
   inset-inline-start: -22px;

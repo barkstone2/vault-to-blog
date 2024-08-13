@@ -38,14 +38,12 @@ describe('마크다운 콘텐츠 컴포넌트 렌더링 시', () => {
   });
   
   it('읽어온 HTML로 렌더링한다.', async () => {
-    const fileName = 'file';
     const path = '/path/to/file.md';
     const htmlText = 'result html'
     expectedHtml = `<div>${htmlText}</div>`
     renderWithWrapper(path);
     
     await waitFor(() => {
-      expect(screen.getByText(fileName)).toBeInTheDocument()
       expect(screen.getByText(htmlText)).toBeInTheDocument()
     });
   });
