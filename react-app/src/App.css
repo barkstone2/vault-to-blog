@@ -13,3 +13,12 @@
 .d-none {
   display: none;
 }
+
+.metadata-container input, span {
+  user-select: none;
+  pointer-events: none;
+}
+
+.metadata-container * {
+  user-select: none;
+}
