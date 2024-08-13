@@ -58,6 +58,7 @@ export default class ObsidianToBlog extends Plugin {
 		const options = {cwd: this.paths.reactPath};
 		const noticeDuration = 5000
 		await this.fileUtils.syncSourceToDest(noticeDuration);
+		await this.fileUtils.copyTypesJson(noticeDuration);
 		await this.gitUtils.stageAllChanges(options, noticeDuration)
 		await this.gitUtils.commitChanges(options, noticeDuration)
 		await this.gitUtils.pushToRemote(options, noticeDuration);

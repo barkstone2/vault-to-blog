@@ -6,12 +6,14 @@ export class Paths {
 	reactPath: string;
 	gitPath: string
 	sourceDestPath: string;
+	sourcePublicPath: string;
 	constructor(app: App) {
 		this.app = app;
 		this.vaultPath = this.getVaultPath();
 		this.reactPath = `${this.vaultPath}/.obsidian/plugins/obsidian-to-blog/react-app`;
 		this.gitPath = `${this.reactPath}/.git`;
 		this.sourceDestPath = `${this.reactPath}/public/sources`;
+		this.sourcePublicPath = `${this.reactPath}/public`;
 	}
 
 	private getVaultPath() {
