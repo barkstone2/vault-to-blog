@@ -204,10 +204,10 @@ export class FileUtils {
 	}
 
 	async unzipReactApp() {
-		if (fs.existsSync(this.paths.reactZipPath())) {
-			const zip = new AdmZip(this.paths.reactZipPath());
-			zip.extractAllTo(this.paths.reactVersionPath(), true)
-			new Notice('Succeeded in unzipping react-app.', noticeDuration)
+		if (fs.existsSync(this.paths.reactZipPath)) {
+			const zip = new AdmZip(this.paths.reactZipPath);
+			zip.extractAllTo(this.paths.reactVersionPath, true)
+			new Notice('Succeeded in unzipping react-app.',)
 		} else {
 			new Notice('Something went wrong while unzipping react-app. Please try again.')
 		}
