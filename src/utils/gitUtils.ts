@@ -1,6 +1,7 @@
 import {spawn} from "child_process";
 import {Notice} from "obsidian";
 import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
+import fsUtils from "./fsUtils";
 
 export class GitUtils {
 	plugin: OTBPlugin;
@@ -127,10 +128,9 @@ export class GitUtils {
 	}
 
 	async stageReactApp(options: { cwd: string }, noticeDuration: number) {
+		const files = await fsUtils.findFiles(options.cwd, 'public/sources');
 		return new Promise((resolve, reject) => {
-			const find = spawn('find', ['.', '-path', './public/sources', '-prune', '-o', '-type', 'f', '-print'], options);
-			const child = spawn('xargs', ['git', 'add'], options);
-			find.stdout.pipe(child.stdin);
+			const child = spawn('git', ['add', ...files], options);
 
 			child.on('error', (error) => {
 				const message = `Failed to start the process of staging react-app.\n${error.message}`;
