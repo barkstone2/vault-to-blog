@@ -5,6 +5,7 @@ import {ObsidianToBlogSettings} from "../../main";
 import fs from "fs";
 import * as https from "https";
 import {Urls} from "../store/urls";
+import AdmZip from 'adm-zip';
 
 export class FileUtils {
 	paths: Paths;
@@ -117,6 +118,16 @@ export class FileUtils {
 				}
 			})
 		});
+	}
+
+	async unzipTest() {
+		if (fs.existsSync(this.paths.reactZipPath)) {
+			const zip = new AdmZip(this.paths.reactZipPath);
+			zip.extractAllTo(this.paths.reactVersionPath, true)
+			new Notice('Succeeded in unzipping react-app.')
+		} else {
+			new Notice('Something went wrong while unzipping react-app. Please try again.')
+		}
 	}
 
 	async downloadReactApp() {
