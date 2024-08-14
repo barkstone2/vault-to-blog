@@ -44,10 +44,15 @@ export default class ObsidianToBlog extends Plugin {
 	}
 
 	async checkVersion() {
-		if (this.settings.version !== this.manifest.version && this.settings.isActivated) {
-			new Notice('OTB plugin is inactivated due to detection of changing version. Please reactivate.')
-			await this.doInactivate();
-			await this.saveSettings();
+		if (this.settings.version !== this.manifest.version) {
+			if (this.settings.isActivated) {
+				new Notice('OTB plugin is inactivated due to detection of changing version. Please reactivate.', 5000)
+				await this.doInactivate();
+				await this.saveSettings();
+			} else {
+				this.settings.version = this.manifest.version;
+				await this.saveSettings();
+			}
 		}
 	}
 
