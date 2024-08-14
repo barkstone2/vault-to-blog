@@ -203,27 +203,27 @@ export class FileUtils {
 		}
 	}
 
-	async unzipReactApp() {
+	async unzipReactApp(noticeDuration: number) {
 		if (fs.existsSync(this.paths.reactZipPath())) {
 			const zip = new AdmZip(this.paths.reactZipPath());
 			zip.extractAllTo(this.paths.reactVersionPath(), true)
-			new Notice('Succeeded in unzipping react-app.',)
+			new Notice('Succeeded in unzipping react-app.', noticeDuration)
 		} else {
-			new Notice('Something went wrong while unzipping react-app. Please try again.')
+			new Notice('Something went wrong while unzipping react-app. Please try again.', noticeDuration)
 		}
 	}
 
-	async downloadReactApp() {
+	async downloadReactApp(noticeDuration: number) {
 		if (!fs.existsSync(this.paths.reactVersionPath())) {
 			fs.mkdirSync(this.paths.reactVersionPath(), {recursive: true})
 		}
 		if (!fs.existsSync(this.paths.reactZipPath())) {
-			new Notice('Started to download react-app.')
-			await this.doDownloadReactApp(this.urls.reactAppUrl());
+			new Notice('Started to download react-app.', noticeDuration)
+			await this.doDownloadReactApp(this.urls.reactAppUrl(), noticeDuration);
 		}
 	}
 
-	private async doDownloadReactApp(url: string) {
+	private async doDownloadReactApp(url: string, noticeDuration: number) {
 		return new Promise(resolve => {
 			https.get(url, async (response) => {
 				if (response.statusCode === 302 || response.statusCode === 301) {
@@ -236,12 +236,12 @@ export class FileUtils {
 					fileStream.on('finish', () => {
 						fileStream.close();
 						resolve(true)
-						new Notice(`Succeeded in downloading react-app.`)
+						new Notice(`Succeeded in downloading react-app.`, noticeDuration)
 					});
 				}
 			}).on('error', (err) => {
 				const message = `Failed to download react-app.`;
-				new Notice(message);
+				new Notice(message, noticeDuration);
 				console.error(message, err);
 			});
 		})
