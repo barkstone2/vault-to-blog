@@ -96,8 +96,10 @@ export default class ObsidianToBlog extends Plugin {
 		await this.fileUtils.copyTypesJson(noticeDuration);
 		await this.gitUtils.stageAllChanges(options, noticeDuration)
 		await this.gitUtils.commitChanges(options, noticeDuration)
-		await this.gitUtils.pushToRemote(options, noticeDuration);
-		new Notice('Blog published')
+			.then(() => {
+				this.gitUtils.pushToRemote(options, noticeDuration)
+				new Notice('Blog published')
+			});
 	}
 
 	private async loadUtils() {

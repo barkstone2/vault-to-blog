@@ -86,20 +86,22 @@ export class GitUtils {
 		});
 	}
 
-	async commitChanges(options: {cwd: string}, noticeDuration: number) {
-		return new Promise(resolve => {
-			const child = spawn('git', ['commit', '-m', 'Blog published by OTB'], options);
+	async commitChanges(options: {cwd: string}, noticeDuration: number, message = "Blog published by OTB") {
+		return new Promise((resolve, reject) => {
+			const child = spawn('git', ['commit', '-m', message], options);
 			child.on('error', (error) => {
 				const message = `Failed to start the process of committing.\n ${error.message}`;
 				new Notice(message, noticeDuration)
 				console.log(message)
+				reject(error);
 			});
 			child.on('close', (code) => {
 				if (code == 0) {
-					resolve(true);
 					new Notice('Succeeded in committing changes.', noticeDuration)
+					resolve(true);
 				} else {
 					new Notice('Failed to commit changes. There might be no changes to commit.', noticeDuration)
+					reject();
 				}
 			})
 		});
