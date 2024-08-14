@@ -125,4 +125,27 @@ export class GitUtils {
 			})
 		});
 	}
+
+	async stageReactApp(options: { cwd: string }, noticeDuration: number) {
+		return new Promise((resolve, reject) => {
+			const find = spawn('find', ['.', '-path', './public/sources', '-prune', '-o', '-type', 'f', '-print'], options);
+			const child = spawn('xargs', ['git', 'add'], options);
+			find.stdout.pipe(child.stdin);
+
+			child.on('error', (error) => {
+				const message = `Failed to start the process of staging react-app.\n${error.message}`;
+				new Notice(message, noticeDuration);
+				console.log(message)
+				reject(error)
+			})
+			child.on('close', (code) => {
+				if (code === 0) {
+					new Notice('Succeeded in staging react-app.', noticeDuration)
+				} else {
+					new Notice('Failed to stage react-app.', noticeDuration)
+				}
+				resolve(true);
+			})
+		});
+	}
 }
