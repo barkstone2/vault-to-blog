@@ -144,6 +144,37 @@ export class FileUtils {
 		});
 	}
 
+	async restoreGitDirectory(noticeDuration: number) {
+		if (fs.existsSync(this.paths.gitBackupPath)) {
+			if (fs.existsSync(this.paths.gitPath)) {
+				await this.cleanGitDirectory(noticeDuration);
+			}
+			return new Promise(resolve => {
+				let child;
+				if (process.platform === 'win32') {
+					child = spawn('xcopy', [this.paths.gitBackupPath, this.paths.gitPath, '/e', '/i']);
+				} else {
+					child = spawn('cp', ['-r', this.paths.gitBackupPath, this.paths.gitPath]);
+				}
+				child.on('error', (error) => {
+					const message = `Failed to start the process of restoring Git directory.\n${error.message}`;
+					new Notice(message, noticeDuration)
+					console.log(message)
+				})
+				child.on('close', (code) => {
+					if (code === 0) {
+						resolve(true);
+						new Notice('Succeeded in restoring Git directory.', noticeDuration)
+					} else {
+						new Notice('Failed to restore Git directory.')
+					}
+				})
+			});
+		} else {
+			return new Promise(resolve => { resolve(true) })
+		}
+	}
+
 	async unzipTest() {
 		if (fs.existsSync(this.paths.reactZipPath)) {
 			const zip = new AdmZip(this.paths.reactZipPath);
