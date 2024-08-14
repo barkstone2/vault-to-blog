@@ -96,13 +96,12 @@ export class FileUtils {
 	}
 
 	async copyTypesJson(noticeDuration: number) {
-		const sourcePath = `${this.paths.vaultPath}/.obsidian/types.json`
 		return new Promise(resolve => {
 			let child;
 			if (process.platform === 'win32') {
-				child = spawn('xcopy', [sourcePath, this.paths.sourcePublicPath, '/e', '/i']);
+				child = spawn('xcopy', [this.paths.typeJsonSourcePath, this.paths.typeJsonDestPath, '/e', '/i']);
 			} else {
-				child = spawn('cp', ['-r', sourcePath, this.paths.sourcePublicPath]);
+				child = spawn('cp', ['-r', this.paths.typeJsonSourcePath, this.paths.typeJsonDestPath]);
 			}
 			child.on('error', (error) => {
 				const message = `Failed to start the process of copying types.json file.\n${error.message}`;
