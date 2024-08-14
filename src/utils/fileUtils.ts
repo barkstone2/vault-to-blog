@@ -2,12 +2,17 @@ import {spawn} from "child_process";
 import {Notice} from "obsidian";
 import {Paths} from "../store/paths";
 import {ObsidianToBlogSettings} from "../../main";
+import fs from "fs";
+import * as https from "https";
+import {Urls} from "../store/urls";
 
 export class FileUtils {
 	paths: Paths;
+	urls: Urls;
 	settings: ObsidianToBlogSettings;
-	constructor(paths: Paths, settings: ObsidianToBlogSettings) {
+	constructor(paths: Paths, urls: Urls, settings: ObsidianToBlogSettings) {
 		this.paths = paths;
+		this.urls = urls;
 		this.settings = settings;
 	}
 
@@ -112,5 +117,39 @@ export class FileUtils {
 				}
 			})
 		});
+	}
+
+	async downloadReactApp() {
+		if (!fs.existsSync(this.paths.reactVersionPath)) {
+			fs.mkdirSync(this.paths.reactVersionPath, {recursive: true})
+		}
+		if (!fs.existsSync(this.paths.reactZipPath)) {
+			new Notice('Started to download react-app.')
+			await this.doDownloadReactApp(this.urls.reactAppUrl);
+		}
+	}
+
+	private async doDownloadReactApp(url: string) {
+		return new Promise(resolve => {
+			https.get(url, async (response) => {
+				if (response.statusCode === 302 || response.statusCode === 301) {
+					// @ts-ignore
+					await this.doDownloadReactApp(response.headers.location);
+					resolve(true)
+				} else if (response.statusCode === 200) {
+					const fileStream = fs.createWriteStream(this.paths.reactZipPath);
+					response.pipe(fileStream);
+					fileStream.on('finish', () => {
+						fileStream.close();
+						resolve(true)
+						new Notice(`Succeeded in downloading react-app.`)
+					});
+				}
+			}).on('error', (err) => {
+				const message = `Failed to download react-app.`;
+				new Notice(message);
+				console.error(message, err);
+			});
+		})
 	}
 }

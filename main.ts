@@ -95,6 +95,6 @@ export default class ObsidianToBlog extends Plugin {
 
 	private async loadUtils() {
 		this.gitUtils = new GitUtils(this, this.settings);
-		this.fileUtils = new FileUtils(this.paths, this.settings);
+		this.fileUtils = new FileUtils(this.paths, this.urls, this.settings);
 	}
 }
