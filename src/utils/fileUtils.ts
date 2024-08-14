@@ -213,6 +213,10 @@ export class FileUtils {
 		}
 	}
 
+	existReactApp() {
+		return fs.existsSync(this.paths.reactPath())
+	}
+
 	async downloadReactApp(noticeDuration: number) {
 		if (!fs.existsSync(this.paths.reactVersionPath())) {
 			fs.mkdirSync(this.paths.reactVersionPath(), {recursive: true})
