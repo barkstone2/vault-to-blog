@@ -121,24 +121,53 @@ export class FileUtils {
 	}
 
 	async backupGitDirectory(noticeDuration: number) {
+		if (fs.existsSync(this.paths.gitPath)) {
+			if (fs.existsSync(this.paths.gitBackupPath)) {
+				await this.cleanGitBackupDirectory(noticeDuration);
+			}
+			return new Promise(resolve => {
+				let child;
+				if (process.platform === 'win32') {
+					child = spawn('xcopy', [this.paths.gitPath, this.paths.gitBackupPath, '/e', '/i']);
+				} else {
+					child = spawn('cp', ['-r', this.paths.gitPath, this.paths.gitBackupPath]);
+				}
+				child.on('error', (error) => {
+					const message = `Failed to start the process of backing up Git directory.\n${error.message}`;
+					new Notice(message, noticeDuration)
+					console.log(message)
+				})
+				child.on('close', (code) => {
+					if (code === 0) {
+						resolve(true);
+						new Notice('Succeeded in backing up Git directory.', noticeDuration)
+					} else {
+						new Notice('Failed to backup Git directory.')
+					}
+				})
+			});
+		}
+	}
+
+	private async cleanGitBackupDirectory(noticeDuration: number) {
 		return new Promise(resolve => {
 			let child;
 			if (process.platform === 'win32') {
-				child = spawn('xcopy', [this.paths.gitPath, this.paths.gitBackupPath, '/e', '/i']);
+				child = spawn('rd', ['/s', '/q', this.paths.gitBackupPath]);
 			} else {
-				child = spawn('cp', ['-r', this.paths.gitPath, this.paths.gitBackupPath]);
+				child = spawn('rm', ['-rf', this.paths.gitBackupPath]);
 			}
 			child.on('error', (error) => {
-				const message = `Failed to start the process of backing up Git directory.\n${error.message}`;
+				const message = `Failed to start the process of cleaning Git backup directory.\n${error.message}`;
 				new Notice(message, noticeDuration)
 				console.log(message)
 			})
 			child.on('close', (code) => {
 				if (code === 0) {
 					resolve(true);
-					new Notice('Succeeded in backing up Git directory.', noticeDuration)
+					new Notice('Succeeded in cleaning Git backup directory.', noticeDuration)
 				} else {
-					new Notice('Failed to backup Git directory.')
+					new Notice('Failed to clean Git backup directory.', noticeDuration)
 				}
 			})
 		});
