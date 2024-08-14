@@ -120,6 +120,30 @@ export class FileUtils {
 		});
 	}
 
+	async backupGitDirectory(noticeDuration: number) {
+		return new Promise(resolve => {
+			let child;
+			if (process.platform === 'win32') {
+				child = spawn('xcopy', [this.paths.gitPath, this.paths.gitBackupPath, '/e', '/i']);
+			} else {
+				child = spawn('cp', ['-r', this.paths.gitPath, this.paths.gitBackupPath]);
+			}
+			child.on('error', (error) => {
+				const message = `Failed to start the process of backing up Git directory.\n${error.message}`;
+				new Notice(message, noticeDuration)
+				console.log(message)
+			})
+			child.on('close', (code) => {
+				if (code === 0) {
+					resolve(true);
+					new Notice('Succeeded in backing up Git directory.', noticeDuration)
+				} else {
+					new Notice('Failed to backup Git directory.')
+				}
+			})
+		});
+	}
+
 	async unzipTest() {
 		if (fs.existsSync(this.paths.reactZipPath)) {
 			const zip = new AdmZip(this.paths.reactZipPath);
