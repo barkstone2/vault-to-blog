@@ -56,6 +56,8 @@ export default class ObsidianToBlog extends Plugin {
 		const noticeDuration = 5000;
 		await this.gitUtils.removeRemote(options, noticeDuration);
 		await this.fileUtils.cleanSourceDest(noticeDuration);
+		await this.fileUtils.backupGitDirectory(noticeDuration);
+		this.settings.version = this.manifest.version;
 		this.settings.isActivated = false;
 		await this.renderStatusBar();
 		new Notice('Inactivate Succeed.', noticeDuration)
