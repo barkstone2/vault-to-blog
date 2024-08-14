@@ -66,7 +66,7 @@ export default class ObsidianToBlog extends Plugin {
 	}
 
 	async loadPaths() {
-		this.paths = new Paths(this.app);
+		this.paths = new Paths(this.app, this.manifest.version);
 	}
 
 	async loadUrls() {
