@@ -27,9 +27,9 @@ export class FileUtils {
 		return new Promise(resolve => {
 			let child;
 			if (process.platform === 'win32') {
-				child = spawn('xcopy', [sourcePath, this.paths.sourceDestPath, '/e', '/i']);
+				child = spawn('xcopy', [sourcePath, this.paths.sourceDestPath(), '/e', '/i']);
 			} else {
-				child = spawn('cp', ['-r', sourcePath, this.paths.sourceDestPath]);
+				child = spawn('cp', ['-r', sourcePath, this.paths.sourceDestPath()]);
 			}
 			child.on('error', (error) => {
 				const message = `Failed to start the process of copying source to destination.\n${error.message}`;
@@ -51,9 +51,9 @@ export class FileUtils {
 		return new Promise(resolve => {
 			let child;
 			if (process.platform === 'win32') {
-				child = spawn('rd', ['/s', '/q', this.paths.gitPath]);
+				child = spawn('rd', ['/s', '/q', this.paths.gitPath()]);
 			} else {
-				child = spawn('rm', ['-rf', this.paths.gitPath]);
+				child = spawn('rm', ['-rf', this.paths.gitPath()]);
 			}
 			child.on('error', (error) => {
 				const message = `Failed to start the process of cleaning Git directory.\n${error.message}`;
@@ -75,9 +75,9 @@ export class FileUtils {
 		return new Promise(resolve => {
 			let child;
 			if (process.platform === 'win32') {
-				child = spawn('rd', ['/s', '/q', this.paths.sourceDestPath]);
+				child = spawn('rd', ['/s', '/q', this.paths.sourceDestPath()]);
 			} else {
-				child = spawn('rm', ['-rf', this.paths.sourceDestPath]);
+				child = spawn('rm', ['-rf', this.paths.sourceDestPath()]);
 			}
 			child.on('error', (error) => {
 				const message = `Failed to start the process of cleaning source destination.\n${error.message}`;
@@ -99,9 +99,9 @@ export class FileUtils {
 		return new Promise(resolve => {
 			let child;
 			if (process.platform === 'win32') {
-				child = spawn('xcopy', [this.paths.typeJsonSourcePath, this.paths.typeJsonDestPath, '/e', '/i']);
+				child = spawn('xcopy', [this.paths.typeJsonSourcePath, this.paths.typeJsonDestPath(), '/e', '/i']);
 			} else {
-				child = spawn('cp', ['-r', this.paths.typeJsonSourcePath, this.paths.typeJsonDestPath]);
+				child = spawn('cp', ['-r', this.paths.typeJsonSourcePath, this.paths.typeJsonDestPath()]);
 			}
 			child.on('error', (error) => {
 				const message = `Failed to start the process of copying types.json file.\n${error.message}`;
@@ -120,16 +120,16 @@ export class FileUtils {
 	}
 
 	async backupGitDirectory(noticeDuration: number) {
-		if (fs.existsSync(this.paths.gitPath)) {
+		if (fs.existsSync(this.paths.gitPath())) {
 			if (fs.existsSync(this.paths.gitBackupPath)) {
 				await this.cleanGitBackupDirectory(noticeDuration);
 			}
 			return new Promise(resolve => {
 				let child;
 				if (process.platform === 'win32') {
-					child = spawn('xcopy', [this.paths.gitPath, this.paths.gitBackupPath, '/e', '/i']);
+					child = spawn('xcopy', [this.paths.gitPath(), this.paths.gitBackupPath, '/e', '/i']);
 				} else {
-					child = spawn('cp', ['-r', this.paths.gitPath, this.paths.gitBackupPath]);
+					child = spawn('cp', ['-r', this.paths.gitPath(), this.paths.gitBackupPath]);
 				}
 				child.on('error', (error) => {
 					const message = `Failed to start the process of backing up Git directory.\n${error.message}`;
@@ -174,15 +174,15 @@ export class FileUtils {
 
 	async restoreGitDirectory(noticeDuration: number) {
 		if (fs.existsSync(this.paths.gitBackupPath)) {
-			if (fs.existsSync(this.paths.gitPath)) {
+			if (fs.existsSync(this.paths.gitPath())) {
 				await this.cleanGitDirectory(noticeDuration);
 			}
 			return new Promise(resolve => {
 				let child;
 				if (process.platform === 'win32') {
-					child = spawn('xcopy', [this.paths.gitBackupPath, this.paths.gitPath, '/e', '/i']);
+					child = spawn('xcopy', [this.paths.gitBackupPath, this.paths.gitPath(), '/e', '/i']);
 				} else {
-					child = spawn('cp', ['-r', this.paths.gitBackupPath, this.paths.gitPath]);
+					child = spawn('cp', ['-r', this.paths.gitBackupPath, this.paths.gitPath()]);
 				}
 				child.on('error', (error) => {
 					const message = `Failed to start the process of restoring Git directory.\n${error.message}`;
@@ -204,9 +204,9 @@ export class FileUtils {
 	}
 
 	async unzipReactApp() {
-		if (fs.existsSync(this.paths.reactZipPath)) {
-			const zip = new AdmZip(this.paths.reactZipPath);
-			zip.extractAllTo(this.paths.reactVersionPath, true)
+		if (fs.existsSync(this.paths.reactZipPath())) {
+			const zip = new AdmZip(this.paths.reactZipPath());
+			zip.extractAllTo(this.paths.reactVersionPath(), true)
 			new Notice('Succeeded in unzipping react-app.',)
 		} else {
 			new Notice('Something went wrong while unzipping react-app. Please try again.')
@@ -214,12 +214,12 @@ export class FileUtils {
 	}
 
 	async downloadReactApp() {
-		if (!fs.existsSync(this.paths.reactVersionPath)) {
-			fs.mkdirSync(this.paths.reactVersionPath, {recursive: true})
+		if (!fs.existsSync(this.paths.reactVersionPath())) {
+			fs.mkdirSync(this.paths.reactVersionPath(), {recursive: true})
 		}
-		if (!fs.existsSync(this.paths.reactZipPath)) {
+		if (!fs.existsSync(this.paths.reactZipPath())) {
 			new Notice('Started to download react-app.')
-			await this.doDownloadReactApp(this.urls.reactAppUrl);
+			await this.doDownloadReactApp(this.urls.reactAppUrl());
 		}
 	}
 
@@ -231,7 +231,7 @@ export class FileUtils {
 					await this.doDownloadReactApp(response.headers.location);
 					resolve(true)
 				} else if (response.statusCode === 200) {
-					const fileStream = fs.createWriteStream(this.paths.reactZipPath);
+					const fileStream = fs.createWriteStream(this.paths.reactZipPath());
 					response.pipe(fileStream);
 					fileStream.on('finish', () => {
 						fileStream.close();

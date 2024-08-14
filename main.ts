@@ -52,7 +52,7 @@ export default class ObsidianToBlog extends Plugin {
 	}
 
 	async doInactivate() {
-		const options = {cwd: this.paths.reactPath};
+		const options = {cwd: this.paths.reactPath()};
 		const noticeDuration = 5000;
 		await this.gitUtils.removeRemote(options, noticeDuration);
 		await this.fileUtils.cleanSourceDest(noticeDuration);
@@ -66,11 +66,11 @@ export default class ObsidianToBlog extends Plugin {
 	}
 
 	async loadPaths() {
-		this.paths = new Paths(this.app, this.manifest.version);
+		this.paths = new Paths(this.app, this.settings);
 	}
 
 	async loadUrls() {
-		this.urls = new Urls(this.settings.repositoryUrl, this.manifest.version);
+		this.urls = new Urls(this.settings);
 	}
 
 	async renderStatusBar() {
@@ -83,7 +83,7 @@ export default class ObsidianToBlog extends Plugin {
 
 	async publishBlog() {
 		new Notice('Start publishing blog');
-		const options = {cwd: this.paths.reactPath};
+		const options = {cwd: this.paths.reactPath()};
 		const noticeDuration = 5000
 		await this.fileUtils.syncSourceToDest(noticeDuration);
 		await this.fileUtils.copyTypesJson(noticeDuration);

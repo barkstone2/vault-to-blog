@@ -184,7 +184,7 @@ export class OTBSettingTab extends PluginSettingTab {
 	}
 
 	private async doActivate() {
-		const options = {cwd: this.paths.reactPath};
+		const options = {cwd: this.paths.reactPath()};
 		const noticeDuration = 5000;
 		await this.gitUtils.initializeGit(options, noticeDuration);
 		await this.gitUtils.addRemote(options, noticeDuration);
