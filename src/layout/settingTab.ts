@@ -186,9 +186,22 @@ export class OTBSettingTab extends PluginSettingTab {
 	private async doActivate() {
 		const options = {cwd: this.paths.reactPath()};
 		const noticeDuration = 5000;
-		await this.gitUtils.initializeGit(options, noticeDuration);
-		await this.gitUtils.addRemote(options, noticeDuration);
-		this.settings.version = this.plugin.manifest.version;
+		if (!this.fileUtils.existReactApp()) {
+			await this.fileUtils.downloadReactApp(noticeDuration);
+			await this.fileUtils.unzipReactApp(noticeDuration)
+			await this.fileUtils.restoreGitDirectory(noticeDuration);
+			await this.gitUtils.initializeGit(options, noticeDuration);
+			await this.gitUtils.addRemote(options, noticeDuration);
+			await this.gitUtils.stageReactApp(options, noticeDuration);
+			await this.gitUtils.commitChanges(options, noticeDuration, `Initialize react-app version ${this.plugin.manifest.version}`)
+				.then(() => {
+					this.gitUtils.pushToRemote(options, noticeDuration);
+				}).catch(() => {});
+		} else {
+			await this.gitUtils.initializeGit(options, noticeDuration);
+			await this.gitUtils.addRemote(options, noticeDuration);
+		}
+		await this.fileUtils.backupGitDirectory(noticeDuration);
 		this.settings.isActivated = true;
 		await this.plugin.renderStatusBar();
 		new Notice('Activate Succeed.', noticeDuration)
