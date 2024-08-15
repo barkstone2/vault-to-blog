@@ -1,4 +1,3 @@
-import {spawn} from "child_process";
 import {Notice} from "obsidian";
 import {Paths} from "../store/paths";
 import {ObsidianToBlogSettings} from "../../main";
@@ -6,6 +5,7 @@ import fs from "fs";
 import * as https from "https";
 import {Urls} from "../store/urls";
 import AdmZip from 'adm-zip';
+import {copyFile, copyFiles, removeDir} from "./fsUtils";
 
 export class FileUtils {
 	paths: Paths;
@@ -24,99 +24,47 @@ export class FileUtils {
 
 	async copySourceToDest(noticeDuration: number) {
 		const sourcePath = `${this.paths.vaultPath}/${this.settings.sourceDir}`
-		return new Promise(resolve => {
-			let child;
-			if (process.platform === 'win32') {
-				child = spawn('xcopy', [sourcePath, this.paths.sourceDestPath(), '/e', '/i']);
-			} else {
-				child = spawn('cp', ['-r', sourcePath, this.paths.sourceDestPath()]);
-			}
-			child.on('error', (error) => {
-				const message = `Failed to start the process of copying source to destination.\n${error.message}`;
-				new Notice(message, noticeDuration)
-				console.log(message)
-			})
-			child.on('close', (code) => {
-				if (code === 0) {
-					resolve(true);
-					new Notice('Succeeded in copying source to destination.', noticeDuration)
-				} else {
-					new Notice('Failed to copy source to destination.')
-				}
-			})
-		});
+		try {
+			await copyFiles(sourcePath, this.paths.sourceDestPath())
+			new Notice('Succeeded in copying source to destination.', noticeDuration)
+		} catch (error) {
+			const message = `Failed to copy source to destination.\n${error.message}`;
+			new Notice(message, noticeDuration)
+			throw new Error(message);
+		}
 	}
 
 	async cleanGitDirectory(noticeDuration: number) {
-		return new Promise(resolve => {
-			let child;
-			if (process.platform === 'win32') {
-				child = spawn('rd', ['/s', '/q', this.paths.gitPath()]);
-			} else {
-				child = spawn('rm', ['-rf', this.paths.gitPath()]);
-			}
-			child.on('error', (error) => {
-				const message = `Failed to start the process of cleaning Git directory.\n${error.message}`;
-				new Notice(message, noticeDuration)
-				console.log(message)
-			})
-			child.on('close', (code) => {
-				if (code === 0) {
-					resolve(true);
-					new Notice('Succeeded in cleaning Git directory.', noticeDuration)
-				} else {
-					new Notice('Failed to clean Git directory.', noticeDuration)
-				}
-			})
-		});
+		try {
+			await removeDir(this.paths.gitPath());
+			new Notice('Succeeded in cleaning Git directory.', noticeDuration)
+		} catch (error) {
+			const message = `'Failed to clean Git directory.'\n${error.message}`;
+			new Notice(message, noticeDuration)
+			throw new Error(message);
+		}
 	}
 
 	async cleanSourceDest(noticeDuration: number) {
-		return new Promise(resolve => {
-			let child;
-			if (process.platform === 'win32') {
-				child = spawn('rd', ['/s', '/q', this.paths.sourceDestPath()]);
-			} else {
-				child = spawn('rm', ['-rf', this.paths.sourceDestPath()]);
-			}
-			child.on('error', (error) => {
-				const message = `Failed to start the process of cleaning source destination.\n${error.message}`;
-				new Notice(message, noticeDuration)
-				console.log(message)
-			})
-			child.on('close', (code) => {
-				if (code === 0) {
-					resolve(true);
-					new Notice('Succeeded in cleaning source destination.', noticeDuration)
-				} else {
-					new Notice('Failed to clean source destination.', noticeDuration)
-				}
-			})
-		});
+		try {
+			await removeDir(this.paths.sourceDestPath());
+			new Notice('Succeeded in cleaning source destination.', noticeDuration)
+		} catch (error) {
+			const message = `Failed to clean source destination.\n${error.message}`;
+			new Notice(message, noticeDuration)
+			throw new Error(message);
+		}
 	}
 
 	async copyTypesJson(noticeDuration: number) {
-		return new Promise(resolve => {
-			let child;
-			if (process.platform === 'win32') {
-				child = spawn('xcopy', [this.paths.typeJsonSourcePath, this.paths.typeJsonDestPath(), '/e', '/i']);
-			} else {
-				child = spawn('cp', ['-r', this.paths.typeJsonSourcePath, this.paths.typeJsonDestPath()]);
-			}
-			child.on('error', (error) => {
-				const message = `Failed to start the process of copying types.json file.\n${error.message}`;
-				new Notice(message, noticeDuration)
-				console.log(message)
-			})
-			child.on('close', (code) => {
-				if (code === 0) {
-					resolve(true);
-					new Notice('Succeeded in copying types.json file.', noticeDuration)
-				} else {
-					new Notice('Failed to copy types.json file.')
-				}
-			})
-		});
+		try {
+			await copyFile(this.paths.typeJsonSourcePath, this.paths.typeJsonDestPath())
+			new Notice('Succeeded in copying types.json file.', noticeDuration)
+		} catch (error) {
+			const message = `Failed to copy types.json file.\n${error.message}`;
+			new Notice(message, noticeDuration)
+			throw new Error(message);
+		}
 	}
 
 	async backupGitDirectory(noticeDuration: number) {
@@ -124,52 +72,26 @@ export class FileUtils {
 			if (fs.existsSync(this.paths.gitBackupPath)) {
 				await this.cleanGitBackupDirectory(noticeDuration);
 			}
-			return new Promise(resolve => {
-				let child;
-				if (process.platform === 'win32') {
-					child = spawn('xcopy', [this.paths.gitPath(), this.paths.gitBackupPath, '/e', '/i']);
-				} else {
-					child = spawn('cp', ['-r', this.paths.gitPath(), this.paths.gitBackupPath]);
-				}
-				child.on('error', (error) => {
-					const message = `Failed to start the process of backing up Git directory.\n${error.message}`;
-					new Notice(message, noticeDuration)
-					console.log(message)
-				})
-				child.on('close', (code) => {
-					if (code === 0) {
-						resolve(true);
-						new Notice('Succeeded in backing up Git directory.', noticeDuration)
-					} else {
-						new Notice('Failed to backup Git directory.')
-					}
-				})
-			});
+			try {
+				await copyFiles(this.paths.gitPath(), this.paths.gitBackupPath)
+				new Notice('Succeeded in backing up Git directory.', noticeDuration)
+			} catch (error) {
+				const message = `Failed to backup Git directory.\n${error.message}`;
+				new Notice(message, noticeDuration)
+				throw new Error(message);
+			}
 		}
 	}
 
 	private async cleanGitBackupDirectory(noticeDuration: number) {
-		return new Promise(resolve => {
-			let child;
-			if (process.platform === 'win32') {
-				child = spawn('rd', ['/s', '/q', this.paths.gitBackupPath]);
-			} else {
-				child = spawn('rm', ['-rf', this.paths.gitBackupPath]);
-			}
-			child.on('error', (error) => {
-				const message = `Failed to start the process of cleaning Git backup directory.\n${error.message}`;
-				new Notice(message, noticeDuration)
-				console.log(message)
-			})
-			child.on('close', (code) => {
-				if (code === 0) {
-					resolve(true);
-					new Notice('Succeeded in cleaning Git backup directory.', noticeDuration)
-				} else {
-					new Notice('Failed to clean Git backup directory.', noticeDuration)
-				}
-			})
-		});
+		try {
+			await removeDir(this.paths.gitBackupPath)
+			new Notice('Succeeded in cleaning Git backup directory.', noticeDuration)
+		} catch (error) {
+			const message = `Failed to clean Git backup directory.\n${error.message}`;
+			new Notice(message, noticeDuration)
+			throw new Error(message);
+		}
 	}
 
 	async restoreGitDirectory(noticeDuration: number) {
@@ -177,29 +99,14 @@ export class FileUtils {
 			if (fs.existsSync(this.paths.gitPath())) {
 				await this.cleanGitDirectory(noticeDuration);
 			}
-			return new Promise(resolve => {
-				let child;
-				if (process.platform === 'win32') {
-					child = spawn('xcopy', [this.paths.gitBackupPath, this.paths.gitPath(), '/e', '/i']);
-				} else {
-					child = spawn('cp', ['-r', this.paths.gitBackupPath, this.paths.gitPath()]);
-				}
-				child.on('error', (error) => {
-					const message = `Failed to start the process of restoring Git directory.\n${error.message}`;
-					new Notice(message, noticeDuration)
-					console.log(message)
-				})
-				child.on('close', (code) => {
-					if (code === 0) {
-						resolve(true);
-						new Notice('Succeeded in restoring Git directory.', noticeDuration)
-					} else {
-						new Notice('Failed to restore Git directory.')
-					}
-				})
-			});
-		} else {
-			return new Promise(resolve => { resolve(true) })
+			try {
+				await copyFiles(this.paths.gitBackupPath, this.paths.gitPath())
+				new Notice('Succeeded in restoring Git directory.', noticeDuration)
+			} catch (error) {
+				const message = `Failed to restore Git directory.\n${error.message}`;
+				new Notice(message, noticeDuration)
+				throw new Error(message);
+			}
 		}
 	}
 
