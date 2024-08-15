@@ -1,7 +1,6 @@
 import {App, normalizePath, Notice, PluginSettingTab, Setting, TFolder} from "obsidian";
 import Awesomplete from "awesomplete";
 import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
-import {spawn, spawnSync} from "child_process";
 import {Paths} from "../store/paths";
 import {GitUtils} from "../utils/gitUtils";
 import {FileUtils} from "../utils/fileUtils";
@@ -100,7 +99,6 @@ export class OTBSettingTab extends PluginSettingTab {
 	}
 
 	private isValidSourceDir(sourceDir: string) {
-		new Notice(sourceDir)
 		const directories = this.app.vault.getAllFolders(true)
 			.map((it: TFolder) => normalizePath(it.path));
 		return directories.includes(sourceDir);
@@ -131,21 +129,15 @@ export class OTBSettingTab extends PluginSettingTab {
 			.addButton((cb) => {
 				cb.setButtonText("Save")
 				cb.onClick(async () => {
-					const child = spawn('git',['ls-remote', inputEl.value]);
-					child.on('error', (error) => {
-						new Notice('Failed to start remote validation. Check your network.')
-					})
-					child.on('close', async (code) => {
-						if (code === 0) {
-							this.settings.repositoryUrl = inputEl.value;
-							await this.plugin.saveSettings();
-							new Notice('Settings saved.');
-							this.display()
-						} else {
-							new Notice(`Invalid repository URL.`)
-							inputEl.value = this.settings.repositoryUrl;
-						}
-					})
+					if (await this.gitUtils.isRemoteValid(inputEl.value)) {
+						this.settings.repositoryUrl = inputEl.value;
+						await this.plugin.saveSettings();
+						new Notice('Settings saved.');
+						this.display()
+					} else {
+						new Notice(`Invalid repository URL.`)
+						inputEl.value = this.settings.repositoryUrl;
+					}
 				})
 			});
 		this.addDefaultSettingClass(setting)
@@ -159,7 +151,7 @@ export class OTBSettingTab extends PluginSettingTab {
 				cb.setClass('activate-button')
 				cb.setCta()
 				cb.onClick(async () => {
-					if (this.isValidSourceDir(this.settings.sourceDir) && this.isValidRepositoryURL(this.settings.repositoryUrl)) {
+					if (this.isValidSourceDir(this.settings.sourceDir) && await this.gitUtils.isRemoteValid(this.settings.repositoryUrl)) {
 						await this.doActivate()
 						await this.plugin.saveSettings();
 						this.display()
@@ -194,9 +186,7 @@ export class OTBSettingTab extends PluginSettingTab {
 			await this.gitUtils.addRemote(options, noticeDuration);
 			await this.gitUtils.stageReactApp(options, noticeDuration);
 			await this.gitUtils.commitChanges(options, noticeDuration, `Initialize react-app version ${this.plugin.manifest.version}`)
-				.then(() => {
-					this.gitUtils.pushToRemote(options, noticeDuration);
-				}).catch(() => {});
+			await this.gitUtils.pushToRemote(options, noticeDuration);
 		} else {
 			await this.gitUtils.initializeGit(options, noticeDuration);
 			await this.gitUtils.addRemote(options, noticeDuration);
@@ -205,10 +195,5 @@ export class OTBSettingTab extends PluginSettingTab {
 		this.settings.isActivated = true;
 		await this.plugin.renderStatusBar();
 		new Notice('Activate Succeed.', noticeDuration)
-	}
-
-	private isValidRepositoryURL(repositoryURL: string) {
-		const child = spawnSync('git',['ls-remote', repositoryURL]);
-		return child.status == 0;
 	}
 }
