@@ -1,7 +1,7 @@
 import {spawn} from "child_process";
 import {Notice} from "obsidian";
 import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
-import fsUtils from "./fsUtils";
+import {findFiles} from "./fsUtils";
 
 export class GitUtils {
 	plugin: OTBPlugin;
@@ -128,7 +128,7 @@ export class GitUtils {
 	}
 
 	async stageReactApp(options: { cwd: string }, noticeDuration: number) {
-		const files = await fsUtils.findFiles(options.cwd, 'public/sources');
+		const files = await findFiles(options.cwd, 'public/sources');
 		return new Promise((resolve, reject) => {
 			const child = spawn('git', ['add', ...files], options);
 
