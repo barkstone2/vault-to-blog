@@ -96,4 +96,13 @@ export class GitUtils {
 			console.error(message)
 		}
 	}
+
+	async isRemoteValid(remoteURL:string) {
+		try {
+			await git.listRemote({[remoteURL]: null})
+			return true;
+		} catch {
+			return false;
+		}
+	}
 }
