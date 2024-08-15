@@ -1,4 +1,5 @@
-import {promises as fsPromises} from "fs";
+import fs, {promises as fsPromises} from "fs";
+import { Readable } from 'stream';
 import path from "path";
 
 export async function findFiles(dir: string, excludeDir: string): Promise<string[]> {
@@ -53,4 +54,25 @@ export async function copyFiles(src: string, dest: string) {
             await fsPromises.copyFile(srcPath, destPath);
         }
     }
+}
+
+export async function writeStreamAsync(sourceStream: Readable, filePath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const fileStream = fs.createWriteStream(filePath);
+        sourceStream.pipe(fileStream)
+
+        fileStream.on('finish', () => {
+            fileStream.close();
+            resolve();
+        });
+
+        fileStream.on('error', (err: Error) => {
+            reject(err);
+        });
+
+        sourceStream.on('error', (err: Error) => {
+            fileStream.close();
+            reject(err);
+        });
+    })
 }
