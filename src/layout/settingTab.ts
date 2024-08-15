@@ -1,4 +1,4 @@
-import {App, normalizePath, Notice, PluginSettingTab, Setting, TFolder} from "obsidian";
+import {App, normalizePath, Notice, PluginSettingTab, SearchComponent, Setting, TFolder} from "obsidian";
 import Awesomplete from "awesomplete";
 import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
 import {Paths} from "../store/paths";
@@ -38,8 +38,6 @@ export class OTBSettingTab extends PluginSettingTab {
 
 	private createSourceDirSetting(containerEl: HTMLElement) {
 		let inputEl: HTMLInputElement;
-		const directories = this.app.vault.getAllFolders(true)
-			.map((it: TFolder) => normalizePath(it.path));
 		const desc = new DocumentFragment();
 		desc.createDiv({text: 'Select a directory to publish to GitHub Pages.'});
 		desc.createDiv({text: 'This must be selected before activating.', cls: 'warning'});
@@ -49,53 +47,51 @@ export class OTBSettingTab extends PluginSettingTab {
 			.setTooltip('Select a directory that contains markdown files, images or other files for publishing to GitHub Pages.')
 			.addSearch((cb) => {
 				inputEl = cb.inputEl;
-				const awesomplete = new Awesomplete(cb.inputEl, {
-					list: directories,
-					minChars: 0,
-					maxItems: Number.MAX_VALUE,
-					autoFirst: true,
-				});
-
-				setTimeout(() => {
-					const dropdown = awesomplete.ul;
-					if (dropdown) {
-						dropdown.removeAttribute('aria-label');
-					}
-				}, 0);
-
-				cb.inputEl.addEventListener('click', () => {
-					awesomplete.evaluate();
-				});
-
-				cb.inputEl.addEventListener('focus', () => {
-					awesomplete.evaluate();
-				});
-
-				cb.clearButtonEl.addEventListener('click', () => {
-					awesomplete.close();
-				});
-
-				cb
-					.setPlaceholder('Enter a directory path')
-					.setValue(this.settings.sourceDir)
+				this.renderAwesomplete(cb);
+				cb.setPlaceholder('Enter a directory path');
+				cb.setValue(this.settings.sourceDir);
 			})
 			.addButton((cb) => {
 				cb.setButtonText("Save")
-				cb.onClick(async () => {
-					if (!this.isValidSourceDir(inputEl?.value)) {
-						new Notice('Invalid directory path.', 3000)
-						inputEl.value = this.settings.sourceDir;
-						return;
-					}
-
-					this.settings.sourceDir = inputEl?.value;
-					await this.plugin.saveSettings();
-					this.display()
-					new Notice('Setting saved.');
-				})
+				cb.onClick(() => this.saveSourceDirSetting(inputEl));
 			});
 		this.addDefaultSettingClass(setting)
 		containerEl.createDiv({cls: 'current-value', text: 'Source Dir : ' + this.settings.sourceDir});
+	}
+
+	private renderAwesomplete(cb: SearchComponent) {
+		const directories = this.app.vault.getAllFolders(true)
+			.map((it: TFolder) => normalizePath(it.path));
+		const awesomplete = new Awesomplete(cb.inputEl, {
+			list: directories,
+			minChars: 0,
+			maxItems: Number.MAX_VALUE,
+			autoFirst: true,
+		});
+
+		setTimeout(() => {
+			const dropdown = awesomplete.ul;
+			if (dropdown) {
+				dropdown.removeAttribute('aria-label');
+			}
+		}, 0);
+
+		cb.inputEl.addEventListener('click', () => awesomplete.evaluate());
+		cb.inputEl.addEventListener('focus', () => awesomplete.evaluate());
+		cb.clearButtonEl.addEventListener('click', () => awesomplete.close());
+	}
+
+	private async saveSourceDirSetting(inputEl: HTMLInputElement) {
+		if (!this.isValidSourceDir(inputEl?.value)) {
+			new Notice('Invalid directory path.', 3000)
+			inputEl.value = this.settings.sourceDir;
+			return;
+		}
+
+		this.settings.sourceDir = inputEl?.value;
+		await this.plugin.saveSettings();
+		this.display()
+		new Notice('Setting saved.');
 	}
 
 	private isValidSourceDir(sourceDir: string) {
@@ -128,20 +124,22 @@ export class OTBSettingTab extends PluginSettingTab {
 			})
 			.addButton((cb) => {
 				cb.setButtonText("Save")
-				cb.onClick(async () => {
-					if (await this.gitUtils.isRemoteValid(inputEl.value)) {
-						this.settings.repositoryUrl = inputEl.value;
-						await this.plugin.saveSettings();
-						new Notice('Settings saved.');
-						this.display()
-					} else {
-						new Notice(`Invalid repository URL.`)
-						inputEl.value = this.settings.repositoryUrl;
-					}
-				})
+				cb.onClick(() => this.saveRepositoryUrlSetting(inputEl))
 			});
 		this.addDefaultSettingClass(setting)
 		containerEl.createDiv({cls: 'current-value', text: 'Repository URL : ' + this.settings.repositoryUrl});
+	}
+
+	private async saveRepositoryUrlSetting(inputEl: HTMLInputElement) {
+		if (await this.gitUtils.isRemoteValid(inputEl.value)) {
+			this.settings.repositoryUrl = inputEl.value;
+			await this.plugin.saveSettings();
+			new Notice('Settings saved.');
+			this.display()
+		} else {
+			new Notice(`Invalid repository URL.`)
+			inputEl.value = this.settings.repositoryUrl;
+		}
 	}
 
 	private createButton(containerEl: HTMLDivElement) {
@@ -150,29 +148,33 @@ export class OTBSettingTab extends PluginSettingTab {
 				cb.setButtonText('Activate')
 				cb.setClass('activate-button')
 				cb.setCta()
-				cb.onClick(async () => {
-					if (this.isValidSourceDir(this.settings.sourceDir) && await this.gitUtils.isRemoteValid(this.settings.repositoryUrl)) {
-						await this.doActivate()
-						await this.plugin.saveSettings();
-						this.display()
-					} else {
-						new Notice('Invalid directory path or invalid repository URL.')
-					}
-				})
+				cb.onClick(() => this.activate())
 			})
 			.addButton((cb) => {
 				cb.setButtonText('Inactivate')
 				cb.setClass('inactivate-button')
-				cb.onClick(async () => {
-					await this.plugin.doInactivate()
-					await this.plugin.saveSettings();
-					this.display()
-				})
+				cb.onClick(() => this.inactivate())
 			})
 		const settingEl = setting.settingEl;
 		settingEl.addClass('button-row')
 		settingEl.addClass(this.settings.isActivated ? 'active' : 'inactive')
 		return setting;
+	}
+
+	private async activate() {
+		if (this.isValidSourceDir(this.settings.sourceDir) && await this.gitUtils.isRemoteValid(this.settings.repositoryUrl)) {
+			await this.doActivate()
+			await this.plugin.saveSettings();
+			this.display()
+		} else {
+			new Notice('Invalid directory path or invalid repository URL.')
+		}
+	}
+
+	private async inactivate() {
+		await this.plugin.doInactivate()
+		await this.plugin.saveSettings();
+		this.display()
 	}
 
 	private async doActivate() {
