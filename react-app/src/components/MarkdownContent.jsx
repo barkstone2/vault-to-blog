@@ -3,8 +3,9 @@ import useBacklinkNavigation from "../utils/hooks/useBacklinkNavigation.js";
 import {useEffect, useState} from "react";
 import '../styles/content.css'
 import {Helmet} from "react-helmet-async";
+import {func} from "prop-types";
 
-function MarkdownContent() {
+function MarkdownContent({onLoadComplete}) {
   const {'*': filePath} = useParams();
   const [innerHtml, setInnerHtml] = useState({});
   useEffect(() => {
@@ -18,6 +19,9 @@ function MarkdownContent() {
         content: content
       };
       setInnerHtml(newInnerHtml)
+      if (onLoadComplete) {
+        onLoadComplete();
+      }
     };
     fetchHtml()
   }, [filePath]);
@@ -55,6 +59,10 @@ function MarkdownContent() {
       </div>
     </div>
   );
+}
+
+MarkdownContent.propTypes = {
+  onLoadComplete: func.isRequired,
 }
 
 export default MarkdownContent;
