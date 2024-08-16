@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-to-blog",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"description": "An Obsidian plugin to publish an Obsidian vault or directory to a GitHub Pages blog.",
 	"main": "main.js",
 	"scripts": {
