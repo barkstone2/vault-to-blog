@@ -24,7 +24,7 @@ export async function findFiles(dir: string, excludeDir: string): Promise<string
 
         if (stat.isDirectory()) {
             if (fullPath.includes(excludeDir)) continue;
-            const subResults = await this.findFiles(fullPath, excludeDir);
+            const subResults = await findFiles(fullPath, excludeDir);
             results = results.concat(subResults);
         } else {
             results.push(fullPath);
