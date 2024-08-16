@@ -1,12 +1,12 @@
 {
 	"name": "obsidian-to-blog",
-	"version": "0.0.1",
-	"description": "Build and deploy obsidian vault to github page blog.",
+	"version": "0.0.0",
+	"description": "An Obsidian plugin to publish an Obsidian vault or directory to a GitHub Pages blog.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"version": "node version-bump.mjs && git add manifest.json versions.json"
+		"version": "node version-bump.mjs && git add manifest.json versions.json ./react-app/package.json ./react-app/package-lock.json"
 	},
 	"keywords": [
 		"obsidian",
