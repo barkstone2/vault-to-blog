@@ -14,7 +14,7 @@
   display: none;
 }
 
-.metadata-container input, span {
+.metadata-container input, .metadata-container span {
   user-select: none;
   pointer-events: none;
 }
