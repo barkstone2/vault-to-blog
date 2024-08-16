@@ -1,10 +1,13 @@
 {
 	"id": "obsidian-to-blog",
 	"name": "Obsidian to blog",
-	"version": "0.0.1",
+	"version": "0.0.0",
 	"minAppVersion": "1.5.8",
-	"description": "Publish vault to github page blog.",
+	"description": "Publish the vault to a GitHub Pages blog.",
 	"author": "barkstone2",
 	"authorUrl": "https://barkstone2.github.io",
+	"fundingUrl": {
+		"Buy Me a Coffee": "https://buymeacoffee.com/barkstone2"
+	},
 	"isDesktopOnly": true
 }
