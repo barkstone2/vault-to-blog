@@ -52,12 +52,14 @@ function addPropertiesContainer(newNodes, tree) {
 }
 
 function addPropertiesHeading(newNodes) {
-  const collapseIconTag =
-    '<div class="collapse-indicator collapse-icon">' +
-    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle">' +
-    '<path d="M3 8L12 17L21 8"></path>' +
-    '</svg>' +
-    '</div>';
+  // TODO 프로퍼티 헤더 토글 기능 추가 후 주석 해제
+  // const collapseIconTag =
+  //   '<div class="collapse-indicator collapse-icon">' +
+  //   '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle">' +
+  //   '<path d="M3 8L12 17L21 8"></path>' +
+  //   '</svg>' +
+  //   '</div>';
+  const collapseIconTag = '';
   const propertiesTitleTag = '<div class="metadata-properties-title">Properties</div>';
   const propertiesHeading = '<div class="metadata-properties-heading" tabindex="-1">' + collapseIconTag + propertiesTitleTag + '</div>'
   newNodes.push({
