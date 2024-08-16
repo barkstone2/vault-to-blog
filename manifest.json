@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-to-blog",
 	"name": "Obsidian to blog",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"minAppVersion": "1.5.8",
 	"description": "Publish the vault to a GitHub Pages blog.",
 	"author": "barkstone2",
