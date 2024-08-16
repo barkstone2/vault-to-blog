@@ -1,0 +1,58 @@
+name: Bug Report
+description: File a bug report.
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Describe the bug
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant errors (if available) from notifications or console (`CTRL+SHIFT+I`)
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+  - type: textarea
+    id: context
+    attributes:
+      label: Addition context
+      description: Add any other context about the problem here.
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      description: Which OS are you using?
+      options:
+        - Windows
+        - Linux
+        - macOS
+    validations:
+      required: true
+  - type: input
+    id: obsidian-version
+    attributes:
+      label: Obsidian Version
+      description: What version of Obsidian are you running?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Plugin version
+    validations:
+      required: true
