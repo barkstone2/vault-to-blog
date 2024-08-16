@@ -1,15 +1,8 @@
 # Obsidian To Blog
-
----
-
 A Community Plugin for [Obsidian.md](https://obsidian.md/) to publish your vault or directory to GitHub Pages Blog.   
-
 > This plugin is currently in beta, so it only offers a limited set of features at the moment.
 
 ## Prerequisites
-
----
-
 - Create a GitHub Repository   
   - You need to first create a GitHub repository that will be used for GitHub Pages.
 - Set GitHub Pages to Use GitHub Actions   
@@ -23,9 +16,6 @@ A Community Plugin for [Obsidian.md](https://obsidian.md/) to publish your vault
   - Please use the default GitHub Pages URL provided by GitHub.
 
 ## Usage
-
----
-
 1. Enable plugin in the settings menu.
 2. Select the directory you want to publish as a blog from the list, then click the Save button.
    - Only the contents of the selected folder will be published; the folder itself will not be displayed on the blog.
@@ -34,8 +24,6 @@ A Community Plugin for [Obsidian.md](https://obsidian.md/) to publish your vault
 5. Once the plugin is activated, click the icon in the status bar. Your directory will now be published as a blog!
 
 ## Features
-
----
 - Obsidian-style Layout
   - Left Sidebar
     - Files explorer only
@@ -61,17 +49,11 @@ A Community Plugin for [Obsidian.md](https://obsidian.md/) to publish your vault
     - Math blocks are supported
     - Inline math expressions are supported
 ## Bug Report
-
----
-
 To report a bug, simply go to the [Issues](https://github.com/barkstone2/obsidian-to-blog/issues) tab and use the provided template to submit your bug report.
 
 ## Support
-
----
-
 If you like this plugin and would like to support its development, you can support me on Buy me a coffee.
 
-<a href="https://www.buymeacoffee.com/barkstone2" target="_blank">
-    <img src="https://downloads.intercomcdn.com/i/o/234105/0d29fbdf17e257cdfc2ba1ba/7103925065c5e9bd6ac7ac9efd453fd7.png" alt="buy-me-a-coffee" style="background-color: yellow; border-radius: 4px; padding: 4px; width: 120px;">
+<a href="https://www.buymeacoffee.com/barkstone2" rel="nofollow">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="width: 120px; max-width: 100%;">
 </a>
