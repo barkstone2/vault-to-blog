@@ -1,18 +1,18 @@
 import {App, normalizePath, Notice, PluginSettingTab, SearchComponent, Setting, TFolder} from "obsidian";
 import Awesomplete from "awesomplete";
-import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
+import VTBPlugin, {VaultToBlogSettings} from "../../main";
 import {Paths} from "../store/paths";
 import {GitUtils} from "../utils/gitUtils";
 import {FileUtils} from "../utils/fileUtils";
 
-export class OTBSettingTab extends PluginSettingTab {
-	plugin: OTBPlugin;
+export class VTBSettingTab extends PluginSettingTab {
+	plugin: VTBPlugin;
 	paths: Paths;
-	settings: ObsidianToBlogSettings;
+	settings: VaultToBlogSettings;
 	gitUtils: GitUtils;
 	fileUtils: FileUtils;
 
-	constructor(app: App, plugin: OTBPlugin, settings: ObsidianToBlogSettings, paths: Paths, gitUtils: GitUtils, fileUtils: FileUtils) {
+	constructor(app: App, plugin: VTBPlugin, settings: VaultToBlogSettings, paths: Paths, gitUtils: GitUtils, fileUtils: FileUtils) {
 		super(app, plugin);
 		this.plugin = plugin;
 		this.settings = settings;

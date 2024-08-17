@@ -1,9 +1,9 @@
-import {ObsidianToBlogSettings} from "../../main";
+import {VaultToBlogSettings} from "../../main";
 
 export class Urls {
-    otbRepositoryURL = 'https://github.com/barkstone2/obsidian-to-blog'
+    vtbRepositoryURL = 'https://github.com/barkstone2/vault-to-blog'
     reactAppUrl;
-    constructor(settings: ObsidianToBlogSettings) {
-        this.reactAppUrl = () => `${this.otbRepositoryURL}/releases/download/${settings.version}/react-app.zip`;
+    constructor(settings: VaultToBlogSettings) {
+        this.reactAppUrl = () => `${this.vtbRepositoryURL}/releases/download/${settings.version}/react-app.zip`;
     }
 }

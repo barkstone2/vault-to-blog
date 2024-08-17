@@ -1,4 +1,4 @@
-# Obsidian To Blog
+# Vault To Blog
 A Community Plugin for [Obsidian.md](https://obsidian.md/) to publish your vault or directory to GitHub Pages Blog.   
 > This plugin is currently in beta, so it only offers a limited set of features at the moment.
 
@@ -49,7 +49,7 @@ A Community Plugin for [Obsidian.md](https://obsidian.md/) to publish your vault
     - Math blocks are supported
     - Inline math expressions are supported
 ## Bug Report
-To report a bug, simply go to the [Issues](https://github.com/barkstone2/obsidian-to-blog/issues) tab and use the provided template to submit your bug report.
+To report a bug, simply go to the [Issues](https://github.com/barkstone2/vault-to-blog/issues) tab and use the provided template to submit your bug report.
 
 ## Support
 If you like this plugin and would like to support its development, you can support me on Buy me a coffee.

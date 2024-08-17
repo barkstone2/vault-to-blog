@@ -1,27 +1,27 @@
 import {Notice, Plugin} from 'obsidian';
 import {Paths} from "./src/store/paths";
 import {StatusBar} from "./src/layout/statusBar";
-import {OTBSettingTab} from './src/layout/settingTab';
+import {VTBSettingTab} from './src/layout/settingTab';
 import {FileUtils} from "./src/utils/fileUtils";
 import {GitUtils} from "./src/utils/gitUtils";
 import {Urls} from "./src/store/urls";
 
-export interface ObsidianToBlogSettings {
+export interface VaultToBlogSettings {
 	sourceDir: string;
 	repositoryUrl: string;
 	isActivated: boolean;
 	version: string;
 }
 
-const DEFAULT_SETTINGS: ObsidianToBlogSettings = {
+const DEFAULT_SETTINGS: VaultToBlogSettings = {
 	sourceDir: '',
 	repositoryUrl: '',
 	isActivated: false,
 	version: '0.0.1'
 };
 
-export default class ObsidianToBlog extends Plugin {
-	settings: ObsidianToBlogSettings;
+export default class VaultToBlog extends Plugin {
+	settings: VaultToBlogSettings;
 	statusBar: StatusBar;
 	paths: Paths;
 	urls: Urls;
@@ -35,7 +35,7 @@ export default class ObsidianToBlog extends Plugin {
 		await this.loadUtils();
 		this.statusBar = new StatusBar(this.addStatusBarItem(), this);
 		await this.renderStatusBar()
-		this.addSettingTab(new OTBSettingTab(this.app, this, this.settings, this.paths, this.gitUtils, this.fileUtils));
+		this.addSettingTab(new VTBSettingTab(this.app, this, this.settings, this.paths, this.gitUtils, this.fileUtils));
 		await this.checkVersion();
 	}
 
@@ -46,7 +46,7 @@ export default class ObsidianToBlog extends Plugin {
 	async checkVersion() {
 		if (this.settings.version !== this.manifest.version) {
 			if (this.settings.isActivated) {
-				new Notice('OTB plugin is inactivated due to detection of changing version. Please reactivate.', 5000)
+				new Notice('VTB plugin is inactivated due to detection of changing version. Please reactivate.', 5000)
 				await this.doInactivate();
 				await this.saveSettings();
 			} else {
