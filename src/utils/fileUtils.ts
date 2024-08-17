@@ -1,6 +1,6 @@
 import {Notice} from "obsidian";
 import {Paths} from "../store/paths";
-import {ObsidianToBlogSettings} from "../../main";
+import {VaultToBlogSettings} from "../../main";
 import fs from "fs";
 import {Urls} from "../store/urls";
 import AdmZip from 'adm-zip';
@@ -10,8 +10,8 @@ import {httpGetAsync} from "./httpUtils";
 export class FileUtils {
 	paths: Paths;
 	urls: Urls;
-	settings: ObsidianToBlogSettings;
-	constructor(paths: Paths, urls: Urls, settings: ObsidianToBlogSettings) {
+	settings: VaultToBlogSettings;
+	constructor(paths: Paths, urls: Urls, settings: VaultToBlogSettings) {
 		this.paths = paths;
 		this.urls = urls;
 		this.settings = settings;

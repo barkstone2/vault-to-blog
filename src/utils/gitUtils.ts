@@ -1,13 +1,13 @@
 import {Notice} from "obsidian";
-import OTBPlugin, {ObsidianToBlogSettings} from "../../main";
+import VTBPlugin, {VaultToBlogSettings} from "../../main";
 import {findFiles} from "./fsUtils";
 import simpleGit from 'simple-git';
 
 const git = simpleGit();
 export class GitUtils {
-	plugin: OTBPlugin;
-	settings: ObsidianToBlogSettings;
-	constructor(plugin: OTBPlugin, settings: ObsidianToBlogSettings) {
+	plugin: VTBPlugin;
+	settings: VaultToBlogSettings;
+	constructor(plugin: VTBPlugin, settings: VaultToBlogSettings) {
 		this.plugin = plugin;
 		this.settings = settings;
 	}
@@ -60,7 +60,7 @@ export class GitUtils {
 		}
 	}
 
-	async commitChanges(options: {cwd: string}, noticeDuration: number, message = "Blog published by OTB") {
+	async commitChanges(options: {cwd: string}, noticeDuration: number, message = "Blog published by VTB") {
 		try {
 			await git.cwd(options.cwd);
 			await git.commit(message);

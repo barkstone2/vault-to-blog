@@ -1,5 +1,5 @@
 import {App, FileSystemAdapter} from "obsidian";
-import {ObsidianToBlogSettings} from "../../main";
+import {VaultToBlogSettings} from "../../main";
 
 export class Paths {
 	app: App;
@@ -16,11 +16,11 @@ export class Paths {
 	sourcePublicPath;
 	typeJsonDestPath;
 
-	constructor(app: App, settings: ObsidianToBlogSettings) {
+	constructor(app: App, settings: VaultToBlogSettings) {
 		this.app = app;
 		this.configDir = () => app.vault.configDir
 		this.vaultPath = () => this.getVaultPath();
-		this.pluginPath = () => `${this.vaultPath()}/${this.configDir()}/plugins/obsidian-to-blog`;
+		this.pluginPath = () => `${this.vaultPath()}/${this.configDir()}/plugins/vault-to-blog`;
 		this.gitBackupPath = () => `${this.pluginPath()}/.git-backup`
 		this.typeJsonSourcePath = () => `${this.vaultPath()}/${this.configDir()}/types.json`;
 
