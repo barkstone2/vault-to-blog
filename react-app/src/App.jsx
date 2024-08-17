@@ -9,7 +9,7 @@ import LoadingScreen from "./components/LoadingScreen.jsx";
 function App() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const location = useLocation(); // useLocation 훅 사용
+  const location = useLocation();
   useEffect(() => {
     async function initialize() {
       await initMarkdownFileMap();
@@ -20,8 +20,8 @@ function App() {
   }, []);
   
   useEffect(() => {
-    setIsLoading(true);
-  }, [location]);
+      setIsLoading(true);
+  }, [location.pathname]);
   
   const handleLoadComplete = () => setIsLoading(false);
   
