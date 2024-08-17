@@ -23,7 +23,7 @@ export class FileUtils {
 	}
 
 	async copySourceToDest(noticeDuration: number) {
-		const sourcePath = `${this.paths.vaultPath}/${this.settings.sourceDir}`
+		const sourcePath = `${this.paths.vaultPath()}/${this.settings.sourceDir}`
 		try {
 			await copyFiles(sourcePath, this.paths.sourceDestPath())
 			new Notice('Succeeded in copying source to destination.', noticeDuration)
@@ -58,7 +58,7 @@ export class FileUtils {
 
 	async copyTypesJson(noticeDuration: number) {
 		try {
-			await copyFile(this.paths.typeJsonSourcePath, this.paths.typeJsonDestPath())
+			await copyFile(this.paths.typeJsonSourcePath(), this.paths.typeJsonDestPath())
 			new Notice('Succeeded in copying types.json file.', noticeDuration)
 		} catch (error) {
 			const message = `Failed to copy types.json file.\n${error.message}`;
@@ -69,11 +69,11 @@ export class FileUtils {
 
 	async backupGitDirectory(noticeDuration: number) {
 		if (fs.existsSync(this.paths.gitPath())) {
-			if (fs.existsSync(this.paths.gitBackupPath)) {
+			if (fs.existsSync(this.paths.gitBackupPath())) {
 				await this.cleanGitBackupDirectory(noticeDuration);
 			}
 			try {
-				await copyFiles(this.paths.gitPath(), this.paths.gitBackupPath)
+				await copyFiles(this.paths.gitPath(), this.paths.gitBackupPath())
 				new Notice('Succeeded in backing up Git directory.', noticeDuration)
 			} catch (error) {
 				const message = `Failed to backup Git directory.\n${error.message}`;
@@ -85,7 +85,7 @@ export class FileUtils {
 
 	private async cleanGitBackupDirectory(noticeDuration: number) {
 		try {
-			await removeDir(this.paths.gitBackupPath)
+			await removeDir(this.paths.gitBackupPath())
 			new Notice('Succeeded in cleaning Git backup directory.', noticeDuration)
 		} catch (error) {
 			const message = `Failed to clean Git backup directory.\n${error.message}`;
@@ -95,12 +95,12 @@ export class FileUtils {
 	}
 
 	async restoreGitDirectory(noticeDuration: number) {
-		if (fs.existsSync(this.paths.gitBackupPath)) {
+		if (fs.existsSync(this.paths.gitBackupPath())) {
 			if (fs.existsSync(this.paths.gitPath())) {
 				await this.cleanGitDirectory(noticeDuration);
 			}
 			try {
-				await copyFiles(this.paths.gitBackupPath, this.paths.gitPath())
+				await copyFiles(this.paths.gitBackupPath(), this.paths.gitPath())
 				new Notice('Succeeded in restoring Git directory.', noticeDuration)
 			} catch (error) {
 				const message = `Failed to restore Git directory.\n${error.message}`;
