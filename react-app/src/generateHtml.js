@@ -14,6 +14,7 @@ import remarkParseFrontmatter from "remark-parse-frontmatter";
 import remarkObsidian from "./utils/parser/remarkObsidian.js";
 import rehypeCallout from "./utils/parser/rehypeCallout.js";
 import rehypePrism from "rehype-prism";
+import './utils/prismjsLanguages'
 
 const sourceDir = 'public/sources';
 async function processMarkdown(file) {
