@@ -1,47 +1,46 @@
-/* 상태바 항목 */
-.grayscale {
+/* Status bar */
+.vtb-grayscale {
 	filter: grayscale(100%);
 }
 
-.status-bar-icon {
+.vtb-status-bar-icon {
 	width: 20px;
 	height: 20px;
 }
 
-/* 설정탭 컨테이너 */
-.setting-container {
+/* Setting container */
+.vtb-setting-container {
 	display: grid;
 	grid-template-rows: 1fr auto;
 }
-
-.setting {
+.vtb-setting {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 }
 
-.control {
+.vtb-control {
 	display: grid;
 	grid-template-columns: 1fr auto;
 }
 
-.name, .desc {
+.vtb-name, .vtb-desc {
 	width: fit-content;
 }
 
-/* 설정탭 텍스트, 콘텐츠 */
-.current-value {
+/* Setting tab text, contents */
+.vtb-current-value {
 	color: var(--text-muted);
 	font-size: 0.8rem;
 	padding-left: 1rem;
 	padding-bottom: 1rem;
 }
 
-.warning {
+.vtb-warning {
 	color: var(--text-warning);
 	font-weight: bold;
 }
 
-.current-value:before {
+.vtb-current-value:before {
 	content: '✅ ';
 }
 
@@ -94,11 +93,11 @@
 	background-color: var(--background-modifier-hover);
 }
 
-/* 설정 버튼 */
-.button-row.active .activate-button {
+/* Setting buttons */
+.vtb-button-row.vtb-active .vtb-activate-button {
 	display: none;
 }
 
-.button-row.inactive .inactivate-button {
+.vtb-button-row.vtb-inactive .vtb-inactivate-button {
 	display: none;
 }
