@@ -46,8 +46,8 @@ export default class VaultToBlog extends Plugin {
 	async checkVersion() {
 		if (this.settings.version !== this.manifest.version) {
 			if (this.settings.isActivated) {
-				new Notice('VTB plugin is inactivated due to detection of changing version. Please reactivate.', 5000)
-				await this.doInactivate();
+				new Notice('VTB plugin is deactivated due to detection of changing version. Please reactivate.', 5000)
+				await this.doDeactivate();
 				await this.saveSettings();
 			} else {
 				this.settings.version = this.manifest.version;
@@ -56,7 +56,7 @@ export default class VaultToBlog extends Plugin {
 		}
 	}
 
-	async doInactivate() {
+	async doDeactivate() {
 		const options = {cwd: this.paths.reactPath()};
 		const noticeDuration = 5000;
 		await this.gitUtils.removeRemote(options, noticeDuration);
@@ -65,7 +65,7 @@ export default class VaultToBlog extends Plugin {
 		this.settings.version = this.manifest.version;
 		this.settings.isActivated = false;
 		await this.renderStatusBar();
-		new Notice('Inactivate Succeed.', noticeDuration)
+		new Notice('Deactivate Succeed.', noticeDuration)
 	}
 
 	async saveSettings() {
@@ -84,7 +84,7 @@ export default class VaultToBlog extends Plugin {
 		if (this.settings.isActivated) {
 			this.statusBar.activate()
 		} else {
-			this.statusBar.inactivate()
+			this.statusBar.deactivate()
 		}
 	}
 

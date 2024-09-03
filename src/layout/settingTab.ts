@@ -151,13 +151,13 @@ export class VTBSettingTab extends PluginSettingTab {
 				cb.onClick(() => this.activate())
 			})
 			.addButton((cb) => {
-				cb.setButtonText('Inactivate')
-				cb.setClass('vtb-inactivate-button')
-				cb.onClick(() => this.inactivate())
+				cb.setButtonText('Deactivate')
+				cb.setClass('vtb-deactivate-button')
+				cb.onClick(() => this.deactivate())
 			})
 		const settingEl = setting.settingEl;
 		settingEl.addClass('vtb-button-row')
-		settingEl.addClass(this.settings.isActivated ? 'vtb-active' : 'vtb-inactive')
+		settingEl.addClass(this.settings.isActivated ? 'vtb-active' : 'vtb-deactive')
 		return setting;
 	}
 
@@ -171,8 +171,8 @@ export class VTBSettingTab extends PluginSettingTab {
 		}
 	}
 
-	private async inactivate() {
-		await this.plugin.doInactivate()
+	private async deactivate() {
+		await this.plugin.doDeactivate()
 		await this.plugin.saveSettings();
 		this.display()
 	}
