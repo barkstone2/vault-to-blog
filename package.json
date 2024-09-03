@@ -32,7 +32,6 @@
 	},
 	"dependencies": {
 		"adm-zip": "^0.5.15",
-		"awesomplete": "^1.1.7",
 		"simple-git": "^3.16.0"
 	}
 }

@@ -1,9 +1,9 @@
-import {App, normalizePath, Notice, PluginSettingTab, SearchComponent, Setting, TFolder} from "obsidian";
-import Awesomplete from "awesomplete";
+import {App, normalizePath, Notice, PluginSettingTab, Setting, TFolder} from "obsidian";
 import VTBPlugin, {VaultToBlogSettings} from "../../main";
 import {Paths} from "../store/paths";
 import {GitUtils} from "../utils/gitUtils";
 import {FileUtils} from "../utils/fileUtils";
+import {FolderSuggester} from "../suggester/FolderSuggester";
 
 export class VTBSettingTab extends PluginSettingTab {
 	plugin: VTBPlugin;
@@ -47,7 +47,7 @@ export class VTBSettingTab extends PluginSettingTab {
 			.setTooltip('Select a directory that contains markdown files, images or other files for publishing to GitHub Pages.')
 			.addSearch((cb) => {
 				inputEl = cb.inputEl;
-				this.renderAwesomplete(cb);
+				new FolderSuggester(this.app, inputEl);
 				cb.setPlaceholder('Enter a directory path');
 				cb.setValue(this.settings.sourceDir);
 			})
@@ -57,28 +57,6 @@ export class VTBSettingTab extends PluginSettingTab {
 			});
 		this.addDefaultSettingClass(setting)
 		containerEl.createDiv({cls: 'vtb-current-value', text: 'Source Dir : ' + this.settings.sourceDir});
-	}
-
-	private renderAwesomplete(cb: SearchComponent) {
-		const directories = this.app.vault.getAllFolders(true)
-			.map((it: TFolder) => normalizePath(it.path));
-		const awesomplete = new Awesomplete(cb.inputEl, {
-			list: directories,
-			minChars: 0,
-			maxItems: Number.MAX_VALUE,
-			autoFirst: true,
-		});
-
-		setTimeout(() => {
-			const dropdown = awesomplete.ul;
-			if (dropdown) {
-				dropdown.removeAttribute('aria-label');
-			}
-		}, 0);
-
-		cb.inputEl.addEventListener('click', () => awesomplete.evaluate());
-		cb.inputEl.addEventListener('focus', () => awesomplete.evaluate());
-		cb.clearButtonEl.addEventListener('click', () => awesomplete.close());
 	}
 
 	private async saveSourceDirSetting(inputEl: HTMLInputElement) {
