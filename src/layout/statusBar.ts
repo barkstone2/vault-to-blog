@@ -4,7 +4,7 @@ import {Notice} from "obsidian";
 export class StatusBar {
 	private iconSrc = 'https://raw.githubusercontent.com/barkstone2/vault-to-blog/main/react-app/public/favicon.ico'
 	constructor(private statusBarEl: HTMLElement, private readonly plugin: VaultToBlog) {
-		statusBarEl.createEl('img', {cls: 'status-bar-icon', attr: {src: this.iconSrc}})
+		statusBarEl.createEl('img', {cls: 'vtb-status-bar-icon', attr: {src: this.iconSrc}})
 		statusBarEl.addClass('mod-clickable')
 		statusBarEl.ariaLabel = 'Publish to GitHub Page.';
 		statusBarEl.setAttribute("data-tooltip-position", "top");
@@ -18,10 +18,10 @@ export class StatusBar {
 	}
 
 	activate() {
-		this.statusBarEl.removeClass('grayscale')
+		this.statusBarEl.removeClass('vtb-grayscale')
 	}
 
-	inactivate() {
-		this.statusBarEl.addClass('grayscale')
+	deactivate() {
+		this.statusBarEl.addClass('vtb-grayscale')
 	}
 }

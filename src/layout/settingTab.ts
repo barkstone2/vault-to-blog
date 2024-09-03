@@ -24,14 +24,14 @@ export class VTBSettingTab extends PluginSettingTab {
 	display(): void {
 		const {containerEl} = this;
 		containerEl.empty();
-		containerEl.addClass('setting-container')
+		containerEl.addClass('vtb-setting-container')
 
-		const propertiesContainer = containerEl.createDiv({cls: 'property-container'})
+		const propertiesContainer = containerEl.createDiv()
 		this.createSourceDirSetting(propertiesContainer)
 		this.createRepositoryUrlSetting(propertiesContainer);
 		containerEl.append(propertiesContainer)
 
-		const buttonContainer = containerEl.createDiv({cls: 'button-container'})
+		const buttonContainer = containerEl.createDiv()
 		this.createButton(buttonContainer);
 		containerEl.append(buttonContainer);
 	}
@@ -40,7 +40,7 @@ export class VTBSettingTab extends PluginSettingTab {
 		let inputEl: HTMLInputElement;
 		const desc = new DocumentFragment();
 		desc.createDiv({text: 'Select a directory to publish to GitHub Pages.'});
-		desc.createDiv({text: 'This must be selected before activating.', cls: 'warning'});
+		desc.createDiv({text: 'This must be selected before activating.', cls: 'vtb-warning'});
 		const setting = new Setting(containerEl)
 			.setName('Source Dir')
 			.setDesc(desc)
@@ -56,7 +56,7 @@ export class VTBSettingTab extends PluginSettingTab {
 				cb.onClick(() => this.saveSourceDirSetting(inputEl));
 			});
 		this.addDefaultSettingClass(setting)
-		containerEl.createDiv({cls: 'current-value', text: 'Source Dir : ' + this.settings.sourceDir});
+		containerEl.createDiv({cls: 'vtb-current-value', text: 'Source Dir : ' + this.settings.sourceDir});
 	}
 
 	private renderAwesomplete(cb: SearchComponent) {
@@ -101,18 +101,18 @@ export class VTBSettingTab extends PluginSettingTab {
 	}
 
 	private addDefaultSettingClass(setting: Setting) {
-		setting.settingEl.addClass('setting')
-		setting.controlEl.addClass('control')
-		setting.nameEl.addClass('name')
-		setting.descEl.addClass('desc')
-		setting.infoEl.addClass('info')
+		setting.settingEl.addClass('vtb-setting')
+		setting.controlEl.addClass('vtb-control')
+		setting.nameEl.addClass('vtb-name')
+		setting.descEl.addClass('vtb-desc')
+		setting.infoEl.addClass('vtb-info')
 	}
 
 	private createRepositoryUrlSetting(containerEl: HTMLElement) {
 		let inputEl: HTMLInputElement;
 		const desc = new DocumentFragment();
 		desc.createDiv({text: 'Enter a GitHub Pages repository URL.'});
-		desc.createDiv({text: 'This must be entered before activating.', cls: 'warning'});
+		desc.createDiv({text: 'This must be entered before activating.', cls: 'vtb-warning'});
 		const setting = new Setting(containerEl)
 			.setName('Repository URL')
 			.setDesc(desc)
@@ -127,7 +127,7 @@ export class VTBSettingTab extends PluginSettingTab {
 				cb.onClick(() => this.saveRepositoryUrlSetting(inputEl))
 			});
 		this.addDefaultSettingClass(setting)
-		containerEl.createDiv({cls: 'current-value', text: 'Repository URL : ' + this.settings.repositoryUrl});
+		containerEl.createDiv({cls: 'vtb-current-value', text: 'Repository URL : ' + this.settings.repositoryUrl});
 	}
 
 	private async saveRepositoryUrlSetting(inputEl: HTMLInputElement) {
@@ -146,18 +146,18 @@ export class VTBSettingTab extends PluginSettingTab {
 		const setting = new Setting(containerEl)
 			.addButton((cb) => {
 				cb.setButtonText('Activate')
-				cb.setClass('activate-button')
+				cb.setClass('vtb-activate-button')
 				cb.setCta()
 				cb.onClick(() => this.activate())
 			})
 			.addButton((cb) => {
 				cb.setButtonText('Inactivate')
-				cb.setClass('inactivate-button')
+				cb.setClass('vtb-inactivate-button')
 				cb.onClick(() => this.inactivate())
 			})
 		const settingEl = setting.settingEl;
-		settingEl.addClass('button-row')
-		settingEl.addClass(this.settings.isActivated ? 'active' : 'inactive')
+		settingEl.addClass('vtb-button-row')
+		settingEl.addClass(this.settings.isActivated ? 'vtb-active' : 'vtb-inactive')
 		return setting;
 	}
 
