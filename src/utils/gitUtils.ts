@@ -108,4 +108,47 @@ export class GitUtils {
 			return false;
 		}
 	}
+
+	async getChangedFileNames(options: { cwd: string }): Promise<string[]> {
+		try {
+			await git.cwd(options.cwd);
+			const names = await git.diff({'--name-only': null});
+			const namesSplit: string[] = names.split('\n');
+			namesSplit.pop()
+			return namesSplit
+		} catch (error) {
+			const message = `Failed to get changed file names.\n${error.message}`;
+			console.error(message)
+		}
+		return []
+	}
+
+	async getNotTrackedFileNames(options: { cwd: string }): Promise<string[]> {
+		try {
+			await git.cwd(options.cwd);
+			const names = await git.raw(['ls-files', '--others', '--exclude-standard', 'public/sources']);
+			const namesSplit: string[] = names.split('\n');
+			namesSplit.pop()
+			return namesSplit
+		} catch (error) {
+			const message = `Failed to get not tracked file names.\n${error.message}`;
+			console.error(message)
+		}
+		return []
+	}
+
+	async getAllTrackedFileNames(options: { cwd: string }): Promise<string[]> {
+		try {
+			await git.cwd(options.cwd);
+			const names = await git.raw(['ls-files', 'public/sources']);
+			const namesSplit: string[] = names.split('\n');
+			console.log(namesSplit)
+			namesSplit.pop()
+			return namesSplit
+		} catch (error) {
+			const message = `Failed to get all tracked file names.\n${error.message}`;
+			console.error(message)
+		}
+		return []
+	}
 }
