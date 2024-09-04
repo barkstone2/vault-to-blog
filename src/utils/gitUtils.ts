@@ -16,6 +16,9 @@ export class GitUtils {
 		try {
 			await git.cwd(options.cwd);
 			await git.init()
+			await git.addConfig('core.quotepath', 'false')
+			await git.addConfig('i18n.logOutputEncoding', 'utf-8')
+			await git.addConfig('i18n.commitEncoding', 'utf-8')
 			new Notice('Succeeded in initializing Git.', noticeDuration)
 		} catch (error) {
 			const message = `Failed to initialize Git.\n${error.message}`;
