@@ -51,6 +51,18 @@ export class GitUtils {
 		}
 	}
 
+	async stageChanges(files: string[], options: { cwd: string }, noticeDuration: number) {
+		try {
+			await git.cwd(options.cwd);
+			await git.add(files);
+			new Notice('Succeeded in staging changes.', noticeDuration)
+		} catch (error) {
+			const message = `Failed to stage changes.\n${error.message}`;
+			new Notice(message, noticeDuration);
+			console.error(message)
+		}
+	}
+
 	async stageAllChanges(options: { cwd: string }, noticeDuration: number) {
 		try {
 			await git.cwd(options.cwd);
@@ -142,7 +154,6 @@ export class GitUtils {
 			await git.cwd(options.cwd);
 			const names = await git.raw(['ls-files', 'public/sources']);
 			const namesSplit: string[] = names.split('\n');
-			console.log(namesSplit)
 			namesSplit.pop()
 			return namesSplit
 		} catch (error) {
