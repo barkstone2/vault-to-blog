@@ -5,6 +5,7 @@ import {VTBSettingTab} from './src/layout/settingTab';
 import {FileUtils} from "./src/utils/fileUtils";
 import {GitUtils} from "./src/utils/gitUtils";
 import {Urls} from "./src/store/urls";
+import {VTBPublishManager} from "./src/layout/VTBPublishManager";
 
 export interface VaultToBlogSettings {
 	sourceDir: string;
@@ -88,21 +89,12 @@ export default class VaultToBlog extends Plugin {
 		}
 	}
 
-	async publishBlog() {
-		new Notice('Start publishing blog');
-		const options = {cwd: this.paths.reactPath()};
-		const noticeDuration = 5000
-		await this.fileUtils.syncSourceToDest(noticeDuration);
-		await this.fileUtils.copyTypesJson(noticeDuration);
-		await this.gitUtils.stageAllChanges(options, noticeDuration)
-		await this.gitUtils.commitChanges(options, noticeDuration)
-		this.gitUtils.pushToRemote(options, noticeDuration).then(() => {
-			new Notice('Blog published')
-		});
-	}
-
 	private async loadUtils() {
 		this.gitUtils = new GitUtils(this, this.settings);
 		this.fileUtils = new FileUtils(this.paths, this.urls, this.settings);
+	}
+
+	async openPublishManager() {
+		new VTBPublishManager(this.app, this.gitUtils, this.paths, this.fileUtils).open()
 	}
 }
