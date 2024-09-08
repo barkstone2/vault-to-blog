@@ -1,14 +1,25 @@
 import {App, ButtonComponent, Modal} from "obsidian";
+import {GitUtils} from "../utils/gitUtils";
+import {Paths} from "../store/paths";
+import {FileUtils} from "../utils/fileUtils";
+import {FileTreeElement} from "./FileTreeElement";
 
 enum VTBPublishManagerMode {
     Publish, Unpublish
 }
 
 export class VTBPublishManager extends Modal {
+    private gitUtils: GitUtils;
+    private paths: Paths;
+    private fileUtils: FileUtils;
+    private options = {cwd: ''};
     private mode : VTBPublishManagerMode = VTBPublishManagerMode.Publish
 
-    constructor(app: App) {
+    constructor(app: App, gitUtils: GitUtils, paths: Paths, fileUtils: FileUtils) {
         super(app);
+        this.gitUtils = gitUtils;
+        this.paths = paths;
+        this.fileUtils = fileUtils;
         this.renderManager();
     }
 
@@ -113,5 +124,65 @@ export class VTBPublishManager extends Modal {
         const clearButton = new ButtonComponent(buttonContainer);
         clearButton.setButtonText('Clear')
         clearButton.onClick(this.clearSelection)
+    }
+
+    async onOpen() {
+        await this.prepareManager();
+        this.reloadPublishTree();
+        this.reloadUnpublishTree();
+    }
+
+    private prepareManager = async () => {
+        this.options = {cwd: this.paths.reactPath()};
+        const noticeDuration = 5000;
+        await this.fileUtils.syncSourceToDest(noticeDuration);
+    }
+
+    private reloadPublishTree = async () => {
+        const publishTreeEl = this.getFreshTreeElOfTab('publish');
+        const changeFileNames = await this.gitUtils.getChangedFileNames(this.options);
+        if (changeFileNames.length > 0) {
+            this.createFileTree(changeFileNames, publishTreeEl, 'Changed Posts');
+        }
+
+        const newFileNames = await this.gitUtils.getNotTrackedFileNames(this.options);
+        if (newFileNames.length > 0) {
+            this.createFileTree(newFileNames, publishTreeEl, 'New Posts');
+        }
+    }
+
+    private getFreshTreeElOfTab(tabName: string): HTMLElement {
+        const tabContent = document.getElementsByClassName(`vtb-${tabName}-tab`)[0];
+        tabContent.replaceChildren()
+        return tabContent.createDiv({cls: ['vtb-publish-manager-tree', 'vtb-publish-manager-elements', `vtb-publish-manager-${tabName}-elements`]});
+    }
+
+    private reloadUnpublishTree = async () => {
+        const unpublishTreeEl = this.getFreshTreeElOfTab('unpublish')
+        const publishedFileNames = await this.gitUtils.getAllTrackedFileNames(this.options);
+        if (publishedFileNames.length > 0) {
+            this.createFileTree(publishedFileNames, unpublishTreeEl, 'Published Posts');
+        }
+    }
+
+    private createFileTree = async (fileNames: string[], treeContainerEl: HTMLElement, rootName: string) => {
+        const root = FileTreeElement.parseFileNamesToTree(fileNames, rootName);
+        root.renderFileTree(treeContainerEl, this.setSelectedCount);
+    }
+
+    private setSelectedCount = () => {
+        const selectedCountSpan = document.getElementsByClassName('vtb-publish-manager-selected-counts')[0];
+        let selectedCount = 0;
+        const trees = document.getElementsByClassName('vtb-publish-manager-tree');
+        for (let i = 0; i < trees.length; i++) {
+            const tree = trees[i];
+            const checkboxes = tree.querySelectorAll('input[type=checkbox]');
+            checkboxes.forEach((it: HTMLInputElement) => {
+                if (it.getAttr('vtb-data-type') == 'file' && it.checked) {
+                    selectedCount++;
+                }
+            })
+        }
+        selectedCountSpan.setText(selectedCount.toString());
     }
 }
