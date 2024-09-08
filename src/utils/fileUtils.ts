@@ -4,7 +4,7 @@ import {VaultToBlogSettings} from "../../main";
 import fs from "fs";
 import {Urls} from "../store/urls";
 import AdmZip from 'adm-zip';
-import {copyFile, copyFiles, removeDir, writeStreamAsync} from "./fsUtils";
+import {copyFile, copyFiles, removeDir, writeStreamAsync, removeFiles} from "./fsUtils";
 import {httpGetAsync} from "./httpUtils";
 
 export class FileUtils {
@@ -148,5 +148,9 @@ export class FileUtils {
 			new Notice(message, noticeDuration);
 			console.error(message, error);
 		}
+	}
+
+	async deleteFiles(files: string[]) {
+		await removeFiles(files)
 	}
 }
