@@ -1,4 +1,4 @@
-import {App, ButtonComponent, Modal} from "obsidian";
+import {App, ButtonComponent, Modal, Notice} from "obsidian";
 import {GitUtils} from "../utils/gitUtils";
 import {Paths} from "../store/paths";
 import {FileUtils} from "../utils/fileUtils";
@@ -13,6 +13,7 @@ export class VTBPublishManager extends Modal {
     private paths: Paths;
     private fileUtils: FileUtils;
     private options = {cwd: ''};
+    private noticeDuration = 5000;
     private mode : VTBPublishManagerMode = VTBPublishManagerMode.Publish
 
     constructor(app: App, gitUtils: GitUtils, paths: Paths, fileUtils: FileUtils) {
@@ -101,10 +102,44 @@ export class VTBPublishManager extends Modal {
     }
 
     private createPublishButton = (buttonContainer: HTMLDivElement) => {
-        const persistButton = new ButtonComponent(buttonContainer);
-        persistButton.setButtonText('Publish')
-        persistButton.setCta()
-        persistButton.buttonEl.addClasses(['vtb-publish-manager-elements', 'vtb-publish-manager-publish-elements'])
+        const publishButton = new ButtonComponent(buttonContainer);
+        publishButton.setButtonText('Publish')
+        publishButton.setCta()
+        publishButton.buttonEl.addClasses(['vtb-publish-manager-elements', 'vtb-publish-manager-publish-elements'])
+        publishButton.onClick(async () => {
+            const paths = this.getSelectedFilePaths();
+            if (paths.length > 0) {
+                const commitMessage = this.getCommitMessage();
+                await this.gitUtils.stageChanges(paths, this.options, this.noticeDuration)
+                await this.gitUtils.commitChanges(this.options, this.noticeDuration, commitMessage)
+                this.gitUtils.pushToRemote(this.options, this.noticeDuration).then(() => {
+                    new Notice('Published successfully');
+                    this.close();
+                });
+            }
+        })
+    }
+
+    private getSelectedFilePaths = (): string[] => {
+        const result: string[] = []
+        const trees = document.getElementsByClassName('vtb-publish-manager-tree');
+        for (let i = 0; i < trees.length; i++) {
+            const tree = trees[i];
+            const checkboxes = tree.querySelectorAll('input[type=checkbox]');
+            checkboxes.forEach((it: HTMLInputElement) => {
+                if (it.getAttr('vtb-data-type') == 'file' && it.checked) {
+                    result.push(it.value);
+                }
+            })
+        }
+        return result;
+    };
+
+    private getCommitMessage = (): string | undefined => {
+        // @ts-ignore
+        const commitMessageEditor: HTMLInputElement = document.querySelector('.vtb-publish-manager-commit-message-editor');
+        const commitMessage = commitMessageEditor.value;
+        return commitMessage.length == 0 ? undefined : commitMessage;
     }
 
     private createUnpublishButton = (buttonContainer: HTMLDivElement) => {
@@ -113,9 +148,18 @@ export class VTBPublishManager extends Modal {
         unpublishButton.setWarning()
         unpublishButton.buttonEl.addClasses(['vtb-publish-manager-elements', 'vtb-publish-manager-unpublish-elements'])
 
-        unpublishButton.onClick(() => {
+        unpublishButton.onClick(async () => {
             if (confirm('Are you sure you want to unpublish selected posts?')) {
-
+                const paths = this.getSelectedFilePaths();
+                if (paths.length > 0) {
+                    const commitMessage = this.getCommitMessage();
+                    await this.gitUtils.removeFiles(paths, this.options, this.noticeDuration)
+                    await this.gitUtils.commitChanges(this.options, this.noticeDuration, commitMessage)
+                    this.gitUtils.pushToRemote(this.options, this.noticeDuration).then(() => {
+                        new Notice('Unpublished successfully');
+                        this.close();
+                    });
+                }
             }
         })
     }
@@ -134,8 +178,7 @@ export class VTBPublishManager extends Modal {
 
     private prepareManager = async () => {
         this.options = {cwd: this.paths.reactPath()};
-        const noticeDuration = 5000;
-        await this.fileUtils.syncSourceToDest(noticeDuration);
+        await this.fileUtils.syncSourceToDest(this.noticeDuration);
     }
 
     private reloadPublishTree = async () => {
