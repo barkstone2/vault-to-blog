@@ -63,6 +63,18 @@ export class GitUtils {
 		}
 	}
 
+	async removeFiles(files: string[], options: { cwd: string }, noticeDuration: number) {
+		try {
+			await git.cwd(options.cwd);
+			await git.rm(files)
+			new Notice('Succeeded in removing files.', noticeDuration)
+		} catch (error) {
+			const message = `Failed to remove files.\n${error.message}`;
+			new Notice(message, noticeDuration);
+			console.error(message)
+		}
+	}
+
 	async stageAllChanges(options: { cwd: string }, noticeDuration: number) {
 		try {
 			await git.cwd(options.cwd);

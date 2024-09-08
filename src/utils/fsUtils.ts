@@ -37,12 +37,6 @@ export async function removeDir(path: string) {
     await fsPromises.rm(path, { recursive: true, force: true });
 }
 
-export async function removeFiles(paths: string[]) {
-    for (const it of paths) {
-        await fsPromises.rm(it);
-    }
-}
-
 export async function copyFile(src: string, dest: string) {
     await fsPromises.copyFile(src, dest);
 }
