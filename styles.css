@@ -101,3 +101,149 @@
 .vtb-button-row.vtb-deactive .vtb-deactivate-button {
 	display: none;
 }
+
+/* VTB Publish Manager */
+.vtb-publish-manager-tab-container {
+	text-align: center;
+}
+
+.vtb-publish-manager-tab-headers {
+	display: grid;
+	grid-template-columns: 50% 50%;
+}
+
+.vtb-publish-manager-tab-title {
+	color: var(--tab-text-color);
+	padding: 1px 4px 3.5px;
+	text-align: center;
+	background-color: var(--tab-container-background);
+	border: 1px solid;
+	border-radius: 4px;
+}
+
+.vtb-publish-manager-commit-message-editor {
+	height: 10vh;
+	max-height: 10vh;
+	background-color: var(--tab-container-background);
+	border-radius: 4px;
+	padding: 15px;
+	width:100%;
+	resize: none;
+}
+
+.vtb-publish-manager-button-container {
+	display: flex;
+	justify-content: end;
+	padding-top: 10px;
+}
+
+.vtb-publish-manager-button-container > * {
+	margin: 5px;
+}
+
+.vtb-publish-manager-tree {
+	height: 30vh;
+	max-height: 30vh;
+	overflow: auto;
+	display: none;
+	padding: 10px;
+}
+
+.vtb-publish-manager-tree-part {
+	padding-left: 5px;
+}
+
+.vtb-publish-manager-tree-part > .vtb-publish-manager-tree-part {
+	padding-left: 15px;
+}
+
+.vtb-publish-manager-tree-part.vtb-publish-manager-tree-part-collapsed > * {
+	display: none;
+}
+
+.vtb-publish-manager-tree-part.vtb-publish-manager-tree-part-collapsed > :nth-child(1) {
+	display: flex;
+}
+
+.vtb-publish-manager-tree-row {
+	display: flex;
+	align-items: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	text-wrap: nowrap;
+}
+
+.vtb-publish-manager-tree-file-row > .vtb-publish-manager-tree-part-collapse-icon {
+	visibility: hidden;
+}
+
+.vtb-publish-manager-tree-part-collapse-icon {
+	padding-right: 5px;
+}
+
+.vtb-publish-manager-tree-file-count {
+	padding-left: 5px;
+	color: var(--text-muted);
+	font-size: var(--font-smallest);
+}
+
+.vtb-publish-manager-tree-checkbox:indeterminate {
+	background-color: var(--checkbox-color);
+	border-color: var(--checkbox-color);
+}
+
+.vtb-publish-manager-tree-checkbox:indeterminate:after {
+	content: "";
+	top: -1px;
+	inset-inline-start: -1px;
+	position: absolute;
+	width: var(--checkbox-size);
+	height: var(--checkbox-size);
+	display: block;
+	background-color: var(--checkbox-marker-color);
+	-webkit-mask-position: 52% 52%;
+	-webkit-mask-size: 65%;
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-image: url('data:image/svg+xml; utf8, <svg width="12px" height="10px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><line x1="24" y1="12" x2="0" y2="12" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 5;"></line></svg>');
+}
+
+.vtb-publish-manager-tree-part-root-title {
+	font-weight: var(--font-bold);
+}
+
+.vtb-publish-manager-selected-counts-container {
+	text-align: right;
+	padding: 5px;
+	font-size: var(--font-smaller);
+}
+
+/* VTB Publish Manager mode CSS */
+.vtb-publish-manager-elements {
+	display: none;
+}
+
+.vtb-publish-mode .vtb-publish-manager-publish-elements {
+	display: block;
+}
+
+.vtb-unpublish-mode .vtb-publish-manager-unpublish-elements {
+	display: block;
+}
+
+.vtb-publish-mode .vtb-publish-manager-publish-tab-title {
+	color: var(--tab-text-color-active);
+	background-color: var(--tab-background-active);
+}
+
+.vtb-unpublish-mode .vtb-publish-manager-unpublish-tab-title {
+	color: var(--tab-text-color-active);
+	background-color: var(--tab-background-active);
+}
+
+.vtb-publish-mode .vtb-publish-manager-selected-counts-container {
+	color: var(--color-blue);
+}
+
+.vtb-unpublish-mode .vtb-publish-manager-selected-counts-container {
+	color: var(--color-red);
+}
