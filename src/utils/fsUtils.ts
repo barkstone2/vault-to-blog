@@ -44,7 +44,8 @@ export async function copyFile(src: string, dest: string) {
 export async function copyFiles(src: string, dest: string) {
     await fsPromises.mkdir(dest, { recursive: true });
     const entries = await fsPromises.readdir(src, { withFileTypes: true });
-    for (const entry of entries) {
+    const notHiddenEntries = entries.filter(it => !it.name.startsWith('.'))
+    for (const entry of notHiddenEntries) {
         const srcPath = path.join(src, entry.name);
         const destPath = path.join(dest, entry.name);
 
