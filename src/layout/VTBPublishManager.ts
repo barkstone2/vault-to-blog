@@ -179,6 +179,7 @@ export class VTBPublishManager extends Modal {
     private prepareManager = async () => {
         this.options = {cwd: this.paths.reactPath()};
         await this.fileUtils.syncSourceToDest(this.noticeDuration);
+        await this.fileUtils.copyTypesJson(this.noticeDuration);
     }
 
     private reloadPublishTree = async () => {
