@@ -1,4 +1,4 @@
-name: 테스트 생략
+name: Skip tests
 
 on:
   pull_request:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   Test:
-    name: Vite 테스트
+    name: Vite test
     runs-on: ubuntu-latest
     steps:
       - run: echo test skipped.
