@@ -38,7 +38,18 @@ export async function removeDir(path: string) {
 }
 
 export async function copyFile(src: string, dest: string) {
-    await fsPromises.copyFile(src, dest);
+    if (await exists(src)) {
+        await fsPromises.copyFile(src, dest);
+    }
+}
+
+async function exists(path: string) {
+    try {
+        await fsPromises.access(path)
+        return true;
+    } catch (error) {
+        return false;
+    }
 }
 
 export async function copyFiles(src: string, dest: string) {
