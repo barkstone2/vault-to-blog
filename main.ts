@@ -38,6 +38,7 @@ export default class VaultToBlog extends Plugin {
 		await this.renderStatusBar()
 		this.addSettingTab(new VTBSettingTab(this.app, this, this.settings, this.paths, this.gitUtils, this.fileUtils));
 		await this.checkVersion();
+		this.registerSourceDirectoryRenameEvent();
 	}
 
 	async loadSettings() {
@@ -96,5 +97,15 @@ export default class VaultToBlog extends Plugin {
 
 	async openPublishManager() {
 		new VTBPublishManager(this.app, this.gitUtils, this.paths, this.fileUtils).open()
+	}
+
+	private registerSourceDirectoryRenameEvent() {
+		// Don't need to release event listener when using registerEvent
+		this.registerEvent(this.app.vault.on('rename', async (file, oldPath) => {
+			if (oldPath == this.settings.sourceDir) {
+				this.settings.sourceDir = file.path;
+				await this.saveSettings();
+			}
+		}))
 	}
 }
