@@ -1,4 +1,4 @@
-name: 블로그 배포
+name: Deploy GitHub Pages
 
 on:
   push:
@@ -7,26 +7,26 @@ on:
 
 jobs:
   build:
-    name: 빌드
+    name: Build and upload artifact
     runs-on: ubuntu-latest
     steps:
-      - name: 리포지토리 체크아웃
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Node.js 셋업
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.2'
-      - name: 패키지 설치
+      - name: Install packages
         run: npm ci
-      - name: 빌드
+      - name: Build
         run: npm run build
-      - name: 아티팩트 업로드
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
   deploy:
-    name: 배포
+    name: Deploy Pages
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -36,7 +36,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: 페이지 배포
+      - name: Do deploy Pages
         id: deployment
         if: github.event_name == 'push'
         uses: actions/deploy-pages@v4

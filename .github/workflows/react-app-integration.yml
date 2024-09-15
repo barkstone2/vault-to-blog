@@ -1,4 +1,4 @@
-name: 리액트 앱 테스트 & 통합
+name: React-app CI
 
 on:
   pull_request:
@@ -11,20 +11,20 @@ on:
 
 jobs:
   Test:
-    name: Vite 테스트
+    name: Vite test
     runs-on: ubuntu-latest
     steps:
-      - name: 리포지토리 체크아웃
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Node.js 셋업
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.2'
-      - name: 패키지 설치
+      - name: Install packages
         run: |
           cd react-app
           npm ci
-      - name: 테스트 수행
+      - name: Run tests
         run: |
           cd react-app
           npm test

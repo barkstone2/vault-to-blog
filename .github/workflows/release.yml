@@ -1,4 +1,4 @@
-name: 플러그인 릴리즈
+name: Release plugin
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
         run: |
           npm install
           npm run build
-      - name: 리액트 앱 소스코드 아카이빙
+      - name: Archive react-app
         run: |
           zip -r react-app.zip ./react-app
       - name: Create release
