@@ -67,7 +67,7 @@ export class VTBSettingTab extends PluginSettingTab {
 		}
 
 		this.settings.sourceDir = inputEl?.value;
-		await this.plugin.saveSettings();
+		await this.deactivate();
 		this.display()
 		new Notice('Setting saved.');
 	}
@@ -111,7 +111,7 @@ export class VTBSettingTab extends PluginSettingTab {
 	private async saveRepositoryUrlSetting(inputEl: HTMLInputElement) {
 		if (await this.gitUtils.isRemoteValid(inputEl.value)) {
 			this.settings.repositoryUrl = inputEl.value;
-			await this.plugin.saveSettings();
+			await this.deactivate();
 			new Notice('Settings saved.');
 			this.display()
 		} else {
