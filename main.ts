@@ -41,11 +41,32 @@ export default class VaultToBlog extends Plugin {
 		this.registerSourceDirectoryRenameEvent();
 	}
 
-	async loadSettings() {
+	private async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
-	async checkVersion() {
+	private async loadPaths() {
+		this.paths = new Paths(this.app, this.settings);
+	}
+
+	private async loadUrls() {
+		this.urls = new Urls(this.settings);
+	}
+
+	private async loadUtils() {
+		this.gitUtils = new GitUtils(this, this.settings);
+		this.fileUtils = new FileUtils(this.paths, this.urls, this.settings);
+	}
+
+	async renderStatusBar() {
+		if (this.settings.isActivated) {
+			this.statusBar.activate()
+		} else {
+			this.statusBar.deactivate()
+		}
+	}
+
+	private async checkVersion() {
 		if (this.settings.version !== this.manifest.version) {
 			if (this.settings.isActivated) {
 				new Notice('VTB plugin is deactivated due to detection of changing version. Please reactivate.', 5000)
@@ -56,6 +77,16 @@ export default class VaultToBlog extends Plugin {
 				await this.saveSettings();
 			}
 		}
+	}
+
+	private registerSourceDirectoryRenameEvent() {
+		// Don't need to release event listener when using registerEvent
+		this.registerEvent(this.app.vault.on('rename', async (file, oldPath) => {
+			if (oldPath == this.settings.sourceDir) {
+				this.settings.sourceDir = file.path;
+				await this.saveSettings();
+			}
+		}))
 	}
 
 	async doDeactivate() {
@@ -74,38 +105,8 @@ export default class VaultToBlog extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	async loadPaths() {
-		this.paths = new Paths(this.app, this.settings);
-	}
-
-	async loadUrls() {
-		this.urls = new Urls(this.settings);
-	}
-
-	async renderStatusBar() {
-		if (this.settings.isActivated) {
-			this.statusBar.activate()
-		} else {
-			this.statusBar.deactivate()
-		}
-	}
-
-	private async loadUtils() {
-		this.gitUtils = new GitUtils(this, this.settings);
-		this.fileUtils = new FileUtils(this.paths, this.urls, this.settings);
-	}
 
 	async openPublishManager() {
 		new VTBPublishManager(this.app, this.gitUtils, this.paths, this.fileUtils).open()
-	}
-
-	private registerSourceDirectoryRenameEvent() {
-		// Don't need to release event listener when using registerEvent
-		this.registerEvent(this.app.vault.on('rename', async (file, oldPath) => {
-			if (oldPath == this.settings.sourceDir) {
-				this.settings.sourceDir = file.path;
-				await this.saveSettings();
-			}
-		}))
 	}
 }
