@@ -2,9 +2,13 @@
 A Community Plugin for [Obsidian.md](https://obsidian.md/) to publish your vault or directory to GitHub Pages Blog.   
 > This plugin is currently in beta, so it only offers a limited set of features at the moment.
 
+> This plugin may not work properly on Windows. I have only tested it on a Mac.
+
 ## Prerequisites
 - Create a GitHub Repository   
   - You need to first create a GitHub repository that will be used for GitHub Pages.
+  - The name of repository should be `<username>.github.io`. 
+  - For more detailed information, please refer to point 3 in [this documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
 - Set GitHub Pages to Use GitHub Actions   
   - In the repository’s settings, go to Pages and set the Build and deployment source to GitHub Actions.   
   - For more detailed information, please refer to [GitHub Pages Docs](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow).
@@ -14,6 +18,10 @@ A Community Plugin for [Obsidian.md](https://obsidian.md/) to publish your vault
 - No Custom Domain Support   
   - Custom domains are not supported at this time. 
   - Please use the default GitHub Pages URL provided by GitHub.
+- Authentication
+  - You need to authenticate before using this plugin.
+  - For more detailed information, please refer [GitHub Authentication Documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github#authenticating-with-the-command-line).
+  - If you are using SSH, you should use SSH URL of the repository.
 
 ## Usage
 1. Enable plugin in the settings menu.
