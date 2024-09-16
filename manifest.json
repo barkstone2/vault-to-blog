@@ -1,7 +1,7 @@
 {
 	"id": "vault-to-blog",
 	"name": "Vault to blog",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"minAppVersion": "1.5.8",
 	"description": "Publish the vault to a GitHub Pages blog.",
 	"author": "barkstone2",
