@@ -27,12 +27,15 @@ function MarkdownContent() {
   }, [filePath]);
   useBacklinkNavigation(innerHtml.content);
   
+  if (isLoading) {
+    return <LoadingScreen />
+  }
+  
   return (
     <div className="workspace-split mod-vertical mod-root">
       <Helmet>
         <title>{innerHtml.title}</title>
       </Helmet>
-      {isLoading && <LoadingScreen />}
       <hr className="workspace-leaf-resize-handle"/>
       <div className="workspace-tabs mod-top">
         <div className="workspace-tab-header-container"></div>
