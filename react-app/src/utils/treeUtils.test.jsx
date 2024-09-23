@@ -1,21 +1,25 @@
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
-import {initTree, renderTree} from "./treeUtils.jsx";
+import {initTree, markUsedPaths, renderTree} from "./treeUtils.jsx";
 import {render, screen} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
 let fileSet;
 let expectedTree;
-describe('initTree 호출 시', () => {
-  beforeAll(() => {
-    vi.mock('./file/fileUtils.js', () => {
-      return {
-        getMarkdownFileSet: () => fileSet
-      }
-    })
-  });
-  afterAll(() => {
-    vi.clearAllMocks();
+beforeAll(() => {
+  vi.mock('./file/fileUtils.js', () => {
+    return {
+      getMarkdownFileSet: () => fileSet
+    }
   })
+  vi.mock('../components/TreeItem', () => ({
+    default: ({title, children}) => <div><div>{title}</div><div>{children}</div></div>}))
+});
+
+afterAll(() => {
+  vi.clearAllMocks();
+})
+
+describe('initTree 호출 시', () => {
   it('조회한 파일 셋의 내용으로 트리를 구축한다.', () => {
     fileSet = new Set(['file1']);
     expectedTree = {
@@ -100,16 +104,19 @@ describe('initTree 호출 시', () => {
 
 describe('renderTree 호출 시', () => {
   let inputTree;
-  it('트리 노드가 컴포넌트로 렌더링된다.', () => {
-    const nodeTitle = 'file';
+  it('인자로 넘겨진 트리 노드가 컴포넌트로 렌더링된다.', () => {
+    const nodeTitle1 = 'file1';
+    const nodeTitle2 = 'file2';
     inputTree = {
-      [nodeTitle] : {children: {}, count: 1, isFile: true},
+      [nodeTitle1] : {children: {}, count: 1, isFile: true},
+      [nodeTitle2] : {children: {}, count: 1, isFile: true},
     }
     render(<MemoryRouter>{renderTree(inputTree)}</MemoryRouter>)
-    expect(screen.getByText(nodeTitle)).toBeInTheDocument();
+    expect(screen.getByText(nodeTitle1)).toBeInTheDocument();
+    expect(screen.getByText(nodeTitle2)).toBeInTheDocument();
   });
   
-  it('트리 노드가 디렉토리 노드면 자식의 수가 표시된다.', () => {
+  it('트리 노드가 파일 노드가 아니면 자식의 수가 타이틀에 표시된다.', () => {
     const nodeKey = 'dir'
     const nodeCount = 3;
     inputTree = {
@@ -125,7 +132,7 @@ describe('renderTree 호출 시', () => {
   });
   
   
-  it('노드가 디렉토리 노드면 자식 노드가 재귀적으로 렌더링된다.', () => {
+  it('트리 노드가 파일 노드가 아니면 재귀적으로 렌더링된다.', () => {
     inputTree = {
       'dir1' : {
         children: {
@@ -144,10 +151,10 @@ describe('renderTree 호출 시', () => {
     }
     
     render(<MemoryRouter>{renderTree(inputTree)}</MemoryRouter>)
-    const dir1Children = screen.getByText('dir1 (1)').parentElement.nextSibling;
+    const dir1Children = screen.getByText('dir1 (1)').nextSibling;
     const file1 = screen.getByText('file1');
     const dir2 = screen.getByText('dir2 (1)');
-    const dir2Children = dir2.parentElement.nextSibling;
+    const dir2Children = dir2.nextSibling;
     const file2 = screen.getByText('file2');
     expect(dir1Children).toContainElement(file1);
     expect(dir1Children).toContainElement(dir2);
@@ -161,14 +168,16 @@ describe('renderTree 호출 시', () => {
       '1' : {children: {}, count: 1, isFile: true},
       '2' : {children: {}, count: 1, isFile: true},
     }
-    // render(renderTree(inputTree, '', ([k1], [k2]) => {
-    //   return k2.localeCompare(k1);
-    // }))
-    // const el1 = screen.getByText('1');
-    // const el2 = screen.getByText('2');
-    // expect(el1).toBeInTheDocument();
-    // expect(el2).toBeInTheDocument();
-    // expect(el1)
+    render(<MemoryRouter data-testid='container'>{renderTree(inputTree, '', ([k1], [k2]) => {
+      return k2.localeCompare(k1);
+    })}</MemoryRouter>)
+    const el1 = screen.getByText('1');
+    const el2 = screen.getByText('2');
+    const el1Parent = el1.parentElement;
+    const el2Parent = el2.parentElement;
+    const ancestor = el1Parent.parentElement;
+    expect(ancestor.children[1]).toBe(el2Parent)
+    expect(ancestor.children[2]).toBe(el1Parent)
   });
 });
 
