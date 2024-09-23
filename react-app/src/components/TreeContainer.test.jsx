@@ -1,7 +1,7 @@
 import {render} from "@testing-library/react";
 import TreeContainer from "./TreeContainer.jsx";
-import {initTree, renderTree} from "../utils/treeUtils.jsx";
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
+import {initTree, markUsedPaths, renderTree} from "../utils/treeUtils.jsx";
 import {MemoryRouter} from "react-router-dom";
 
 let tree = {};
@@ -10,7 +10,8 @@ describe('트리 컨테이너 컴포넌트 렌더링 시', () => {
     vi.mock('../utils/treeUtils.jsx', () => {
       return {
         initTree: vi.fn(() => tree),
-        renderTree: vi.fn()
+        renderTree: vi.fn(),
+        markUsedPaths: vi.fn()
       }
     })
   })
@@ -41,5 +42,10 @@ describe('트리 컨테이너 컴포넌트 렌더링 시', () => {
     calls.forEach(call => {
       expect(call[0]).toStrictEqual(tree.children);
     });
+  });
+  
+  it('markUsedPaths가 호출된다', () => {
+    render(<MemoryRouter><TreeContainer/></MemoryRouter>)
+    expect(markUsedPaths).toHaveBeenCalled();
   });
 });
