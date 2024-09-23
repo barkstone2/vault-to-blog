@@ -4,12 +4,7 @@ import DirectoryIcon from "./DirectoryIcon.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import {TreeContainerContext} from "./TreeContainer.jsx";
 
-const TreeItem = ({title, isDirectory = false, path = '', children = null}) => {
-  const {usedPaths} = useContext(TreeContainerContext);
-  const [isOpen, setIsOpen] = useState(usedPaths.current[path]);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const isActive = decodeURIComponent(location.pathname) === path;
+function determineTypeAndClassName(isDirectory, isOpen) {
   let className = 'tree-item';
   let type = 'nav-file'
   if (isDirectory) {
@@ -17,7 +12,11 @@ const TreeItem = ({title, isDirectory = false, path = '', children = null}) => {
     if (!isOpen) className += ' is-collapsed';
   }
   className += ` ${type}`;
-  const doOnClick = () => {
+  return {className, type};
+}
+
+const createOnClickHandler = (isDirectory, setIsOpen, isOpen, navigate, path) => {
+  return () => {
     if (isDirectory) {
       setIsOpen(!isOpen);
     } else {
@@ -27,9 +26,20 @@ const TreeItem = ({title, isDirectory = false, path = '', children = null}) => {
       scrollTarget.scrollLeft = 0;
     }
   }
+}
+
+const TreeItem = ({title, isDirectory = false, path = '', children = null}) => {
+  const {usedPaths} = useContext(TreeContainerContext);
+  const [isOpen, setIsOpen] = useState(usedPaths.current[path]);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isActive = decodeURIComponent(location.pathname) === path;
+  const {className, type} = determineTypeAndClassName(isDirectory, isOpen);
+  const onClickHandler = createOnClickHandler(isDirectory, setIsOpen, isOpen, navigate, path);
   return (
     <div className={className}>
-      <div className={`tree-item-self is-clickable mod-collapsible ${type}-title ${isActive ? 'is-active' : ''}`} onClick={doOnClick} style={{ marginInlineStart: "0px", paddingInlineStart: "24px"}}>
+      <div className={`tree-item-self is-clickable mod-collapsible ${type}-title ${isActive ? 'is-active' : ''}`}
+           onClick={onClickHandler} style={{marginInlineStart: "0px", paddingInlineStart: "24px"}}>
         <DirectoryIcon isDirectory={isDirectory} isOpen={isOpen}/>
         <div className={`tree-item-inner ${type}-title-content`}>{title}</div>
       </div>
@@ -38,7 +48,7 @@ const TreeItem = ({title, isDirectory = false, path = '', children = null}) => {
       </div>
     </div>
   )
-}
+};
 
 TreeItem.propTypes = {
   title: PropTypes.string.isRequired,
@@ -46,6 +56,6 @@ TreeItem.propTypes = {
   isDirectory: PropTypes.bool,
   path: PropTypes.string,
   children: PropTypes.node,
-}
+};
 
 export default TreeItem
