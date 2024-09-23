@@ -1,14 +1,16 @@
-import {useParams} from "react-router-dom";
 import useBacklinkNavigation from "../utils/hooks/useBacklinkNavigation.js";
-import {useEffect, useState} from "react";
 import '../styles/content.css'
 import {Helmet} from "react-helmet-async";
-import {func} from "prop-types";
+import LoadingScreen from "./LoadingScreen.jsx";
+import {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
 
-function MarkdownContent({onLoadComplete}) {
+function MarkdownContent() {
   const {'*': filePath} = useParams();
   const [innerHtml, setInnerHtml] = useState({});
+  const [isLoading, setIsLoading] = useState(true)
   useEffect(() => {
+    setIsLoading(true);
     const fetchHtml = async () => {
       const path = filePath ? `/html/${filePath.replace('.md', '.html')}` : `/default/home.html`;
       const response = await fetch(`${path}`);
@@ -19,9 +21,7 @@ function MarkdownContent({onLoadComplete}) {
         content: content
       };
       setInnerHtml(newInnerHtml)
-      if (onLoadComplete) {
-        onLoadComplete();
-      }
+      setIsLoading(false);
     };
     fetchHtml()
   }, [filePath]);
@@ -32,6 +32,7 @@ function MarkdownContent({onLoadComplete}) {
       <Helmet>
         <title>{innerHtml.title}</title>
       </Helmet>
+      {isLoading && <LoadingScreen />}
       <hr className="workspace-leaf-resize-handle"/>
       <div className="workspace-tabs mod-top">
         <div className="workspace-tab-header-container"></div>
@@ -59,10 +60,6 @@ function MarkdownContent({onLoadComplete}) {
       </div>
     </div>
   );
-}
-
-MarkdownContent.propTypes = {
-  onLoadComplete: func.isRequired,
 }
 
 export default MarkdownContent;
