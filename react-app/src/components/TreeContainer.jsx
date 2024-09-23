@@ -1,6 +1,5 @@
 import {createContext, useRef} from 'react';
 import {initTree, markUsedPaths, renderTree} from "../utils/treeUtils.jsx";
-import {useNavigate} from "react-router-dom";
 
 export const TreeContainerContext = createContext({});
 
@@ -13,7 +12,6 @@ const directoryFirstFn = ([key1, value1], [key2, value2]) => {
 
 const TreeContainer = ({datatype}) => {
   const tree = useRef(initTree());
-  const navigate = useNavigate()
   const usedPaths = useRef(markUsedPaths());
   return (
     <TreeContainerContext.Provider value={{usedPaths}}>
@@ -22,7 +20,7 @@ const TreeContainer = ({datatype}) => {
       <div className="workspace-leaf-content" datatype={datatype}>
         <div className="nav-files-container node-insert-event" style={{position: "relative"}}>
           <div>
-            {renderTree(tree.current.children, '', directoryFirstFn, navigate)}
+            {renderTree(tree.current.children, '', directoryFirstFn)}
           </div>
         </div>
       </div>
