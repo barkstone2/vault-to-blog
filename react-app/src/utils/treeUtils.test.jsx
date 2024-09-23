@@ -171,3 +171,21 @@ describe('renderTree 호출 시', () => {
     // expect(el1)
   });
 });
+
+describe('markUsedPaths 호출 시', () => {
+  it('현재 경로가 비어있다면 빈 오브젝트를 반환한다', () => {
+    const result = markUsedPaths('');
+    expect(result).toStrictEqual({})
+  });
+  
+  it('현재 경로가 비어있지 않다면 모든 서브 경로를 담은 오브젝트를 반환한다', () => {
+    const path = '/A/B/C';
+    const expectedObject = {
+      '/A': true,
+      '/A/B': true,
+      '/A/B/C': true
+    }
+    const result = markUsedPaths(path);
+    expect(result).toStrictEqual(expectedObject)
+  });
+});
