@@ -1,11 +1,15 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
 import PropTypes from "prop-types";
 import DirectoryIcon from "./DirectoryIcon.jsx";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
+import {TreeContainerContext} from "./TreeContainer.jsx";
 
 const TreeItem = ({title, isDirectory = false, path = '', children = null}) => {
+  const {usedPaths} = useContext(TreeContainerContext);
+  const [isOpen, setIsOpen] = useState(usedPaths.current[path]);
+  const location = useLocation();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
+  const isActive = decodeURIComponent(location.pathname) === path;
   let className = 'tree-item';
   let type = 'nav-file'
   if (isDirectory) {
@@ -25,7 +29,7 @@ const TreeItem = ({title, isDirectory = false, path = '', children = null}) => {
   }
   return (
     <div className={className}>
-      <div className={`tree-item-self is-clickable mod-collapsible ${type}-title`} onClick={doOnClick} style={{ marginInlineStart: "0px", paddingInlineStart: "24px"}}>
+      <div className={`tree-item-self is-clickable mod-collapsible ${type}-title ${isActive ? 'is-active' : ''}`} onClick={doOnClick} style={{ marginInlineStart: "0px", paddingInlineStart: "24px"}}>
         <DirectoryIcon isDirectory={isDirectory} isOpen={isOpen}/>
         <div className={`tree-item-inner ${type}-title-content`}>{title}</div>
       </div>
