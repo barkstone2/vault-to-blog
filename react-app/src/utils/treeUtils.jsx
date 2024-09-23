@@ -44,8 +44,7 @@ export const initTree =  () => {
   return buildTree(fileSet)
 }
 
-export const renderTree = (nodes, basePath = '', compareFn = () => {
-}, navigate) => {
+export const renderTree = (nodes, basePath = '', compareFn = () => {}) => {
   const sortedNodes = Object.entries(nodes).sort(compareFn)
   return (
     <>
@@ -54,20 +53,14 @@ export const renderTree = (nodes, basePath = '', compareFn = () => {
       {
         sortedNodes.map(([key, value]) => {
             const path = `${basePath}/${key}`;
-            const handleNavigate = () => {
-              navigate(path);
-              const scrollTarget = document.querySelector('.markdown-preview-view');
-              scrollTarget.scrollTop = 0;
-              scrollTarget.scrollLeft = 0;
-            }
             return (
               <React.Fragment key={path}>
                 {!value.isFile ? (
-                  <TreeItem title={key + " (" + value.count + ")"} isDirectory={true}>
-                    {renderTree(value.children, path, compareFn, navigate)}
+                  <TreeItem title={key + " (" + value.count + ")"} isDirectory={true} path={path}>
+                    {renderTree(value.children, path, compareFn)}
                   </TreeItem>
                 ) : (
-                  <TreeItem onClick={handleNavigate} title={key.replace('.md', '')}/>
+                  <TreeItem title={key.replace('.md', '')} path={path}/>
                 )}
               </React.Fragment>
             );

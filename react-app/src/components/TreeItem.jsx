@@ -1,8 +1,10 @@
 import {useState} from "react";
 import PropTypes from "prop-types";
 import DirectoryIcon from "./DirectoryIcon.jsx";
+import {useNavigate} from "react-router-dom";
 
-const TreeItem = ({title, onClick = () => {}, isDirectory = false, children = null}) => {
+const TreeItem = ({title, isDirectory = false, path = '', children = null}) => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   let className = 'tree-item';
   let type = 'nav-file'
@@ -14,8 +16,12 @@ const TreeItem = ({title, onClick = () => {}, isDirectory = false, children = nu
   const doOnClick = () => {
     if (isDirectory) {
       setIsOpen(!isOpen);
+    } else {
+      navigate(path);
+      const scrollTarget = document.querySelector('.markdown-preview-view');
+      scrollTarget.scrollTop = 0;
+      scrollTarget.scrollLeft = 0;
     }
-    onClick();
   }
   return (
     <div className={className}>
@@ -34,6 +40,7 @@ TreeItem.propTypes = {
   title: PropTypes.string.isRequired,
   onClick: PropTypes.func,
   isDirectory: PropTypes.bool,
+  path: PropTypes.string,
   children: PropTypes.node,
 }
 
