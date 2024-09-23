@@ -75,3 +75,18 @@ export const renderTree = (nodes, basePath = '', compareFn = () => {
     </>
   )
 };
+
+export const markUsedPaths = (path = location.pathname) => {
+  const usedPaths = {};
+  const currentPath = decodeURIComponent(path);
+  if (currentPath) {
+    const pathParts = currentPath.split('/').filter(Boolean);
+    let subPath = '';
+    pathParts.forEach((part) => {
+      subPath += `/${part}`;
+      usedPaths[subPath] = true;
+    });
+    return usedPaths
+  }
+  return usedPaths
+}
