@@ -15,7 +15,7 @@ export class GitUtils {
 	async initializeGit(options: { cwd: string }, noticeDuration: number) {
 		try {
 			await git.cwd(options.cwd);
-			await git.init()
+			await git.init(['-b', 'main']);
 			await git.addConfig('core.quotepath', 'false')
 			await git.addConfig('i18n.logOutputEncoding', 'utf-8')
 			await git.addConfig('i18n.commitEncoding', 'utf-8')
