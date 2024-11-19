@@ -85,16 +85,19 @@ export class FileTreeElement {
         const parent = this?.parent;
         if (!parent) return;
         let checkedCount = 0;
+        let indeterminateCount = 0;
         parent.children.forEach((value) => {
-            if (value.element.checked || value.element.indeterminate) checkedCount++;
+            if (value.element.checked) checkedCount++;
+            if (value.element.indeterminate) indeterminateCount++;
         })
-        if (checkedCount == 0) {
+        if (checkedCount == 0 && indeterminateCount == 0) {
             parent.element.checked = false;
             parent.element.indeterminate = false;
-        }else if (checkedCount == parent.children.size) {
+        } else if (checkedCount == parent.children.size) {
             parent.element.checked = true
             parent.element.indeterminate = false;
         } else {
+            parent.element.checked = false;
             parent.element.indeterminate = true;
         }
         parent.checkParent();
