@@ -1,14 +1,15 @@
 import {Notice} from "obsidian";
-import VTBPlugin, {VaultToBlogSettings} from "../../main";
+import {VaultToBlogSettings} from "../../main";
 import {findFiles} from "./fsUtils";
 import simpleGit from 'simple-git';
+import {Paths} from "../store/paths";
 
 const git = simpleGit();
 export class GitUtils {
-	plugin: VTBPlugin;
+	paths: Paths;
 	settings: VaultToBlogSettings;
-	constructor(plugin: VTBPlugin, settings: VaultToBlogSettings) {
-		this.plugin = plugin;
+	constructor(paths: Paths, settings: VaultToBlogSettings) {
+		this.paths = paths;
 		this.settings = settings;
 	}
 
@@ -173,5 +174,15 @@ export class GitUtils {
 			console.error(message)
 		}
 		return []
+	}
+
+	async stageTypesJson(options: { cwd: string }) {
+		try {
+			await git.cwd(options.cwd);
+			await git.add(this.paths.typeJsonDestPath());
+		} catch (error) {
+			const message = `Failed to stage types.json.\n${error.message}`;
+			console.error(message)
+		}
 	}
 }

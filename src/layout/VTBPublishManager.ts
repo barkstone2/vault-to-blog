@@ -180,6 +180,7 @@ export class VTBPublishManager extends Modal {
         this.options = {cwd: this.paths.reactPath()};
         await this.fileUtils.syncSourceToDest(this.noticeDuration);
         await this.fileUtils.copyTypesJson(this.noticeDuration);
+        await this.gitUtils.stageTypesJson(this.options);
     }
 
     private reloadPublishTree = async () => {

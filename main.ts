@@ -54,7 +54,7 @@ export default class VaultToBlog extends Plugin {
 	}
 
 	private async loadUtils() {
-		this.gitUtils = new GitUtils(this, this.settings);
+		this.gitUtils = new GitUtils(this.paths, this.settings);
 		this.fileUtils = new FileUtils(this.paths, this.urls, this.settings);
 	}
 
