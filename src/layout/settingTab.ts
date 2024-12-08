@@ -31,6 +31,8 @@ export class VTBSettingTab extends PluginSettingTab {
 		this.createRepositoryUrlSetting(propertiesContainer);
 		containerEl.append(propertiesContainer)
 
+		this.createCommentsSetting(propertiesContainer);
+
 		const buttonContainer = containerEl.createDiv()
 		this.createButton(buttonContainer);
 		containerEl.append(buttonContainer);
@@ -117,6 +119,56 @@ export class VTBSettingTab extends PluginSettingTab {
 		} else {
 			new Notice(`Invalid repository URL.`)
 			inputEl.value = this.settings.repositoryUrl;
+		}
+	}
+
+	private createCommentsSetting(containerEl: HTMLElement) {
+		let desc = new DocumentFragment();
+		desc.createDiv({text: 'You must enable issues in the GitHub repository and install Utterances to use this feature.', cls: 'vtb-warning'});
+		desc.createSpan({text: 'For more details, please refer to ', cls: 'vtb-warning'});
+		desc.createEl('a', {text: 'this page', href: 'https://utteranc.es/'})
+		desc.createSpan({text: '.', cls: 'vtb-warning'});
+		new Setting(containerEl)
+			.setName('Comments layout')
+			.setHeading()
+			.setDesc(desc);
+
+		desc = new DocumentFragment();
+		desc.createDiv({text: 'Enable Utterances comments layout.'});
+
+		new Setting(containerEl)
+			.setDesc(desc)
+			.setName('Enable Utterances comments layout')
+			.addToggle((cb) => {
+				cb.setValue(this.settings.isEnableComments);
+				cb.onChange((value) => {
+					this.settings.isEnableComments = value;
+					this.display()
+				})
+			})
+
+		if (this.settings.isEnableComments) {
+			new Setting(containerEl)
+				.setName('Repo')
+				.addText((cb) => {
+					cb.setPlaceholder('owner/repo')
+				})
+
+			new Setting(containerEl)
+				.setName('Theme')
+				.addDropdown((cb) => {
+					cb.addOptions({
+						'github-light': 'GitHub Light',
+						'github-dark': 'GitHub Dark',
+						'preferred-color-scheme': 'Preferred Color Scheme',
+						'github-dark-orange': 'GitHub Dark Orange',
+						'icy-dark': 'Icy Dark',
+						'dark-blue': 'Dark Blue',
+						'photon-dark': 'Photon Dark',
+						'boxy-light': 'Boxy Light',
+						'gruvbox-dark': 'Gruvbox Dark',
+					});
+				})
 		}
 	}
 

@@ -12,13 +12,15 @@ export interface VaultToBlogSettings {
 	repositoryUrl: string;
 	isActivated: boolean;
 	version: string;
+	isEnableComments: boolean;
 }
 
 const DEFAULT_SETTINGS: VaultToBlogSettings = {
 	sourceDir: '',
 	repositoryUrl: '',
 	isActivated: false,
-	version: '0.0.1'
+	version: '0.0.1',
+	isEnableComments: false,
 };
 
 export default class VaultToBlog extends Plugin {
