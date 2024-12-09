@@ -141,8 +141,9 @@ export class VTBSettingTab extends PluginSettingTab {
 			.setName('Enable Utterances comments layout')
 			.addToggle((cb) => {
 				cb.setValue(this.settings.isEnableComments);
-				cb.onChange((value) => {
+				cb.onChange(async (value) => {
 					this.settings.isEnableComments = value;
+					await this.plugin.saveSettings();
 					this.display()
 				})
 			})
@@ -152,6 +153,10 @@ export class VTBSettingTab extends PluginSettingTab {
 				.setName('Repo')
 				.addText((cb) => {
 					cb.setPlaceholder('owner/repo')
+					cb.onChange(async (value) => {
+						this.settings.repo = value;
+						await this.plugin.saveSettings();
+					})
 				})
 
 			new Setting(containerEl)
@@ -168,6 +173,10 @@ export class VTBSettingTab extends PluginSettingTab {
 						'boxy-light': 'Boxy Light',
 						'gruvbox-dark': 'Gruvbox Dark',
 					});
+					cb.onChange(async (value) => {
+						this.settings.theme = value;
+						await this.plugin.saveSettings();
+					})
 				})
 		}
 	}
