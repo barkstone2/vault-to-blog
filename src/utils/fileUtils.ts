@@ -67,6 +67,16 @@ export class FileUtils {
 		}
 	}
 
+	async copyDataJson(noticeDuration: number) {
+		try {
+			await copyFile(this.paths.dataJsonSourcePath(), this.paths.dataJsonDestPath())
+		} catch (error) {
+			const message = `Failed to copy data.json file.\n${error.message}`;
+			console.error(message);
+			throw new Error(message);
+		}
+	}
+
 	async backupGitDirectory(noticeDuration: number) {
 		if (fs.existsSync(this.paths.gitPath())) {
 			if (fs.existsSync(this.paths.gitBackupPath())) {
