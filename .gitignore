@@ -29,5 +29,5 @@ react-app/public/html/*
 react-app/public/sources
 
 # Obsidian Plugin
-data.json
+/data.json
 main.js
