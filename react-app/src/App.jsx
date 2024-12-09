@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import MarkdownContent from "./components/MarkdownContent.jsx";
 import {Route, Routes} from "react-router-dom";
 import LoadingScreen from "./components/LoadingScreen.jsx";
+import MarkdownWrapper from "./components/MarkdownWrapper.jsx";
 
 function App() {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -25,9 +26,11 @@ function App() {
     <div className="horizontal-main-container">
       <div className="workspace is-left-sidedock-open is-right-sidedock-open">
         <Sidebar/>
-        <Routes>
-          <Route path={"/*"} element={<MarkdownContent/>}/>
-        </Routes>
+        <MarkdownWrapper>
+          <Routes>
+            <Route path={"/*"} element={<MarkdownContent/>}/>
+          </Routes>
+        </MarkdownWrapper>
       </div>
     </div>
   );
