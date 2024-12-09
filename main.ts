@@ -13,6 +13,8 @@ export interface VaultToBlogSettings {
 	isActivated: boolean;
 	version: string;
 	isEnableComments: boolean;
+	repo: string;
+	theme: string;
 }
 
 const DEFAULT_SETTINGS: VaultToBlogSettings = {
@@ -21,6 +23,8 @@ const DEFAULT_SETTINGS: VaultToBlogSettings = {
 	isActivated: false,
 	version: '0.0.1',
 	isEnableComments: false,
+	repo: '',
+	theme: ''
 };
 
 export default class VaultToBlog extends Plugin {
