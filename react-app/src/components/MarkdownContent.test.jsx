@@ -60,6 +60,42 @@ describe('마크다운 콘텐츠 컴포넌트 렌더링 시', () => {
     });
   });
   
+  it('홈페이지에서는 댓글 레이아웃이 렌더링되지 않는다.', async () => {
+    vi.mock('../stores/data.json', () => ({
+      default: {
+        isEnableComments: true,
+        repo: 'example/repo',
+        theme: 'github-light'
+      }
+    }))
+    const path = '';
+    const htmlText = 'result html'
+    expectedHtml = `<div>${htmlText}</div>`
+    const {container} = renderWithWrapper(path);
+    await waitFor(() => {
+      const script = container.querySelector('script');
+      expect(script).toBeNull()
+    });
+  });
+  
+  it('홈페이지가 아니면 댓글 레이아웃이 렌더링된다.', async () => {
+    vi.mock('../stores/data.json', () => ({
+      default: {
+        isEnableComments: true,
+        repo: 'example/repo',
+        theme: 'github-light'
+      }
+    }))
+    const path = '/path/to/file.md';
+    const htmlText = 'result html'
+    expectedHtml = `<div>${htmlText}</div>`
+    const {container} = renderWithWrapper(path);
+    await waitFor(() => {
+      const script = container.querySelector('script');
+      expect(script).not.toBeNull()
+    });
+  });
+  
   function renderWithWrapper(path) {
     return render((
       <MemoryRouter initialEntries={[path]}>

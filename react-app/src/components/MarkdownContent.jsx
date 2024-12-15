@@ -40,7 +40,7 @@ function MarkdownContent() {
       <div className="markdown-preview-sizer markdown-preview-section"
            dangerouslySetInnerHTML={{__html: innerHtml.content}}>
       </div>
-        <UtterancesComments />
+      { filePath !== '' && <UtterancesComments /> }
     </>
   );
 }
