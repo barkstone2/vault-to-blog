@@ -69,6 +69,9 @@ export class FileUtils {
 
 	async copyDataJson(noticeDuration: number) {
 		try {
+			if (!fs.existsSync(this.paths.dataJsonDestDirPath())) {
+				fs.mkdirSync(this.paths.dataJsonDestDirPath(), {recursive: true})
+			}
 			await copyFile(this.paths.dataJsonSourcePath(), this.paths.dataJsonDestPath())
 		} catch (error) {
 			const message = `Failed to copy data.json file.\n${error.message}`;
