@@ -56,6 +56,11 @@ A Community Plugin for [Obsidian.md](https://obsidian.md/) to publish your vault
   - Math
     - Math blocks are supported
     - Inline math expressions are supported
+- Utterances Comments Layout
+  - Comments layout provided by the Utterances are supported
+## Demo Page
+If you want to see a demo page, you can see the very simple result [here](https://barkstone3.github.io/).
+
 ## Bug Report
 To report a bug, simply go to the [Issues](https://github.com/barkstone2/vault-to-blog/issues) tab and use the provided template to submit your bug report.
 
