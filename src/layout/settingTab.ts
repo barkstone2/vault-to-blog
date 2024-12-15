@@ -153,6 +153,7 @@ export class VTBSettingTab extends PluginSettingTab {
 				.setName('Repo')
 				.addText((cb) => {
 					cb.setPlaceholder('owner/repo')
+					cb.setValue(this.settings.repo)
 					cb.onChange(async (value) => {
 						this.settings.repo = value;
 						await this.plugin.saveSettings();
@@ -162,6 +163,7 @@ export class VTBSettingTab extends PluginSettingTab {
 			new Setting(containerEl)
 				.setName('Theme')
 				.addDropdown((cb) => {
+					cb.setValue(this.settings.theme)
 					cb.addOptions({
 						'github-light': 'GitHub Light',
 						'github-dark': 'GitHub Dark',
