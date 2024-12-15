@@ -16,6 +16,7 @@ export class Paths {
 	sourcePublicPath;
 	typeJsonDestPath;
 	dataJsonSourcePath;
+	dataJsonDestDirPath;
 	dataJsonDestPath;
 
 	constructor(app: App, settings: VaultToBlogSettings) {
@@ -35,7 +36,8 @@ export class Paths {
 		this.typeJsonDestPath = () => `${this.sourcePublicPath()}/types.json`;
 
 		this.dataJsonSourcePath = () => `${this.pluginPath()}/data.json`;
-		this.dataJsonDestPath = () => `${this.reactPath()}/src/stores/data.json`;
+		this.dataJsonDestDirPath = () => `${this.reactPath()}/src/stores`;
+		this.dataJsonDestPath = () => `${this.dataJsonDestDirPath()}/data.json`;
 	}
 
 	private getVaultPath() {
