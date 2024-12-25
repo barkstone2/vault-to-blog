@@ -21,9 +21,9 @@ jobs:
         run: |
           npm install
           npm run build
-      - name: Archive react-app
+      - name: Archive react-app-internal
         run: |
-          zip -r react-app.zip ./react-app
+          zip -r react-app.zip ./react-app-internal
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

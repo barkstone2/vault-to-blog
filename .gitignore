@@ -23,10 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# react-app
-react-app/node_modules
-react-app/public/html/*
-react-app/public/sources
+# react-app-internal
+react-app-internal/node_modules
+react-app-internal/public/html/*
+react-app-internal/public/sources
 
 # Obsidian Plugin
 /data.json

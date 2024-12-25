@@ -6,9 +6,9 @@ on:
       - main
     paths:
       - '**'
-      - '!react-app/**'
-      - 'react-app/public/**'
-      - 'react-app/src/assets/**'
+      - '!react-app-internal/**'
+      - 'react-app-internal/public/**'
+      - 'react-app-internal/src/assets/**'
 
 jobs:
   Test:
