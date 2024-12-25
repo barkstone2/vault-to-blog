@@ -13,13 +13,13 @@ let versions = JSON.parse(readFileSync("versions.json", "utf8"));
 versions[targetVersion] = minAppVersion;
 writeFileSync("versions.json", JSON.stringify(versions, null, "\t"));
 
-// update package.json of react-app with target version to target version
-let packageOfReactApp = JSON.parse(readFileSync("./react-app/package.json", "utf8"));
+// update package.json of react-app-internal with target version to target version
+let packageOfReactApp = JSON.parse(readFileSync("./react-app-internal/package.json", "utf8"));
 packageOfReactApp.version = targetVersion;
-writeFileSync("./react-app/package.json", JSON.stringify(packageOfReactApp, null, "\t"));
+writeFileSync("./react-app-internal/package.json", JSON.stringify(packageOfReactApp, null, "\t"));
 
-// update package-lock.json of react-app with target version to target version
-let packageLockOfReactApp = JSON.parse(readFileSync("./react-app/package-lock.json", "utf8"));
+// update package-lock.json of react-app-internal with target version to target version
+let packageLockOfReactApp = JSON.parse(readFileSync("./react-app-internal/package-lock.json", "utf8"));
 packageLockOfReactApp.version = targetVersion;
 packageLockOfReactApp.packages[""].version = targetVersion;
-writeFileSync("./react-app/package-lock.json", JSON.stringify(packageLockOfReactApp, null, "\t"));
+writeFileSync("./react-app-internal/package-lock.json", JSON.stringify(packageLockOfReactApp, null, "\t"));
