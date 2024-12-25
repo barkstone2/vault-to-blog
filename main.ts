@@ -82,6 +82,8 @@ export default class VaultToBlog extends Plugin {
 				this.settings.version = this.manifest.version;
 				await this.saveSettings();
 			}
+
+			await this.fileUtils.cleanOldReactApps();
 		}
 	}
 

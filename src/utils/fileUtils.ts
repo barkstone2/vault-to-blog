@@ -162,4 +162,13 @@ export class FileUtils {
 			console.error(message, error);
 		}
 	}
+
+	public async cleanOldReactApps() {
+		try {
+			await removeDir(this.paths.reactRootPath())
+		} catch (error) {
+			const message = `Failed to clean old react apps.\n${error.message}`;
+			console.error(message, error);
+		}
+	}
 }
