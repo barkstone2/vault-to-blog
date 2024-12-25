@@ -185,4 +185,14 @@ export class GitUtils {
 			console.error(message)
 		}
 	}
+
+	async stageDataJson(options: { cwd: string }) {
+		try {
+			await git.cwd(options.cwd);
+			await git.add(this.paths.dataJsonDestPath());
+		} catch (error) {
+			const message = `Failed to stage data.json.\n${error.message}`;
+			console.error(message)
+		}
+	}
 }
