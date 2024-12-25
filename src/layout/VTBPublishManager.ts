@@ -182,6 +182,7 @@ export class VTBPublishManager extends Modal {
         await this.fileUtils.copyTypesJson(this.noticeDuration);
         await this.fileUtils.copyDataJson(this.noticeDuration);
         await this.gitUtils.stageTypesJson(this.options);
+        await this.gitUtils.stageDataJson(this.options);
     }
 
     private reloadPublishTree = async () => {
