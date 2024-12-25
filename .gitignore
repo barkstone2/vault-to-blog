@@ -31,3 +31,4 @@ react-app-internal/public/sources
 # Obsidian Plugin
 /data.json
 main.js
+.git-backup
