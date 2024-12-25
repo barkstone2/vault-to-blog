@@ -8,6 +8,7 @@ export class Paths {
 	pluginPath;
 	gitBackupPath;
 	typeJsonSourcePath;
+	reactRootPath;
 	reactVersionPath;
 	reactPath;
 	reactZipPath;
@@ -27,7 +28,8 @@ export class Paths {
 		this.gitBackupPath = () => `${this.pluginPath()}/.git-backup`
 		this.typeJsonSourcePath = () => `${this.vaultPath()}/${this.configDir()}/types.json`;
 
-		this.reactVersionPath = () => `${this.pluginPath()}/react-app/${settings.version}`
+		this.reactRootPath = () => `${this.pluginPath()}/react-app`
+		this.reactVersionPath = () => `${this.reactRootPath()}/${settings.version}`
 		this.reactPath = () => `${this.reactVersionPath()}/react-app`;
 		this.reactZipPath = () => `${this.reactVersionPath()}/react-app.zip`
 		this.gitPath = () => `${this.reactPath()}/.git`;
