@@ -163,7 +163,6 @@ export class VTBSettingTab extends PluginSettingTab {
 			new Setting(containerEl)
 				.setName('Theme')
 				.addDropdown((cb) => {
-					cb.setValue(this.settings.theme)
 					cb.addOptions({
 						'github-light': 'GitHub Light',
 						'github-dark': 'GitHub Dark',
@@ -175,6 +174,7 @@ export class VTBSettingTab extends PluginSettingTab {
 						'boxy-light': 'Boxy Light',
 						'gruvbox-dark': 'Gruvbox Dark',
 					});
+					cb.setValue(this.settings.theme)
 					cb.onChange(async (value) => {
 						this.settings.theme = value;
 						await this.plugin.saveSettings();
