@@ -36,7 +36,7 @@ describe("html 생성 요청 시", () => {
 <div class="mod-header">
 <div class="inline-title" tabindex="-1">md</div>
 </div>
-<h1>H1</h1>`;
+<h1 id="h1">H1</h1>`;
     
     // when
     await generateHtmlFiles()
