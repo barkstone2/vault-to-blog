@@ -1,5 +1,5 @@
 import './App.css'
-import {initImageFileMap, initMarkdownFileMap} from "./utils/file/fileUtils.js";
+import {initImageFileMap, initMarkdownFileMap, initTocMap} from "./utils/file/fileUtils.js";
 import Sidebar from "./components/Sidebar.jsx";
 import {useEffect, useState} from "react";
 import MarkdownContent from "./components/MarkdownContent.jsx";
@@ -13,6 +13,7 @@ function App() {
     async function initialize() {
       await initMarkdownFileMap();
       await initImageFileMap();
+      await initTocMap();
       setIsInitialized(true);
     }
     initialize();
