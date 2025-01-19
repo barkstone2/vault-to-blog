@@ -1,11 +1,10 @@
 import './App.css'
 import {initImageFileMap, initMarkdownFileMap, initTocMap} from "./utils/file/fileUtils.js";
-import Sidebar from "./components/Sidebar.jsx";
 import {useEffect, useState} from "react";
 import MarkdownContent from "./components/MarkdownContent.jsx";
 import {Route, Routes} from "react-router-dom";
 import LoadingScreen from "./components/LoadingScreen.jsx";
-import MarkdownWrapper from "./components/MarkdownWrapper.jsx";
+import {WorkspaceContainer} from "./containers/WorkspaceContainer";
 
 function App() {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -25,14 +24,16 @@ function App() {
   
   return (
     <div className="horizontal-main-container">
-      <div className="workspace is-left-sidedock-open is-right-sidedock-open">
-        <Sidebar/>
-        <MarkdownWrapper>
-          <Routes>
-            <Route path={"/*"} element={<MarkdownContent/>}/>
-          </Routes>
-        </MarkdownWrapper>
-      </div>
+        <Routes>
+          <Route path={"/*"}
+            element={
+              <WorkspaceContainer>
+                <MarkdownContent/>
+              </WorkspaceContainer>
+            }
+          >
+          </Route>
+        </Routes>
     </div>
   );
 }
