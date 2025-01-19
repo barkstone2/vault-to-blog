@@ -1,13 +1,14 @@
 import {render, screen, waitFor} from '@testing-library/react';
 import {expect, vi} from 'vitest';
 import App from './App';
-import {initImageFileMap, initMarkdownFileMap} from './utils/file/fileUtils';
+import {initImageFileMap, initMarkdownFileMap, initTocMap} from './utils/file/fileUtils';
 import {MemoryRouter} from "react-router-dom";
 
 beforeAll(() => {
   vi.mock('./utils/file/fileUtils', () => ({
     initMarkdownFileMap: vi.fn(),
     initImageFileMap: vi.fn(),
+    initTocMap: vi.fn(),
     getMarkdownFileSet: vi.fn(() => new Set()),
   }));
 })
@@ -23,6 +24,7 @@ describe('App 컴포넌트 렌더링 시', () => {
     await waitFor(() => {
       expect(initMarkdownFileMap).toHaveBeenCalled();
       expect(initImageFileMap).toHaveBeenCalled();
+      expect(initTocMap).toHaveBeenCalled();
     });
   });
   

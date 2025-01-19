@@ -68,6 +68,21 @@ function traverseFilesRecursively(dir, fileMap) {
   return fileMap;
 }
 
+let tocMap = {};
+export async function initTocMap() {
+  try {
+    const response = await fetch("/toc.json");
+    tocMap = await response.json();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export function getTocMap() {
+ return tocMap;
+}
+
+
 let markdownFileMap = {};
 export async function initMarkdownFileMap() {
   try {
