@@ -1,4 +1,4 @@
-import {ReactNode, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import {WorkspaceSplitContainer} from "./WorkspaceSplitContainer";
 import TreeContainer from "../components/TreeContainer";
 import {WorkspaceTabs} from "../components/tab-header/WorkspaceTabs";
@@ -22,8 +22,27 @@ export function WorkspaceContainer({children}: {children: ReactNode}) {
     const tocMap: {[key: string]: HeaderOfToc} = getTocMap();
     const tocOfFile: HeaderOfToc = tocMap[filePath ?? ''];
 
-    const [isLeftSideDockOpened, setIsLeftSideDockOpened] = useState(true);
-    const [isRightSideDockOpened, setIsRightSideDockOpened] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(max-width: 900px)');
+        setIsMobile(mediaQuery.matches);
+
+        const handleChange = (e: MediaQueryListEvent) => {
+            setIsMobile(e.matches);
+        };
+        mediaQuery.addEventListener('change', handleChange);
+
+        return () => mediaQuery.removeEventListener('change', handleChange);
+    }, []);
+
+    const [isLeftSideDockOpened, setIsLeftSideDockOpened] = useState(!isMobile);
+    const [isRightSideDockOpened, setIsRightSideDockOpened] = useState(!isMobile);
+
+    useEffect(() => {
+        setIsLeftSideDockOpened(!isMobile)
+        setIsRightSideDockOpened(!isMobile)
+    }, [isMobile]);
+
     let workspaceClassName = 'workspace';
     if (isLeftSideDockOpened) {
         workspaceClassName += ' ' + leftSideDockOpenedClassName;
