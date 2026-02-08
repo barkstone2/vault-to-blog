@@ -85,6 +85,34 @@ describe('rehypeCallout 동작 시', () => {
     expect(inputAst).toEqual(expectedAst)
   });
 
+  it('indicator의 첫 자식이 text 노드가 아니어도 에러 없이 통과한다.', () => {
+    inputAst = u('root', [
+      {
+        type: 'element',
+        tagName: 'blockquote',
+        children: [
+          { type: 'text', value: '\n' },
+          {
+            type: 'element',
+            tagName: 'p',
+            children: [
+              {
+                type: 'element',
+                tagName: 'strong',
+                children: [{ type: 'text', value: '[!info]' }],
+              },
+              { type: 'text', value: '내용' },
+            ],
+          },
+        ],
+      }
+    ]);
+    expectedAst = structuredClone(inputAst);
+
+    expect(() => rehypeCallout()(inputAst)).not.toThrow();
+    expect(inputAst).toEqual(expectedAst);
+  });
+
   it('콜아웃 지시자가 있는 blockquote 태그의 경우 rehype 된다.', () => {
     inputAst = u('root', [
       {

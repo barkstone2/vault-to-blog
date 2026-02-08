@@ -47,7 +47,8 @@ const rehypeCallout = () => {
 }
 
 function isCallout(indicatorNode) {
-  return indicatorNode.tagName === 'p' && indicatorNode.children[0].value.match(/\[!.*]/)
+  const indicatorValue = indicatorNode?.children?.[0]?.value;
+  return indicatorNode?.tagName === 'p' && typeof indicatorValue === 'string' && /\[!.*]/.test(indicatorValue)
 }
 
 function parseIndicatorNode(indicatorNode) {
