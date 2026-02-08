@@ -1,4 +1,4 @@
-import {ReactNode, useEffect, useState} from "react";
+import {MouseEvent as ReactMouseEvent, ReactNode, useCallback, useEffect, useState} from "react";
 import {WorkspaceSplitContainer} from "./WorkspaceSplitContainer";
 import TreeContainer from "../components/TreeContainer";
 import {WorkspaceTabs} from "../components/tab-header/WorkspaceTabs";
@@ -33,6 +33,9 @@ export function resolveTocHeaders(
 
 const leftSideDockOpenedClassName = 'is-left-sidedock-open';
 const rightSideDockOpenedClassName = 'is-right-sidedock-open';
+const defaultLeftSideDockWidth = 300;
+const minLeftSideDockWidth = 220;
+const maxLeftSideDockWidth = 560;
 
 export function WorkspaceContainer({children}: {children: ReactNode}) {
     const {'*': filePath } = useParams();
@@ -54,6 +57,7 @@ export function WorkspaceContainer({children}: {children: ReactNode}) {
 
     const [isLeftSideDockOpened, setIsLeftSideDockOpened] = useState(!isMobile);
     const [isRightSideDockOpened, setIsRightSideDockOpened] = useState(!isMobile);
+    const [leftSideDockWidth, setLeftSideDockWidth] = useState(defaultLeftSideDockWidth);
 
     useEffect(() => {
         setIsLeftSideDockOpened(!isMobile)
@@ -69,11 +73,39 @@ export function WorkspaceContainer({children}: {children: ReactNode}) {
         workspaceClassName += ' ' + rightSideDockOpenedClassName;
     }
 
+    const handleLeftSidebarResizeMouseDown = useCallback((event: ReactMouseEvent<HTMLHRElement>) => {
+        if (isMobile || !isLeftSideDockOpened) {
+            return;
+        }
+
+        event.preventDefault();
+        const startX = event.clientX;
+        const startWidth = leftSideDockWidth;
+
+        const handleMouseMove = (moveEvent: MouseEvent) => {
+            const nextWidth = Math.min(
+                maxLeftSideDockWidth,
+                Math.max(minLeftSideDockWidth, startWidth + (moveEvent.clientX - startX)),
+            );
+            setLeftSideDockWidth(nextWidth);
+        };
+
+        const handleMouseUp = () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+    }, [isLeftSideDockOpened, isMobile, leftSideDockWidth]);
+
     return (
         <div className={workspaceClassName}>
             <WorkspaceSplitContainer modOrientation={'mod-horizontal'}
                                      isSideDock={true}
                                      isSideDockCollapse={!isLeftSideDockOpened}
+                                     width={leftSideDockWidth}
+                                     onResizeMouseDown={handleLeftSidebarResizeMouseDown}
                                      modSplitDirection={'mod-left-split'}>
                 <WorkspaceTabs spaceDirection={'mod-top-left-space'}>
                     <WorkspaceTabHeaderContainer
