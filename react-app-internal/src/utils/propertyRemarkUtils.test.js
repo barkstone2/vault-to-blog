@@ -84,6 +84,15 @@ describe('addPropertyValue 호출 시', () => {
 });
 
 describe('getPropertyType 호출 시', () => {
+  it('types.json 파일이 없어도 tags 키는 tags 타입이 반환된다.', () => {
+    vi.spyOn(fs, 'existsSync').mockImplementation(() => {
+      return false;
+    })
+    const result = getPropertyType('tags');
+    expect(result).toBe('tags');
+    vi.clearAllMocks();
+  });
+
   it('types.json 파일이 존재하지 않는 경우 text 타입이 반환된다.', () => {
     vi.spyOn(fs, 'existsSync').mockImplementation(() => {
       return false;

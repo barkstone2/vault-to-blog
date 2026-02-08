@@ -85,6 +85,11 @@ function createMultiValueTag(type, value) {
 
 const typesPath = 'public/types.json';
 export function getPropertyType(key) {
+  const normalizedKey = key.trim().toLowerCase();
+  if (normalizedKey === 'tags' || normalizedKey === 'tag') {
+    return 'tags';
+  }
+
   const types = fs.existsSync(typesPath) ? fs.readFileSync(typesPath, 'utf-8') : '{}';
   const typesMap = JSON.parse(types).types ?? {};
   return typesMap[[key]] ?? 'text';
