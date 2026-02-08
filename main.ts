@@ -9,6 +9,7 @@ import {VTBPublishManager} from "./src/layout/VTBPublishManager";
 
 export interface VaultToBlogSettings {
 	sourceDir: string;
+	indexFilePath: string;
 	repositoryUrl: string;
 	isActivated: boolean;
 	version: string;
@@ -19,6 +20,7 @@ export interface VaultToBlogSettings {
 
 const DEFAULT_SETTINGS: VaultToBlogSettings = {
 	sourceDir: '',
+	indexFilePath: '',
 	repositoryUrl: '',
 	isActivated: false,
 	version: '0.0.1',

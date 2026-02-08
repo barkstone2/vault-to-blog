@@ -3,9 +3,11 @@ import {
   createFileMapToJson,
   createImageMapToJson,
   getImageFileMap,
+  getIndexFilePath,
   getMarkdownFileMap,
   initImageFileMap,
   initMarkdownFileMap,
+  normalizeIndexFilePath,
 } from "./fileUtils.js";
 import fs from "fs";
 
@@ -309,5 +311,21 @@ describe('파일 셋 조회 요청 시', () => {
     
     expect(cachedSet).not.toStrictEqual(expectedFileSet);
     expect(cachedSet).toStrictEqual(initSet);
+  });
+});
+
+describe('index 파일 경로 정규화 요청 시', () => {
+  it('sourceDir를 포함한 index 경로를 source 기준 상대 경로로 정규화한다.', () => {
+    const normalized = normalizeIndexFilePath('!new-blog/index.md', '!new-blog');
+    expect(normalized).toBe('index.md');
+  });
+
+  it('이미 source 기준 상대 경로면 그대로 반환한다.', () => {
+    const normalized = normalizeIndexFilePath('index.md', '!new-blog');
+    expect(normalized).toBe('index.md');
+  });
+
+  it('설정 데이터에 index 경로가 없으면 빈 값을 반환한다.', () => {
+    expect(getIndexFilePath()).toBe('');
   });
 });

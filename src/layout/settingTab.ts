@@ -1,9 +1,10 @@
-import {App, normalizePath, Notice, PluginSettingTab, Setting, TFolder} from "obsidian";
+import {App, normalizePath, Notice, PluginSettingTab, Setting, TFile, TFolder} from "obsidian";
 import VTBPlugin, {VaultToBlogSettings} from "../../main";
 import {Paths} from "../store/paths";
 import {GitUtils} from "../utils/gitUtils";
 import {FileUtils} from "../utils/fileUtils";
 import {FolderSuggester} from "../suggester/FolderSuggester";
+import {MarkdownFileSuggester} from "../suggester/MarkdownFileSuggester";
 
 export class VTBSettingTab extends PluginSettingTab {
 	plugin: VTBPlugin;
@@ -28,6 +29,7 @@ export class VTBSettingTab extends PluginSettingTab {
 
 		const propertiesContainer = containerEl.createDiv()
 		this.createSourceDirSetting(propertiesContainer)
+		this.createIndexFileSetting(propertiesContainer)
 		this.createRepositoryUrlSetting(propertiesContainer);
 		containerEl.append(propertiesContainer)
 
@@ -69,6 +71,9 @@ export class VTBSettingTab extends PluginSettingTab {
 		}
 
 		this.settings.sourceDir = inputEl?.value;
+		if (this.settings.indexFilePath && !this.isValidIndexFile(this.settings.indexFilePath)) {
+			this.settings.indexFilePath = '';
+		}
 		await this.deactivate();
 		this.display()
 		new Notice('Setting saved.');
@@ -78,6 +83,73 @@ export class VTBSettingTab extends PluginSettingTab {
 		const directories = this.app.vault.getAllFolders(true)
 			.map((it: TFolder) => normalizePath(it.path));
 		return directories.includes(sourceDir);
+	}
+
+	private createIndexFileSetting(containerEl: HTMLElement) {
+		let inputEl: HTMLInputElement;
+		let isSaveDisabled = false;
+		const desc = new DocumentFragment();
+		desc.createDiv({text: 'Select an index.md file to use as homepage.'});
+		desc.createDiv({text: 'This file must be under Source Dir and will be hidden from the left sidebar.', cls: 'vtb-warning'});
+		if (!this.settings.sourceDir) {
+			desc.createDiv({text: 'Select Source Dir first.', cls: 'vtb-warning'});
+			isSaveDisabled = true;
+		}
+		const setting = new Setting(containerEl)
+			.setName('Index File')
+			.setDesc(desc)
+			.setTooltip('Select an index markdown file under Source Dir. Leave empty to use default home.html.')
+			.addSearch((cb) => {
+				inputEl = cb.inputEl;
+				new MarkdownFileSuggester(this.app, inputEl, this.settings.sourceDir);
+				cb.setPlaceholder('Enter an index markdown file path');
+				cb.setValue(this.settings.indexFilePath);
+				cb.setDisabled(isSaveDisabled);
+			})
+			.addButton((cb) => {
+				cb.setButtonText('Save');
+				cb.setDisabled(isSaveDisabled);
+				cb.onClick(() => this.saveIndexFileSetting(inputEl));
+			});
+		this.addDefaultSettingClass(setting)
+		containerEl.createDiv({cls: 'vtb-current-value', text: 'Index File : ' + (this.settings.indexFilePath || '(default home.html)')});
+	}
+
+	private async saveIndexFileSetting(inputEl: HTMLInputElement) {
+		if (!this.settings.sourceDir) {
+			new Notice('Source Dir must be selected first.', 3000)
+			return;
+		}
+
+		const selectedPath = normalizePath(inputEl?.value ?? '');
+		if (selectedPath !== '' && !this.isValidIndexFile(selectedPath)) {
+			new Notice('Invalid index markdown file path.', 3000)
+			inputEl.value = this.settings.indexFilePath;
+			return;
+		}
+
+		this.settings.indexFilePath = selectedPath;
+		await this.deactivate();
+		this.display();
+		new Notice('Setting saved.');
+	}
+
+	private isValidIndexFile(indexFilePath: string) {
+		if (!indexFilePath.endsWith('.md')) {
+			return false;
+		}
+
+		const markdownFiles = this.app.vault.getMarkdownFiles()
+			.map((it: TFile) => normalizePath(it.path));
+		if (!markdownFiles.includes(indexFilePath)) {
+			return false;
+		}
+
+		if (!this.settings.sourceDir) {
+			return false;
+		}
+
+		return indexFilePath.startsWith(`${this.settings.sourceDir}/`);
 	}
 
 	private addDefaultSettingClass(setting: Setting) {

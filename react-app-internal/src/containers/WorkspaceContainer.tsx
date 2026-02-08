@@ -7,20 +7,37 @@ import FileExplorerTabHeader from "../components/sidebar/FileExplorerTabHeader";
 import {WorkspaceTabHeader} from "../components/tab-header/WorkspaceTabHeader";
 import {LucideList} from "lucide-react";
 import {useParams} from "react-router-dom";
-import {getTocMap} from "../utils/file/fileUtils";
+import {getIndexFilePath, getTocMap} from "../utils/file/fileUtils";
 import {TocHeaders} from "../components/tab-header/TocHeaders";
 import {SidebarRightToggleSvg} from "../components/svg/SidebarRightToggleSvg";
 import {SidebarToggleButton} from "../components/SidebarToggleButton";
 import {SidebarLeftToggleSvg} from "../components/svg/SidebarLeftToggleSvg";
 import {HeaderOfToc} from "../types/HeaderOfToc";
 
+export function resolveEffectiveMarkdownPath(filePath: string | undefined, indexFilePath: string): string {
+    if (filePath && filePath !== '') {
+        return filePath;
+    }
+    return indexFilePath || '';
+}
+
+export function resolveTocHeaders(
+    tocMap: {[key: string]: HeaderOfToc},
+    filePath: string | undefined,
+    indexFilePath: string,
+): HeaderOfToc[] {
+    const resolvedPath = resolveEffectiveMarkdownPath(filePath, indexFilePath);
+    const tocOfFile = tocMap[resolvedPath];
+    return tocOfFile?.children ?? [];
+}
+
 const leftSideDockOpenedClassName = 'is-left-sidedock-open';
 const rightSideDockOpenedClassName = 'is-right-sidedock-open';
 
 export function WorkspaceContainer({children}: {children: ReactNode}) {
     const {'*': filePath } = useParams();
-    const tocMap: {[key: string]: HeaderOfToc} = getTocMap();
-    const tocOfFile: HeaderOfToc = tocMap[filePath ?? ''];
+    const tocMap = getTocMap() as {[key: string]: HeaderOfToc};
+    const tocHeaders = resolveTocHeaders(tocMap, filePath, getIndexFilePath());
 
     const [isMobile, setIsMobile] = useState(false);
     useEffect(() => {
@@ -152,7 +169,7 @@ export function WorkspaceContainer({children}: {children: ReactNode}) {
                             <div className="workspace-leaf-content" data-type={'outline'}>
 
                                 <div className="view-content node-insert-event" style={{position: 'relative'}}>
-                                    <TocHeaders headers={tocOfFile.children}/>
+                                    <TocHeaders headers={tocHeaders}/>
                                 </div>
                             </div>
                         </div>

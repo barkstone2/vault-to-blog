@@ -8,7 +8,8 @@ let expectedTree;
 beforeAll(() => {
   vi.mock('./file/fileUtils.js', () => {
     return {
-      getMarkdownFileSet: () => fileSet
+      getMarkdownFileSet: () => fileSet,
+      getIndexFilePath: () => ''
     }
   })
   vi.mock('../components/TreeItem', () => ({
@@ -100,6 +101,26 @@ describe('initTree 호출 시', () => {
     expect(tree.count).toBe(fileSet.size);
     expect(tree).toStrictEqual(expectedTree)
   });
+
+	it('index 파일 경로가 전달되면 해당 파일은 트리에서 제외한다.', () => {
+		fileSet = new Set(['index.md', 'posts/post-1.md']);
+		expectedTree = {
+			children: {
+				posts: {
+					children: {
+						'post-1.md': {children: {}, count: 1, isFile: true},
+					},
+					count: 1,
+					isFile: false,
+				},
+			},
+			count: 1,
+		};
+
+		const tree = initTree('index.md');
+		expect(tree.count).toBe(1);
+		expect(tree).toStrictEqual(expectedTree);
+	});
 });
 
 describe('renderTree 호출 시', () => {

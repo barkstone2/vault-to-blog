@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import mime from "mime";
+import data from "../../stores/data.json";
 
 const sourceDir = 'public/sources';
 const imageJsonFilePath = 'image-files.json';
@@ -95,6 +96,29 @@ export async function initMarkdownFileMap() {
 
 export function getMarkdownFileMap() {
   return markdownFileMap;
+}
+
+export function normalizeIndexFilePath(indexFilePath, sourceDir) {
+  if (!indexFilePath) {
+    return '';
+  }
+
+  const normalizedIndexPath = indexFilePath.normalize('NFC');
+  if (!sourceDir) {
+    return normalizedIndexPath;
+  }
+
+  const normalizedSourceDir = sourceDir.normalize('NFC').replace(/^\/+|\/+$/g, '');
+  const sourcePrefix = `${normalizedSourceDir}/`;
+  if (normalizedIndexPath.startsWith(sourcePrefix)) {
+    return normalizedIndexPath.substring(sourcePrefix.length);
+  }
+
+  return normalizedIndexPath;
+}
+
+export function getIndexFilePath() {
+  return normalizeIndexFilePath(data.indexFilePath || '', data.sourceDir || '');
 }
 
 let markdownFileSet = null;
