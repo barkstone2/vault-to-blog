@@ -1,5 +1,5 @@
 import React from 'react'
-import {getMarkdownFileSet} from "./file/fileUtils.js";
+import {getIndexFilePath, getMarkdownFileSet} from "./file/fileUtils.js";
 import TreeItem from "../components/TreeItem.jsx";
 
 const calculateCounts = (node) => {
@@ -39,8 +39,12 @@ const buildTree = (paths) => {
   return tree;
 };
 
-export const initTree =  () => {
+export const initTree = (indexMarkdownPath = getIndexFilePath()) => {
   const fileSet = getMarkdownFileSet();
+  const indexFilePath = indexMarkdownPath.normalize('NFC');
+  if (indexFilePath) {
+    fileSet.delete(indexFilePath);
+  }
   return buildTree(fileSet)
 }
 

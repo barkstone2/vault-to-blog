@@ -5,18 +5,32 @@ import LoadingScreen from "./LoadingScreen.jsx";
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import UtterancesComments from "./UtterancesComments.jsx";
+import {getIndexFilePath} from "../utils/file/fileUtils.js";
+
+export function resolveMarkdownFilePath(filePath, indexFilePath) {
+  if (filePath && filePath !== '') {
+    return filePath;
+  }
+  return indexFilePath || '';
+}
+
+function resolveTitle(filePath) {
+  return filePath ? filePath.split('/').pop().replace('.md', '') : 'Home';
+}
 
 function MarkdownContent() {
   const {'*': filePath} = useParams();
+  const indexFilePath = getIndexFilePath();
   const [innerHtml, setInnerHtml] = useState({});
   const [isLoading, setIsLoading] = useState(true)
   useEffect(() => {
     setIsLoading(true);
     const fetchHtml = async () => {
-      const path = filePath ? `/html/${filePath.replace('.md', '.html')}` : `/default/home.html`;
+      const resolvedFilePath = resolveMarkdownFilePath(filePath, indexFilePath);
+      const path = resolvedFilePath ? `/html/${resolvedFilePath.replace('.md', '.html')}` : `/default/home.html`;
       const response = await fetch(`${path}`);
       const content = await response.text();
-      const title = filePath.split('/').pop().replace('.md', '');
+      const title = resolveTitle(resolvedFilePath);
       const newInnerHtml = {
         title: title,
         content: content
@@ -25,7 +39,7 @@ function MarkdownContent() {
       setIsLoading(false);
     };
     fetchHtml()
-  }, [filePath]);
+  }, [filePath, indexFilePath]);
   useBacklinkNavigation(innerHtml.content);
   
   if (isLoading) {
@@ -40,7 +54,7 @@ function MarkdownContent() {
       <div className="markdown-preview-sizer markdown-preview-section"
            dangerouslySetInnerHTML={{__html: innerHtml.content}}>
       </div>
-      { filePath !== '' && <UtterancesComments /> }
+      { resolveMarkdownFilePath(filePath, indexFilePath) !== '' && <UtterancesComments /> }
     </>
   );
 }
