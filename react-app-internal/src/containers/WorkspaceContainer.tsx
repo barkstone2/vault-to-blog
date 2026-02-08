@@ -4,6 +4,7 @@ import TreeContainer from "../components/TreeContainer";
 import {WorkspaceTabs} from "../components/tab-header/WorkspaceTabs";
 import {WorkspaceTabHeaderContainer} from "./WorkspaceTabHeaderContainer";
 import FileExplorerTabHeader from "../components/sidebar/FileExplorerTabHeader";
+import HomeTabHeader from "../components/sidebar/HomeTabHeader";
 import {WorkspaceTabHeader} from "../components/tab-header/WorkspaceTabHeader";
 import {LucideList} from "lucide-react";
 import {useParams} from "react-router-dom";
@@ -119,6 +120,7 @@ export function WorkspaceContainer({children}: {children: ReactNode}) {
                             />
                         }
                     >
+                        <HomeTabHeader/>
                         <FileExplorerTabHeader/>
                         {/* TODO left sidebar에 다른 탭 추가될 때 주석 해제 */}
                         {/*<OutlineTabHeader title=""/>*/}
