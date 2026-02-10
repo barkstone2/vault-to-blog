@@ -5,11 +5,12 @@ import {MemoryRouter} from "react-router-dom";
 
 let fileSet;
 let expectedTree;
+
 beforeAll(() => {
   vi.mock('./file/fileUtils.js', () => {
     return {
       getMarkdownFileSet: () => fileSet,
-      getIndexFilePath: () => ''
+      getIndexFilePath: () => '',
     }
   })
   vi.mock('../components/TreeItem', () => ({
@@ -121,6 +122,19 @@ describe('initTree 호출 시', () => {
 		expect(tree.count).toBe(1);
 		expect(tree).toStrictEqual(expectedTree);
 	});
+
+	it('검색어가 전달되면 해당 키워드를 포함한 경로만 트리에 포함한다.', () => {
+		fileSet = new Set([
+			'Development/Frontend/React/useState.md',
+			'Development/Backend/Java/ArrayList.md',
+		]);
+
+		const tree = initTree('', 'react');
+		expect(tree.count).toBe(1);
+		expect(tree.children.Development.children.Frontend).toBeDefined();
+		expect(tree.children.Development.children.Backend).toBeUndefined();
+	});
+
 });
 
 describe('renderTree 호출 시', () => {

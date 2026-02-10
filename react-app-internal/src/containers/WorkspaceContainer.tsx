@@ -4,6 +4,7 @@ import TreeContainer from "../components/TreeContainer";
 import {WorkspaceTabs} from "../components/tab-header/WorkspaceTabs";
 import {WorkspaceTabHeaderContainer} from "./WorkspaceTabHeaderContainer";
 import FileExplorerTabHeader from "../components/sidebar/FileExplorerTabHeader";
+import SearchTabHeader from "../components/sidebar/SearchTabHeader";
 import HomeTabHeader from "../components/sidebar/HomeTabHeader";
 import {WorkspaceTabHeader} from "../components/tab-header/WorkspaceTabHeader";
 import {LucideList} from "lucide-react";
@@ -59,6 +60,9 @@ export function WorkspaceContainer({children}: {children: ReactNode}) {
     const [isLeftSideDockOpened, setIsLeftSideDockOpened] = useState(!isMobile);
     const [isRightSideDockOpened, setIsRightSideDockOpened] = useState(!isMobile);
     const [leftSideDockWidth, setLeftSideDockWidth] = useState(defaultLeftSideDockWidth);
+    const [leftSidebarTab, setLeftSidebarTab] = useState<'file-explorer' | 'search'>('file-explorer');
+    const [searchKeyword, setSearchKeyword] = useState('');
+    const hasActiveSearch = searchKeyword.trim().length > 0;
 
     useEffect(() => {
         setIsLeftSideDockOpened(!isMobile)
@@ -121,13 +125,33 @@ export function WorkspaceContainer({children}: {children: ReactNode}) {
                         }
                     >
                         <HomeTabHeader/>
-                        <FileExplorerTabHeader/>
+                        <FileExplorerTabHeader
+                            isActive={leftSidebarTab === 'file-explorer'}
+                            onSelectTab={() => setLeftSidebarTab('file-explorer')}
+                        />
+                        <SearchTabHeader
+                            isActive={leftSidebarTab === 'search'}
+                            onSelectTab={() => setLeftSidebarTab('search')}
+                        />
                         {/* TODO left sidebar에 다른 탭 추가될 때 주석 해제 */}
                         {/*<OutlineTabHeader title=""/>*/}
                         {/*<TagsTabHeader/>*/}
                     </WorkspaceTabHeaderContainer>
                     <div className="workspace-tab-container">
-                        <TreeContainer datatype="file-explorer"/>
+                        <div style={{display: leftSidebarTab === 'file-explorer' ? 'block' : 'none'}}>
+                            <TreeContainer
+                                datatype="file-explorer"
+                            />
+                        </div>
+                        <div style={{display: leftSidebarTab === 'search' ? 'block' : 'none'}}>
+                            <TreeContainer
+                                datatype="search"
+                                searchKeyword={searchKeyword}
+                                forceExpandDirectories={hasActiveSearch}
+                                showSearchInput={true}
+                                onSearchKeywordChange={setSearchKeyword}
+                            />
+                        </div>
                     </div>
                 </WorkspaceTabs>
             </WorkspaceSplitContainer>

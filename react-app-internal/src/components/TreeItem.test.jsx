@@ -7,6 +7,7 @@ import {MemoryRouter} from "react-router-dom";
 const directoryIconId = 'DirectoryIcon';
 const directoryCloseClass = 'is-collapsed';
 let usedPaths = {current: {}};
+let forceOpenDirectories = false;
 let currentPath = ''
 let mockNavigate;
 
@@ -24,12 +25,13 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.clearAllMocks();
+  forceOpenDirectories = false;
 })
 
 const renderWithWrapper = (component) => {
   return render(
     <MemoryRouter>
-      <TreeContainerContext.Provider value={{usedPaths}}>
+      <TreeContainerContext.Provider value={{usedPaths, forceOpenDirectories}}>
         <div className='markdown-preview-view'>
           {component}
         </div>
@@ -60,6 +62,13 @@ describe("트리 아이템 렌더링 시", () => {
     const clickable = container.querySelector('.tree-item-self');
     fireEvent.click(clickable)
     expect(container.querySelector('.tree-item')).not.toHaveClass('is-collapsed');
+  });
+
+  it('검색 결과 강제 확장 모드면 디렉토리가 기본으로 열린다.', () => {
+    forceOpenDirectories = true;
+    const {container} = renderWithWrapper(<TreeItem title="title" isDirectory={true}/>);
+    expect(container.querySelector('.tree-item')).not.toHaveClass('is-collapsed');
+    expect(container.querySelector('.tree-item-children')).not.toHaveClass('d-none');
   });
   
   it('디렉토리가 닫힌 상태면 자식 목록 태그에 d-none 클래스가 추가된다.', () => {

@@ -39,13 +39,31 @@ const buildTree = (paths) => {
   return tree;
 };
 
-export const initTree = (indexMarkdownPath = getIndexFilePath()) => {
-  const fileSet = getMarkdownFileSet();
-  const indexFilePath = indexMarkdownPath.normalize('NFC');
+export const filterPathsByKeyword = (paths, keyword = '') => {
+  const normalizedKeyword = keyword.normalize('NFC').trim().toLowerCase();
+  if (!normalizedKeyword) {
+    return new Set(paths);
+  }
+
+  const result = new Set();
+  for (const path of paths) {
+    const normalizedPath = path.normalize('NFC').toLowerCase();
+    if (normalizedPath.includes(normalizedKeyword)) {
+      result.add(path);
+    }
+  }
+  return result;
+}
+
+export const initTree = (indexMarkdownPath = getIndexFilePath(), searchKeyword = '') => {
+  const fileSet = new Set(getMarkdownFileSet());
+  const indexFilePath = (indexMarkdownPath || '').normalize('NFC');
   if (indexFilePath) {
     fileSet.delete(indexFilePath);
   }
-  return buildTree(fileSet)
+
+  const filteredPaths = filterPathsByKeyword(fileSet, searchKeyword);
+  return buildTree(filteredPaths)
 }
 
 export const renderTree = (nodes, basePath = '', compareFn = () => {}) => {

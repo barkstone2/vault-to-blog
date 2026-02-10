@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import DirectoryIcon from "./DirectoryIcon.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -29,13 +29,20 @@ const createOnClickHandler = (isDirectory, setIsOpen, isOpen, navigate, path) =>
 }
 
 const TreeItem = ({title, isDirectory = false, path = '', children = null}) => {
-  const {usedPaths} = useContext(TreeContainerContext);
-  const [isOpen, setIsOpen] = useState(usedPaths.current[path]);
+  const {usedPaths, forceOpenDirectories = false} = useContext(TreeContainerContext);
+  const [isOpen, setIsOpen] = useState(forceOpenDirectories || usedPaths.current[path]);
   const location = useLocation();
   const navigate = useNavigate();
   const isActive = decodeURIComponent(location.pathname) === path;
   const {className, type} = determineTypeAndClassName(isDirectory, isOpen);
   const onClickHandler = createOnClickHandler(isDirectory, setIsOpen, isOpen, navigate, path);
+
+  useEffect(() => {
+    if (isDirectory && forceOpenDirectories) {
+      setIsOpen(true);
+    }
+  }, [forceOpenDirectories, isDirectory]);
+
   return (
     <div className={className}>
       <div className={`tree-item-self is-clickable mod-collapsible ${type}-title ${isActive ? 'is-active' : ''}`}
