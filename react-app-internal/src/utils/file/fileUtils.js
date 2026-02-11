@@ -16,57 +16,77 @@ const addToFileMap = (fileMap, key, value) => {
   }
 }
 
+function readDirectoryEntries(dir) {
+  return fs.readdirSync(dir, { encoding: 'utf-8', withFileTypes: true });
+}
+
+function getEntryName(entry) {
+  return typeof entry === 'string' ? entry : entry.name;
+}
+
+function isDirectoryEntry(entry, filePath) {
+  if (typeof entry === 'string') {
+    return fs.statSync(filePath).isDirectory();
+  }
+
+  if (entry.isDirectory()) {
+    return true;
+  }
+
+  if (entry.isSymbolicLink()) {
+    return fs.statSync(filePath).isDirectory();
+  }
+
+  return false;
+}
+
 function traverseImageRecursively(dir, fileMap) {
-  const files = fs.readdirSync(dir, { encoding: 'utf-8' });
-  const directories = [];
-  files.forEach((file) => {
-    const filePath = path.join(dir, file);
-    const mimeType = mime.getType(file);
-    if (fs.statSync(filePath).isDirectory()) {
-      directories.push(file);
-    } else {
-      if (mimeType && mimeType.startsWith('image/')) {
-        const fileNameKey = file.normalize('NFC');
-        const relativePath = path.relative(sourceDir, filePath).normalize('NFC')
-        
-        addToFileMap(fileMap, fileNameKey, relativePath);
-        if (fileNameKey !== relativePath) {
-          addToFileMap(fileMap, relativePath, relativePath);
-        }
+  const entries = readDirectoryEntries(dir);
+  entries.forEach((entry) => {
+    const entryName = getEntryName(entry);
+    const filePath = path.join(dir, entryName);
+    if (isDirectoryEntry(entry, filePath)) {
+      traverseImageRecursively(filePath, fileMap);
+      return;
+    }
+
+    const mimeType = mime.getType(entryName);
+    if (mimeType && mimeType.startsWith('image/')) {
+      const fileNameKey = entryName.normalize('NFC');
+      const relativePath = path.relative(sourceDir, filePath).normalize('NFC')
+
+      addToFileMap(fileMap, fileNameKey, relativePath);
+      if (fileNameKey !== relativePath) {
+        addToFileMap(fileMap, relativePath, relativePath);
       }
     }
   });
-  
-  directories.forEach((file) => {
-    const filePath = path.join(dir, file);
-    traverseImageRecursively(filePath, fileMap);
-  })
+
   return fileMap;
 }
 
 function traverseFilesRecursively(dir, fileMap) {
-  const files = fs.readdirSync(dir, { encoding: 'utf-8' });
-  const directories = [];
-  files.forEach((file) => {
-    const filePath = path.join(dir, file);
-    if (fs.statSync(filePath).isDirectory()) {
-      directories.push(file);
-    } else if (file.endsWith('.md')) {
-      const fileNameKey = file.replace('.md', '').normalize('NFC');
+  const entries = readDirectoryEntries(dir);
+  entries.forEach((entry) => {
+    const entryName = getEntryName(entry);
+    const filePath = path.join(dir, entryName);
+    if (isDirectoryEntry(entry, filePath)) {
+      traverseFilesRecursively(filePath, fileMap);
+      return;
+    }
+
+    if (entryName.endsWith('.md')) {
+      const fileNameKey = entryName.replace('.md', '').normalize('NFC');
       const relativePath = path.relative(sourceDir, filePath).normalize('NFC')
       const relativePathKey = relativePath.replace('.md', '')
-      
+
       addToFileMap(fileMap, fileNameKey, relativePath);
       if (relativePathKey !== fileNameKey) {
         addToFileMap(fileMap, relativePathKey, relativePath);
       }
     }
   });
-  
-  directories.forEach((file) => {
-    const filePath = path.join(dir, file);
-    traverseFilesRecursively(filePath, fileMap);
-  })
+
   return fileMap;
 }
 
@@ -75,15 +95,16 @@ function normalizeSearchText(markdownText = '') {
 }
 
 function traverseMarkdownSearchRecursively(dir, searchMap) {
-  const files = fs.readdirSync(dir, { encoding: 'utf-8' });
-  for (const file of files) {
-    const filePath = path.join(dir, file);
-    if (fs.statSync(filePath).isDirectory()) {
+  const entries = readDirectoryEntries(dir);
+  for (const entry of entries) {
+    const entryName = getEntryName(entry);
+    const filePath = path.join(dir, entryName);
+    if (isDirectoryEntry(entry, filePath)) {
       traverseMarkdownSearchRecursively(filePath, searchMap);
       continue;
     }
 
-    if (!file.endsWith('.md')) {
+    if (!entryName.endsWith('.md')) {
       continue;
     }
 

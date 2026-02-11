@@ -25,6 +25,12 @@ const jsonOf = (expectedFileList) => {return JSON.stringify(expectedFileList, nu
 let mockFiles;
 let expectedFileMap;
 
+const createDirent = (name, {directory = false, symbolicLink = false} = {}) => ({
+  name,
+  isDirectory: () => directory,
+  isSymbolicLink: () => symbolicLink,
+});
+
 beforeAll(() => {
   vi.mock('fs')
   vi.mock('fetch')
@@ -210,6 +216,25 @@ describe('파일 목록 JSON 생성 요청 시', () => {
     createFileMapToJson();
     
     expect(getMarkdownFileMap()).toStrictEqual(expectedFileMap);
+  });
+
+  it('심볼릭 링크 디렉토리도 재귀 탐색해 목록에 포함한다.', () => {
+    mockFiles = {
+      [sourceDir]: [createDirent('linked', {symbolicLink: true})],
+      [sourceDir + '/linked']: [createDirent('file1.md')],
+    };
+    expectedFileMap = {
+      file1: ['linked/file1.md'],
+      'linked/file1': ['linked/file1.md'],
+    };
+
+    createFileMapToJson();
+
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      'public/' + markdownJsonFilePath,
+      jsonOf(expectedFileMap),
+      options,
+    );
   });
 });
 
