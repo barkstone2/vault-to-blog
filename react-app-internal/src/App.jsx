@@ -1,5 +1,5 @@
 import './App.css'
-import {initImageFileMap, initMarkdownFileMap, initTocMap} from "./utils/file/fileUtils.js";
+import {initImageFileMap, initMarkdownFileMap, initMarkdownSearchMap, initTocMap} from "./utils/file/fileUtils.js";
 import {useEffect, useState} from "react";
 import MarkdownContent from "./components/MarkdownContent.jsx";
 import {Route, Routes} from "react-router-dom";
@@ -11,6 +11,7 @@ function App() {
   useEffect(() => {
     async function initialize() {
       await initMarkdownFileMap();
+      await initMarkdownSearchMap();
       await initImageFileMap();
       await initTocMap();
       setIsInitialized(true);

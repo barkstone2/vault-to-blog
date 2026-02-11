@@ -2,11 +2,14 @@ import {afterAll, beforeAll, beforeEach, describe, expect, it, vi} from "vitest"
 import {
   createFileMapToJson,
   createImageMapToJson,
+  createMarkdownSearchMapToJson,
   getImageFileMap,
   getIndexFilePath,
   getMarkdownFileMap,
+  getMarkdownSearchMap,
   initImageFileMap,
   initMarkdownFileMap,
+  initMarkdownSearchMap,
   normalizeIndexFilePath,
 } from "./fileUtils.js";
 import fs from "fs";
@@ -14,6 +17,7 @@ import fs from "fs";
 const sourceDir = 'public/sources';
 const imageJsonFilePath = 'image-files.json';
 const markdownJsonFilePath = 'markdown-files.json'
+const markdownSearchJsonFilePath = 'markdown-search.json'
 
 const options = { encoding: 'utf-8' };
 const jsonOf = (expectedFileList) => {return JSON.stringify(expectedFileList, null, 2)};
@@ -238,6 +242,83 @@ describe('파일 맵 초기화 요청 시', () => {
     await initMarkdownFileMap()
     const markdownFileMap = getMarkdownFileMap()
     expect(markdownFileMap).not.toBe(expectedFileMap)
+  });
+});
+
+describe('검색 맵 초기화 요청 시', () => {
+  beforeEach(() => {
+    global.fetch = vi.fn((url) => {
+      if (url === '/' + markdownSearchJsonFilePath) {
+        return Promise.resolve({
+          json: () => Promise.resolve({'doc.md': 'cached index'})
+        });
+      }
+      if (url === '/doc.md') {
+        return Promise.resolve({
+          text: () => Promise.resolve('apple and 안녕하세요')
+        });
+      }
+      return Promise.resolve({
+        json: () => Promise.resolve(expectedFileMap),
+        text: () => Promise.resolve(''),
+      });
+    });
+  });
+
+  it('검색 맵 JSON fetch 성공 시 내부 검색 맵을 업데이트한다.', async () => {
+    await initMarkdownSearchMap();
+    expect(getMarkdownSearchMap()).toEqual({'doc.md': 'cached index'});
+  });
+
+  it('검색 맵 JSON fetch 실패 시 마크다운 파일 본문 fetch로 검색 맵을 구성한다.', async () => {
+    vi.resetModules();
+    global.fetch = vi.fn((url) => {
+      if (url === '/' + markdownSearchJsonFilePath) {
+        return Promise.reject(new Error('missing index'));
+      }
+      if (url === '/' + markdownJsonFilePath) {
+        return Promise.resolve({
+          json: () => Promise.resolve({doc: ['doc.md']})
+        });
+      }
+      if (url === '/sources/doc.md') {
+        return Promise.resolve({
+          text: () => Promise.resolve('apple and 안녕하세요')
+        });
+      }
+      return Promise.resolve({
+        json: () => Promise.resolve({}),
+        text: () => Promise.resolve(''),
+      });
+    });
+
+    const {initMarkdownFileMap, initMarkdownSearchMap, getMarkdownSearchMap} = await import('./fileUtils.js');
+    await initMarkdownFileMap();
+    await initMarkdownSearchMap();
+
+    expect(getMarkdownSearchMap()).toEqual({'doc.md': 'apple and 안녕하세요'});
+  });
+});
+
+describe('검색 맵 JSON 생성 요청 시', () => {
+  it('재귀적으로 마크다운 파일 본문을 탐색해 검색 맵 JSON을 생성한다.', () => {
+    mockFiles = {
+      [sourceDir]: ['doc.md'],
+    };
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath === sourceDir + '/doc.md') {
+        return '  apple\n\n안녕하세요  ';
+      }
+      return '';
+    });
+
+    createMarkdownSearchMapToJson();
+
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      'public/' + markdownSearchJsonFilePath,
+      jsonOf({'doc.md': 'apple 안녕하세요'}),
+      options,
+    );
   });
 });
 

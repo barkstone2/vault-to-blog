@@ -1,5 +1,5 @@
 import {createContext, useMemo, useRef} from 'react';
-import {initTree, markUsedPaths, renderTree} from "../utils/treeUtils.jsx";
+import {initTree, markUsedPaths, MIN_SEARCH_KEYWORD_LENGTH, renderTree} from "../utils/treeUtils.jsx";
 
 export const TreeContainerContext = createContext({});
 
@@ -18,7 +18,8 @@ const TreeContainer = ({
   onSearchKeywordChange = (_nextKeyword) => {},
 }) => {
   const tree = useMemo(() => initTree(undefined, searchKeyword), [searchKeyword]);
-  const shouldRenderTree = !showSearchInput || searchKeyword.trim().length > 0;
+  const normalizedSearchLength = searchKeyword.normalize('NFC').trim().length;
+  const shouldRenderTree = !showSearchInput || normalizedSearchLength >= MIN_SEARCH_KEYWORD_LENGTH;
   const usedPaths = useRef(markUsedPaths());
   return (
     <TreeContainerContext.Provider value={{usedPaths, forceOpenDirectories: forceExpandDirectories}}>

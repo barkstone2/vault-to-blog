@@ -11,6 +11,7 @@ describe('트리 컨테이너 컴포넌트 렌더링 시', () => {
   beforeEach(() => {
     vi.mock('../utils/treeUtils.jsx', () => {
       return {
+        MIN_SEARCH_KEYWORD_LENGTH: 2,
         initTree: vi.fn(() => tree),
         renderTree: vi.fn(),
         markUsedPaths: vi.fn()
