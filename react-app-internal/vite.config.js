@@ -1,7 +1,12 @@
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 import generateHtmlFiles from "./src/generateHtml.js";
-import {createFileMapToJson, createImageMapToJson, initSourceDirectory,} from "./src/utils/file/fileUtils.js";
+import {
+  createFileMapToJson,
+  createImageMapToJson,
+  createMarkdownSearchMapToJson,
+  initSourceDirectory,
+} from "./src/utils/file/fileUtils.js";
 import {viteStaticCopy} from "vite-plugin-static-copy";
 
 export default defineConfig({
@@ -20,6 +25,7 @@ export default defineConfig({
       async buildStart() {
         initSourceDirectory()
         createFileMapToJson()
+        createMarkdownSearchMapToJson()
         createImageMapToJson()
         await generateHtmlFiles()
       }

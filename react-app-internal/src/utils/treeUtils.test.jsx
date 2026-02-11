@@ -4,12 +4,14 @@ import {render, screen} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
 let fileSet;
+let searchContentMap;
 let expectedTree;
 
 beforeAll(() => {
   vi.mock('./file/fileUtils.js', () => {
     return {
       getMarkdownFileSet: () => fileSet,
+      getMarkdownSearchMap: () => searchContentMap,
       getIndexFilePath: () => '',
     }
   })
@@ -123,16 +125,55 @@ describe('initTree 호출 시', () => {
 		expect(tree).toStrictEqual(expectedTree);
 	});
 
-	it('검색어가 전달되면 해당 키워드를 포함한 경로만 트리에 포함한다.', () => {
+  it('검색어가 전달되면 해당 키워드를 포함한 경로만 트리에 포함한다.', () => {
 		fileSet = new Set([
 			'Development/Frontend/React/useState.md',
 			'Development/Backend/Java/ArrayList.md',
 		]);
+		searchContentMap = {};
 
 		const tree = initTree('', 'react');
 		expect(tree.count).toBe(1);
 		expect(tree.children.Development.children.Frontend).toBeDefined();
 		expect(tree.children.Development.children.Backend).toBeUndefined();
+	});
+
+	it('검색어 길이가 2글자 미만이면 검색 결과를 표시하지 않는다.', () => {
+		fileSet = new Set([
+			'Development/Frontend/React/useState.md',
+			'Development/Backend/Java/ArrayList.md',
+		]);
+		searchContentMap = {};
+
+		const tree = initTree('', 'r');
+		expect(tree.count).toBe(0);
+		expect(tree.children).toStrictEqual({});
+	});
+
+	it('검색어가 문서 본문에 부분 일치하면 해당 문서를 검색 결과에 포함한다.', () => {
+		fileSet = new Set(['posts/greeting.md', 'posts/other.md']);
+		searchContentMap = {
+			'posts/greeting.md': '오늘의 인사말은 안녕하세요 입니다.',
+			'posts/other.md': '테스트 문서입니다.',
+		};
+
+		const tree = initTree('', '하세');
+		expect(tree.count).toBe(1);
+		expect(tree.children.posts.children['greeting.md']).toBeDefined();
+		expect(tree.children.posts.children['other.md']).toBeUndefined();
+	});
+
+	it('영문 검색어가 문서 본문에 부분 일치하면 해당 문서를 검색 결과에 포함한다.', () => {
+		fileSet = new Set(['posts/doc-1.md', 'posts/doc-2.md']);
+		searchContentMap = {
+			'posts/doc-1.md': 'I like green apple pie.',
+			'posts/doc-2.md': 'Banana bread recipe.',
+		};
+
+		const tree = initTree('', 'pl');
+		expect(tree.count).toBe(1);
+		expect(tree.children.posts.children['doc-1.md']).toBeDefined();
+		expect(tree.children.posts.children['doc-2.md']).toBeUndefined();
 	});
 
 });

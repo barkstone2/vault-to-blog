@@ -1,6 +1,8 @@
 import React from 'react'
-import {getIndexFilePath, getMarkdownFileSet} from "./file/fileUtils.js";
+import {getIndexFilePath, getMarkdownFileSet, getMarkdownSearchMap} from "./file/fileUtils.js";
 import TreeItem from "../components/TreeItem.jsx";
+
+export const MIN_SEARCH_KEYWORD_LENGTH = 2;
 
 const calculateCounts = (node) => {
   let total = 0;
@@ -44,11 +46,16 @@ export const filterPathsByKeyword = (paths, keyword = '') => {
   if (!normalizedKeyword) {
     return new Set(paths);
   }
+  if (normalizedKeyword.length < MIN_SEARCH_KEYWORD_LENGTH) {
+    return new Set();
+  }
 
+  const markdownSearchMap = getMarkdownSearchMap() || {};
   const result = new Set();
   for (const path of paths) {
     const normalizedPath = path.normalize('NFC').toLowerCase();
-    if (normalizedPath.includes(normalizedKeyword)) {
+    const markdownContent = (markdownSearchMap[path] || '').normalize('NFC').toLowerCase();
+    if (normalizedPath.includes(normalizedKeyword) || markdownContent.includes(normalizedKeyword)) {
       result.add(path);
     }
   }
