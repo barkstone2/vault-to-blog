@@ -176,6 +176,84 @@ describe('initTree 호출 시', () => {
 		expect(tree.children.posts.children['doc-2.md']).toBeUndefined();
 	});
 
+	it('tag:태그명 형식으로 입력하면 해당 태그를 가진 문서만 검색된다.', () => {
+		fileSet = new Set(['posts/react.md', 'posts/java.md']);
+		searchContentMap = {
+			'posts/react.md': '---\ntags:\n  - react\n---\nReact content',
+			'posts/java.md': '---\ntags:\n  - java\n---\nJava content',
+		};
+
+		const tree = initTree('', 'tag:react');
+		expect(tree.count).toBe(1);
+		expect(tree.children.posts.children['react.md']).toBeDefined();
+		expect(tree.children.posts.children['java.md']).toBeUndefined();
+	});
+
+	it('tag:#태그명 형식도 동일하게 동작한다.', () => {
+		fileSet = new Set(['posts/react.md', 'posts/java.md']);
+		searchContentMap = {
+			'posts/react.md': '---\ntags: [react]\n---\nReact content',
+			'posts/java.md': '---\ntags: [java]\n---\nJava content',
+		};
+
+		const tree = initTree('', 'tag:#react');
+		expect(tree.count).toBe(1);
+		expect(tree.children.posts.children['react.md']).toBeDefined();
+		expect(tree.children.posts.children['java.md']).toBeUndefined();
+	});
+
+	it('영문 태그는 대소문자를 구분하지 않고 검색된다.', () => {
+		fileSet = new Set(['posts/react.md', 'posts/java.md']);
+		searchContentMap = {
+			'posts/react.md': '---\ntags:\n  - React\n---\nReact content',
+			'posts/java.md': '---\ntags:\n  - Java\n---\nJava content',
+		};
+
+		const tree = initTree('', 'tag:react');
+		expect(tree.count).toBe(1);
+		expect(tree.children.posts.children['react.md']).toBeDefined();
+		expect(tree.children.posts.children['java.md']).toBeUndefined();
+	});
+
+	it('공백 정규화로 줄바꿈이 사라진 검색 인덱스에서도 태그 검색이 동작한다.', () => {
+		fileSet = new Set(['posts/react.md', 'posts/java.md']);
+		searchContentMap = {
+			'posts/react.md': '--- created: 2024-01-01 tags: - React - JS --- React content',
+			'posts/java.md': '--- created: 2024-01-01 tags: - Java --- Java content',
+		};
+
+		const tree = initTree('', 'tag:react');
+		expect(tree.count).toBe(1);
+		expect(tree.children.posts.children['react.md']).toBeDefined();
+		expect(tree.children.posts.children['java.md']).toBeUndefined();
+	});
+
+	it('공백 정규화된 인덱스의 tags: [a, b] 형식도 태그 검색이 동작한다.', () => {
+		fileSet = new Set(['posts/react.md', 'posts/java.md']);
+		searchContentMap = {
+			'posts/react.md': '--- created: 2024-01-01 tags: [React, JS] --- React content',
+			'posts/java.md': '--- created: 2024-01-01 tags: [Java] --- Java content',
+		};
+
+		const tree = initTree('', 'tag:#react');
+		expect(tree.count).toBe(1);
+		expect(tree.children.posts.children['react.md']).toBeDefined();
+		expect(tree.children.posts.children['java.md']).toBeUndefined();
+	});
+
+	it('태그 검색과 키워드 검색을 함께 입력하면 모두 일치하는 문서만 검색된다.', () => {
+		fileSet = new Set(['posts/react-state.md', 'posts/react-router.md']);
+		searchContentMap = {
+			'posts/react-state.md': '---\ntags:\n  - react\n---\nState management details',
+			'posts/react-router.md': '---\ntags:\n  - react\n---\nRouting details',
+		};
+
+		const tree = initTree('', 'tag:react state');
+		expect(tree.count).toBe(1);
+		expect(tree.children.posts.children['react-state.md']).toBeDefined();
+		expect(tree.children.posts.children['react-router.md']).toBeUndefined();
+	});
+
 });
 
 describe('renderTree 호출 시', () => {

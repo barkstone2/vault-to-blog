@@ -19,13 +19,13 @@ afterAll(() => {
 })
 
 describe('백링크 네비게이션 훅 동작 시', () => {
-  const setup = (content) => {
+  const setup = (content, onTagSelected = () => {}) => {
     const wrapper = ({children}) => (
     <MemoryRouter>
       {children}
     </MemoryRouter>
     );
-    return renderHook(() => useBacklinkNavigation(content), {wrapper});
+    return renderHook(() => useBacklinkNavigation(content, onTagSelected), {wrapper});
   };
   
   it('backlink 클래스 클릭 시 목적지로 이동하고 스크롤이 상단으로 이동한다.', () => {
@@ -56,5 +56,20 @@ describe('백링크 네비게이션 훅 동작 시', () => {
     unmount();
     
     expect(removeEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function));
+  });
+
+  it('태그 필을 클릭하면 태그 선택 핸들러가 호출된다.', () => {
+    const onTagSelected = vi.fn();
+    const tagValue = 'React';
+    document.body.innerHTML =
+      `<div class="metadata-property" data-property-type="tags">` +
+      `<div class="multi-select-pill" data-tag-value="${tagValue}"><div class="multi-select-pill-content"><span>${tagValue}</span></div></div>` +
+      `</div>`;
+    setup('', onTagSelected);
+
+    const tag = document.querySelector('.multi-select-pill');
+    fireEvent.click(tag);
+
+    expect(onTagSelected).toHaveBeenCalledWith(tagValue);
   });
 });

@@ -181,7 +181,7 @@ describe('addMultiPropertyValue 호출 시', () => {
   
   it('key 값이 존재하지 않고 tags 타입이면 타입에 맞는 태그가 추가된다.', () => {
     const value = 'value';
-    expectedTag = `<div class="multi-select-pill" tabindex="0"><div class="multi-select-pill-content"><span>${value}</span></div></div>`;
+    expectedTag = `<div class="multi-select-pill metadata-property-tag" tabindex="0" data-tag-value="${value}"><div class="multi-select-pill-content"><span>${value}</span></div></div>`;
     properties = ['parent: parent', '  - ' + value]
     index = 0;
     type = 'tags';

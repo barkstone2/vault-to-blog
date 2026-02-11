@@ -78,7 +78,7 @@ function createMultiValueTag(type, value) {
   if (type === 'multitext') {
     valueTag = `<div class="multi-select-pill"><div class="multi-select-pill-content">${value}</div></div>`;
   } else {
-    valueTag = `<div class="multi-select-pill" tabindex="0"><div class="multi-select-pill-content"><span>${value}</span></div></div>`
+    valueTag = `<div class="multi-select-pill metadata-property-tag" tabindex="0" data-tag-value="${value}"><div class="multi-select-pill-content"><span>${value}</span></div></div>`
   }
   return valueTag;
 }

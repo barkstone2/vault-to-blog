@@ -1,4 +1,4 @@
-import {MouseEvent as ReactMouseEvent, ReactNode, useCallback, useEffect, useState} from "react";
+import {cloneElement, isValidElement, MouseEvent as ReactMouseEvent, ReactElement, ReactNode, useCallback, useEffect, useState} from "react";
 import {WorkspaceSplitContainer} from "./WorkspaceSplitContainer";
 import TreeContainer from "../components/TreeContainer";
 import {WorkspaceTabs} from "../components/tab-header/WorkspaceTabs";
@@ -33,6 +33,38 @@ export function resolveTocHeaders(
     return tocOfFile?.children ?? [];
 }
 
+export function normalizeTagKeyword(tagValue: string): string {
+    return tagValue
+        .normalize('NFC')
+        .trim()
+        .replace(/^#/, '')
+        .toLowerCase();
+}
+
+export function createTagQuery(tagValue: string): string {
+    const normalizedTag = normalizeTagKeyword(tagValue);
+    return normalizedTag ? `tag:${normalizedTag}` : '';
+}
+
+export function appendTagQuery(searchKeyword: string, tagValue: string): string {
+    const tagQuery = createTagQuery(tagValue);
+    if (!tagQuery) {
+        return searchKeyword;
+    }
+
+    const normalizedKeyword = (searchKeyword || '').trim();
+    if (!normalizedKeyword) {
+        return tagQuery;
+    }
+
+    const hasTagQuery = normalizedKeyword.split(/\s+/).some((token) => token.toLowerCase() === tagQuery.toLowerCase());
+    if (hasTagQuery) {
+        return normalizedKeyword;
+    }
+
+    return `${normalizedKeyword} ${tagQuery}`;
+}
+
 const leftSideDockOpenedClassName = 'is-left-sidedock-open';
 const rightSideDockOpenedClassName = 'is-right-sidedock-open';
 const defaultLeftSideDockWidth = 300;
@@ -63,6 +95,18 @@ export function WorkspaceContainer({children}: {children: ReactNode}) {
     const [leftSidebarTab, setLeftSidebarTab] = useState<'file-explorer' | 'search'>('file-explorer');
     const [searchKeyword, setSearchKeyword] = useState('');
     const hasActiveSearch = searchKeyword.trim().length > 0;
+
+    const handleTagSelected = useCallback((tagValue: string) => {
+        setSearchKeyword((prevKeyword) => appendTagQuery(prevKeyword, tagValue));
+        setLeftSidebarTab('search');
+        if (isMobile) {
+            setIsLeftSideDockOpened(true);
+        }
+    }, [isMobile]);
+
+    const renderedChildren = isValidElement(children)
+        ? cloneElement(children as ReactElement<{onTagSelected?: (tagValue: string) => void}>, {onTagSelected: handleTagSelected})
+        : children;
 
     useEffect(() => {
         setIsLeftSideDockOpened(!isMobile)
@@ -190,7 +234,7 @@ export function WorkspaceContainer({children}: {children: ReactNode}) {
                                         <div
                                             className="markdown-preview-view markdown-rendered node-insert-event is-readable-line-width allow-fold-headings show-indentation-guide allow-fold-lists show-properties"
                                             tabIndex={-1} style={{tabSize: 4}}>
-                                            {children}
+                                            {renderedChildren}
                                         </div>
                                     </div>
                                 </div>
