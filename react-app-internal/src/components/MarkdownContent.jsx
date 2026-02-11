@@ -18,7 +18,7 @@ function resolveTitle(filePath) {
   return filePath ? filePath.split('/').pop().replace('.md', '') : 'Home';
 }
 
-function MarkdownContent() {
+function MarkdownContent({onTagSelected = (_tagValue) => {}}) {
   const {'*': filePath} = useParams();
   const indexFilePath = getIndexFilePath();
   const [innerHtml, setInnerHtml] = useState({});
@@ -40,7 +40,7 @@ function MarkdownContent() {
     };
     fetchHtml()
   }, [filePath, indexFilePath]);
-  useBacklinkNavigation(innerHtml.content);
+  useBacklinkNavigation(innerHtml.content, onTagSelected);
   
   if (isLoading) {
     return <LoadingScreen/>
