@@ -21,6 +21,12 @@
     "allowSyntheticDefaultImports": true,
   },
   "include": [
-    "**/*.ts"
+    "main.ts",
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "react-app-internal/**",
+    "node_modules",
+    "main.js"
   ]
 }
