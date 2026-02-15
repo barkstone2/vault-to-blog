@@ -125,6 +125,47 @@ describe('initTree 호출 시', () => {
 		expect(tree).toStrictEqual(expectedTree);
 	});
 
+	it('index 파일 경로에 선행 슬래시가 있어도 동일 파일을 트리에서 제외한다.', () => {
+		fileSet = new Set(['index.md', 'posts/post-1.md']);
+		expectedTree = {
+			children: {
+				posts: {
+					children: {
+						'post-1.md': {children: {}, count: 1, isFile: true},
+					},
+					count: 1,
+					isFile: false,
+				},
+			},
+			count: 1,
+		};
+
+		const tree = initTree('/index.md');
+		expect(tree.count).toBe(1);
+		expect(tree).toStrictEqual(expectedTree);
+	});
+
+	it('index 파일 경로를 전달하지 않으면 index.md도 트리에 표시한다.', () => {
+		fileSet = new Set(['index.md', 'posts/post-1.md']);
+		expectedTree = {
+			children: {
+				'index.md': {children: {}, count: 1, isFile: true},
+				posts: {
+					children: {
+						'post-1.md': {children: {}, count: 1, isFile: true},
+					},
+					count: 1,
+					isFile: false,
+				},
+			},
+			count: 2,
+		};
+
+		const tree = initTree('');
+		expect(tree.count).toBe(2);
+		expect(tree).toStrictEqual(expectedTree);
+	});
+
   it('검색어가 전달되면 해당 키워드를 포함한 경로만 트리에 포함한다.', () => {
 		fileSet = new Set([
 			'Development/Frontend/React/useState.md',

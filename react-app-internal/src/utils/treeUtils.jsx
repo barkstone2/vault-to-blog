@@ -6,6 +6,13 @@ export const MIN_SEARCH_KEYWORD_LENGTH = 2;
 
 const TAG_QUERY_PATTERN = /^tag:(#?\S+)$/i;
 
+const normalizeComparablePath = (path = '') => {
+  return path
+    .normalize('NFC')
+    .replace(/\\/g, '/')
+    .replace(/^\/+/, '');
+}
+
 const calculateCounts = (node) => {
   let total = 0;
   Object.values(node).forEach((child) => {
@@ -233,9 +240,17 @@ export const filterPathsByKeyword = (paths, keyword = '') => {
 
 export const initTree = (indexMarkdownPath = getIndexFilePath(), searchKeyword = '') => {
   const fileSet = new Set(getMarkdownFileSet());
-  const indexFilePath = (indexMarkdownPath || '').normalize('NFC');
-  if (indexFilePath) {
-    fileSet.delete(indexFilePath);
+  const explicitIndexPath = normalizeComparablePath(indexMarkdownPath || '');
+  if (!explicitIndexPath) {
+    const filteredPaths = filterPathsByKeyword(fileSet, searchKeyword);
+    return buildTree(filteredPaths)
+  }
+
+  for (const filePath of [...fileSet]) {
+    const comparablePath = normalizeComparablePath(filePath);
+    if (explicitIndexPath === comparablePath) {
+      fileSet.delete(filePath);
+    }
   }
 
   const filteredPaths = filterPathsByKeyword(fileSet, searchKeyword);
