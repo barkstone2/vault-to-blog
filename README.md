@@ -34,9 +34,16 @@ A Community Plugin for [Obsidian.md](https://obsidian.md/) to publish your vault
 ## Features
 - Obsidian-style Layout
   - Left Sidebar
-    - Files explorer only
+    - Files explorer
+    - Home tab that routes to the root page
+    - Draggable sidebar resizing
+    - Keyword search in the sidebar tree
+    - Tag query search and tag-click integration
 - Markdown View
   - Basic Markdown support
+  - Table of Contents (TOC)
+    - Extracts TOC data from markdown headings
+    - Displays TOC header components in the page view
   - Internal Links
     - Block references are not supported
     - Heading references are not supported
@@ -58,6 +65,10 @@ A Community Plugin for [Obsidian.md](https://obsidian.md/) to publish your vault
     - Inline math expressions are supported
 - Utterances Comments Layout
   - Comments layout provided by the Utterances are supported
+- SEO
+  - Generates indexable output for published pages
+- Homepage Configuration
+  - Supports configurable `index.md` as the homepage
 ## Demo Page
 If you want to see a demo page, you can see the very simple result [here](https://barkstone3.github.io/).
 
