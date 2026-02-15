@@ -77,10 +77,28 @@ function createMultiValueTag(type, value) {
   let valueTag;
   if (type === 'multitext') {
     valueTag = `<div class="multi-select-pill"><div class="multi-select-pill-content">${value}</div></div>`;
+  } else if (type === 'references') {
+    valueTag = createReferenceLinkTag(value);
   } else {
     valueTag = `<div class="multi-select-pill metadata-property-tag" tabindex="0" data-tag-value="${value}"><div class="multi-select-pill-content"><span>${value}</span></div></div>`
   }
   return valueTag;
+}
+
+function createReferenceLinkTag(value = '') {
+  const markdownLinkRegex = /^\[(.+)]\((https?:\/\/\S+)\)$/;
+  const markdownMatch = value.match(markdownLinkRegex);
+  if (markdownMatch) {
+    const [, text, href] = markdownMatch;
+    return `<a href="${href}">${text}</a>`;
+  }
+
+  const externalUrlRegex = /^https?:\/\/\S+$/;
+  if (externalUrlRegex.test(value)) {
+    return `<a href="${value}">${value}</a>`;
+  }
+
+  return value;
 }
 
 const typesPath = 'public/types.json';
@@ -89,8 +107,15 @@ export function getPropertyType(key) {
   if (normalizedKey === 'tags' || normalizedKey === 'tag') {
     return 'tags';
   }
+  if (normalizedKey === 'references' || normalizedKey === 'reference') {
+    return 'references';
+  }
 
   const types = fs.existsSync(typesPath) ? fs.readFileSync(typesPath, 'utf-8') : '{}';
   const typesMap = JSON.parse(types).types ?? {};
-  return typesMap[[key]] ?? 'text';
+  const configuredType = typesMap[[key]] ?? typesMap[normalizedKey] ?? 'text';
+  if (configuredType === 'list') {
+    return 'multitext';
+  }
+  return configuredType;
 }

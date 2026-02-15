@@ -92,7 +92,7 @@ function addProperty(newNodes, key, type, index, properties, value) {
     `<div class="metadata-property" data-property-key="${key}" data-property-type="${type}">`, '</div>',
     () => {
       addPropertyKey(newNodes, key, type);
-      if (type === 'multitext' || type === 'tags') {
+      if (type === 'multitext' || type === 'tags' || type === 'list' || type === 'references') {
         index = addMultiPropertyValue(newNodes, type, properties, index);
       } else {
         addPropertyValue(newNodes, value, type);
