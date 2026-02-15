@@ -93,6 +93,15 @@ describe('getPropertyType 호출 시', () => {
     vi.clearAllMocks();
   });
 
+  it('types.json 파일이 없어도 references 키는 references 타입이 반환된다.', () => {
+    vi.spyOn(fs, 'existsSync').mockImplementation(() => {
+      return false;
+    })
+    const result = getPropertyType('references');
+    expect(result).toBe('references');
+    vi.clearAllMocks();
+  });
+
   it('types.json 파일이 존재하지 않는 경우 text 타입이 반환된다.', () => {
     vi.spyOn(fs, 'existsSync').mockImplementation(() => {
       return false;
@@ -127,6 +136,20 @@ describe('getPropertyType 호출 시', () => {
     const result = getPropertyType(key);
     expect(result).toBe('text');
     vi.clearAllMocks()
+  });
+
+  it('맵의 타입이 list인 경우 multitext 타입으로 정규화된다.', () => {
+    const key = 'custom-list-key';
+    vi.spyOn(JSON, 'parse').mockImplementation(() => {
+      return {
+        types: {
+          [key]: 'list'
+        }
+      }
+    })
+    const result = getPropertyType(key);
+    expect(result).toBe('multitext');
+    vi.clearAllMocks();
   });
 });
 
@@ -185,6 +208,16 @@ describe('addMultiPropertyValue 호출 시', () => {
     properties = ['parent: parent', '  - ' + value]
     index = 0;
     type = 'tags';
+    addMultiPropertyValue(nodes, type, properties, index);
+    expect(spy).toHaveBeenCalledWith(wrapTagByObject(expectedTag))
+  });
+
+  it('key 값이 존재하지 않고 references 타입이면 링크 태그가 추가된다.', () => {
+    const value = 'https://example.com';
+    expectedTag = `<a href="${value}">${value}</a>`;
+    properties = ['parent: parent', '  - ' + value]
+    index = 0;
+    type = 'references';
     addMultiPropertyValue(nodes, type, properties, index);
     expect(spy).toHaveBeenCalledWith(wrapTagByObject(expectedTag))
   });

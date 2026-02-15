@@ -60,6 +60,17 @@ describe('프로퍼티 파싱 요청 시', () => {
     remarkProperties()(inputAst)
     expect(addMultiPropertyValueSpy).toBeCalled();
   });
+
+  it('프로퍼티의 타입이 list인 경우 addMultiPropertyValue가 호출된다.', () => {
+    vi.spyOn(propertyRemarkUtil, 'getPropertyType').mockImplementation(() => {
+      return 'list'
+    })
+    inputAst = u('root', [
+      u('yaml', "a: A")
+    ]);
+    remarkProperties()(inputAst)
+    expect(addMultiPropertyValueSpy).toBeCalled();
+  });
   
   it('프로퍼티의 타입이 tags와 multitext가 아니면 addPropertyValue가 호출된다.', () => {
     vi.spyOn(propertyRemarkUtil, 'getPropertyType').mockImplementation(() => {
