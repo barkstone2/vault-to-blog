@@ -23,7 +23,9 @@ jobs:
           npm run build
       - name: Archive react-app-internal
         run: |
-          zip -r react-app.zip ./react-app-internal
+          tmpdir=$(mktemp -d)
+          cp -R ./react-app-internal "$tmpdir/react-app"
+          (cd "$tmpdir" && zip -r "$GITHUB_WORKSPACE/react-app.zip" react-app)
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
